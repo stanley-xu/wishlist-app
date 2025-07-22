@@ -30,10 +30,10 @@ Core features for end-to-end Secret Santa exchange:
 
 **Goal**: Basic login/register functionality
 
-- [ ] Set up auth provider integration
-- [ ] Create login screen UI
-- [ ] Create register screen UI
-- [ ] Implement basic auth flow
+- [x] Set up auth provider integration
+- [x] Create login screen UI
+- [x] Create register screen UI
+- [x] Implement basic auth flow
 
 **Files**: `lib/auth.ts`, `app/(auth)/login.tsx`, `app/(auth)/register.tsx`
 

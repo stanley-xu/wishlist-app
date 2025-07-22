@@ -15,8 +15,11 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 })
 
+// Re-export Supabase auth User type
+export type { User } from '@supabase/supabase-js'
+
 // Database types - these will match our Supabase tables
-export interface User {
+export interface UserProfile {
   id: string
   email: string
   name: string
