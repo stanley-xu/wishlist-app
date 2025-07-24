@@ -1,13 +1,9 @@
+import { Button, Card, Input } from "@/components";
 import { useAuth } from "@/lib/auth";
-import { useState } from "react";
+import TOKENS from "@/lib/tokens";
 import { router } from "expo-router";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState<string>("");
@@ -21,7 +17,7 @@ export default function RegisterScreen() {
       setSubmitting(true);
       await signUp({ email, password });
       // Force navigation after successful signup
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     } catch (e) {
       console.error(e);
     } finally {
@@ -31,34 +27,33 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign up</Text>
+      <Card variant="elevated" padding="lg">
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Join to start your gift exchange</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+        <Input
+          label="Email"
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <Input
+          label="Password"
+          placeholder="Create a password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleRegister}
-        disabled={submitting}
-      >
-        <Text style={styles.buttonText}>
-          {submitting ? "Signing up..." : "Sign up"}
-        </Text>
-      </TouchableOpacity>
+        <Button
+          title="Create Account"
+          onPress={handleRegister}
+          loading={submitting}
+        />
+      </Card>
     </View>
   );
 }
@@ -67,39 +62,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#25292e",
-    padding: 20,
+    backgroundColor: TOKENS.colors.surface,
+    padding: TOKENS.spacing.lg,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 30,
+    fontSize: TOKENS.typography.fontSize["2xl"],
+    fontWeight: TOKENS.typography.fontWeight.bold,
+    color: TOKENS.colors.text,
+    textAlign: "center",
+    marginBottom: TOKENS.spacing.xs,
   },
-  input: {
-    width: "100%",
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: "white",
-    fontSize: 16,
-  },
-  button: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+  subtitle: {
+    fontSize: TOKENS.typography.fontSize.base,
+    color: TOKENS.colors.textSecondary,
+    textAlign: "center",
+    marginBottom: TOKENS.spacing.xl,
   },
 });

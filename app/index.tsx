@@ -29,10 +29,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: TOKENS.backgroundColor,
+    backgroundColor: TOKENS.colors.surface,
   },
   text: {
-    color: "white",
-    marginTop: 10,
+    fontSize: TOKENS.typography.fontSize.base,
+    color: TOKENS.colors.textSecondary,
+    marginTop: TOKENS.spacing.md,
   },
 });

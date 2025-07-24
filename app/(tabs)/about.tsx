@@ -1,21 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
+
+import { Container, Text } from "@/components";
 
 export default function AboutScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>About screen</Text>
-    </View>
+    <Container style={styles.container}>
+      <Text>About screen</Text>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
     justifyContent: "center",
     alignItems: "center",
-  },
-  text: {
-    color: "#fff",
   },
 });

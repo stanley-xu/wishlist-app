@@ -1,17 +1,18 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRef, useState } from "react";
-import { ImageSourcePropType, Platform, StyleSheet, View } from "react-native";
+import {
+  ImageSourcePropType,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import Button from "@/components/Button";
-import CircleButton from "@/components/CircleButton";
-import EmojiList from "@/components/EmojiList";
-import EmojiPicker from "@/components/EmojiPicker";
-import IconButton from "@/components/IconButton";
-import ImageViewer from "@/components/ImageViewer";
+import { Button, Card, Container } from "@/components";
 
-import EmojiSticker from "@/components/EmojiSticker";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { colors } from "@/lib/tokens";
 import domtoimage from "dom-to-image";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
@@ -95,47 +96,15 @@ export default function Index() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View style={styles.container}>
+      <Card>
+        <Text>Test</Text>
+        <Button title={"Test"} onPress={() => console.log("test")} />
+      </Card>
+      <Container>
         <View style={styles.imageContainer}>
-          <View ref={imageRef} collapsable={false}>
-            <ImageViewer
-              imgSource={PlaceholderImage}
-              selectedImage={selectedImage}
-            />
-            {pickedEmoji && (
-              <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
-            )}
-          </View>
+          <View ref={imageRef} collapsable={false}></View>
         </View>
-        {showAppOptions ? (
-          <View style={styles.optionsContainer}>
-            <View style={styles.optionsRow}>
-              <IconButton icon="refresh" label="Reset" onPress={onReset} />
-              <CircleButton onPress={onAddSticker} />
-              <IconButton
-                icon="save-alt"
-                label="Save"
-                onPress={onSaveImageAsync}
-              />
-            </View>
-          </View>
-        ) : (
-          <View style={styles.footerContainer}>
-            <Button
-              theme="primary"
-              label="Choose a photo"
-              onPress={pickImageAsync}
-            />
-            <Button
-              label="Use this photo"
-              onPress={() => setShowAppOptions(true)}
-            />
-          </View>
-        )}
-        <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-          <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
-        </EmojiPicker>
-      </View>
+      </Container>
     </GestureHandlerRootView>
   );
 }
@@ -143,7 +112,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: colors.background,
     alignItems: "center",
   },
   imageContainer: {
