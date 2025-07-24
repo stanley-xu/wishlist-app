@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 interface ButtonProps {
@@ -38,20 +39,29 @@ export default function Button({
       disabled={isDisabled}
       activeOpacity={0.7}
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={
-            variant === "outline" ? colors.primaryDark : colors.primaryContrast
-          }
-        />
-      ) : (
+      <View style={styles.contentContainer}>
+        {loading && (
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === "outline"
+                ? colors.primaryDark
+                : colors.primaryContrast
+            }
+            style={styles.spinner}
+          />
+        )}
         <Text
-          style={[styles.text, styles[`${variant}Text`], styles[`${size}Text`]]}
+          style={[
+            styles.text,
+            styles[`${variant}Text`],
+            styles[`${size}Text`],
+            loading && styles.hiddenText,
+          ]}
         >
           {title}
         </Text>
-      )}
+      </View>
     </TouchableOpacity>
   );
 }
@@ -131,5 +141,18 @@ const styles = StyleSheet.create({
   // Disabled state
   disabled: {
     opacity: 0.5,
+  },
+
+  // Loading state styles
+  contentContainer: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  spinner: {
+    position: "absolute",
+  },
+  hiddenText: {
+    opacity: 0,
   },
 });

@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { Button, Card } from '@/components';
-import { colors, spacing, typography } from '@/lib/tokens';
+import { Button, Card } from "@/components";
+import { colors, spacing, typography } from "@/lib/tokens";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function ButtonShowcase() {
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const toggleLoading = (key: string) => {
-    setLoadingStates(prev => ({
+    setLoadingStates((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
-  const variants = ['primary', 'secondary', 'outline'] as const;
-  const sizes = ['sm', 'md', 'lg'] as const;
+  const variants = ["primary", "secondary", "outline"] as const;
+  const sizes = ["sm", "md", "lg"] as const;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -58,7 +60,7 @@ export default function ButtonShowcase() {
           <View key={`loading-${variant}`} style={styles.row}>
             <Text style={styles.label}>{variant} loading:</Text>
             <Button
-              title={loadingStates[variant] ? 'Loading...' : 'Click to Load'}
+              title={"Click to Load"}
               variant={variant}
               loading={loadingStates[variant]}
               onPress={() => toggleLoading(variant)}
@@ -77,7 +79,7 @@ export default function ButtonShowcase() {
               title="Disabled Button"
               variant={variant}
               disabled={true}
-              onPress={() => console.log('This should not fire')}
+              onPress={() => console.log("This should not fire")}
             />
           </View>
         ))}
@@ -118,16 +120,16 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    fontSize: typography.fontSize['3xl'],
+    fontSize: typography.fontSize["3xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: spacing.xs,
   },
   subtitle: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: spacing.xl,
   },
   section: {
@@ -140,16 +142,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: spacing.md,
   },
   label: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
     flex: 1,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   gridSection: {
     marginBottom: spacing.lg,

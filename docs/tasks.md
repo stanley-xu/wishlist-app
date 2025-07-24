@@ -41,10 +41,10 @@ Core features for end-to-end Secret Santa exchange:
 
 **Goal**: UI foundation and components
 
-- [ ] Define colors, fonts, spacing
-- [ ] Create Button component
-- [ ] Create Input component
-- [ ] Create basic Card component
+- [x] Define colors, fonts, spacing
+- [x] Create Button component
+- [x] Create Input component
+- [x] Create basic Card component
 
 **Files**: `constants/Theme.ts`, `components/ui/Button.tsx`, `components/ui/Input.tsx`
 
