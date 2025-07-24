@@ -7,9 +7,9 @@ export const colors = {
   primaryContrast: 'hsl(135, 100%, 15%)', // Dark green for text on pastel backgrounds
   
   // Neutral colors (light theme)
-  background: 'hsl(135, 100%, 99%)',    // Very light mint background
-  surface: 'hsl(135, 40%, 95%)',       // Subtle mint tint for cards
-  border: 'hsl(135, 20%, 85%)',        // Soft mint border
+  background: 'hsl(135, 100%, 100%)',
+  surface: 'hsl(135, 40%, 97%)',
+  border: 'hsl(135, 20%, 85%)',
   
   // Text colors (maintaining accessibility)
   text: 'hsl(135, 15%, 15%)',          // Dark green-tinted text (AA compliant)
@@ -20,6 +20,9 @@ export const colors = {
   success: 'hsl(135, 60%, 70%)',       // Soft success green
   error: 'hsl(0, 70%, 75%)',           // Soft error pink
   warning: 'hsl(35, 80%, 75%)',        // Soft warning peach
+
+  // Utility
+  white: 'hsl(0, 0, 100%)'
 } as const
 
 export const typography = {
