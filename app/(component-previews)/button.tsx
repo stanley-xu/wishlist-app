@@ -4,9 +4,17 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ShowcaseCardProps } from "../(component-previews)/_shared";
 
+const previewComponent = (
+  <Button
+    title={`Button`}
+    variant={"primary"}
+    onPress={() => console.log(`pressed`)}
+  />
+);
+
 export const metadata: ShowcaseCardProps = {
   href: "/button",
-  previewComponent: null,
+  previewComponent,
   title: "Button Showcase",
   subtitle: "All button variations for testing",
 };

@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 8,
     marginBottom: spacing.md,
+    pointerEvents: 'none', // Make preview non-interactive
   },
   title: {
     fontSize: typography.fontSize["2xl"],
