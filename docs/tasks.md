@@ -56,10 +56,10 @@ Core features for end-to-end Secret Santa exchange:
 
 **Goal**: Core navigation structure
 
-- [ ] Set up tab navigation
-- [ ] Create stack navigators
-- [ ] Connect auth flow to main app
-- [ ] Test navigation flow
+- [x] Set up tab navigation
+- [x] Create stack navigators
+- [x] Connect auth flow to main app
+- [x] Test navigation flow
 
 **Files**: `app/_layout.tsx`, `app/(tabs)/_layout.tsx`
 
