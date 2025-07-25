@@ -2,6 +2,14 @@ import { Button, Card } from "@/components";
 import { colors, spacing, typography } from "@/lib/tokens";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ShowcaseCardProps } from "../(component-previews)/_shared";
+
+export const metadata: ShowcaseCardProps = {
+  href: "/button",
+  previewComponent: null,
+  title: "Button Showcase",
+  subtitle: "All button variations for testing",
+};
 
 export default function ButtonShowcase() {
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(

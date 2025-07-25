@@ -47,6 +47,21 @@ export default function TabLayout() {
           ),
         }}
       />
+      {__DEV__ && (
+        <Tabs.Screen
+          name="component-preview"
+          options={{
+            title: "Components",
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "code-slash" : "code-slash-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }
