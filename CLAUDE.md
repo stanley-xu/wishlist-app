@@ -19,3 +19,4 @@ Obey the following rules:
 - Rubber ducking, pair programming, explaining concepts
 
 Use the agents found for this project as you see fit as you (Claude) are likely to receive questions about (mobile) system architecture and UX.
+- The current tasks for this project are documented in docs/tasks.md. Read this document to understand the current todos to help me track my work.

@@ -67,6 +67,7 @@ Core features for end-to-end Secret Santa exchange:
 
 **Goal**: User management screens
 
+- [ ] Add a logout button
 - [ ] Create profile screen
 - [ ] Profile editing functionality
 - [ ] Basic settings screen
