@@ -62,19 +62,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: TOKENS.colors.surface,
+    backgroundColor: TOKENS.colours.surface,
     padding: TOKENS.spacing.lg,
   },
   title: {
     fontSize: TOKENS.typography.fontSize["2xl"],
     fontWeight: TOKENS.typography.fontWeight.bold,
-    color: TOKENS.colors.text,
+    color: TOKENS.colours.text,
     textAlign: "center",
     marginBottom: TOKENS.spacing.xs,
   },
   subtitle: {
     fontSize: TOKENS.typography.fontSize.base,
-    color: TOKENS.colors.textSecondary,
+    color: TOKENS.colours.textSecondary,
     textAlign: "center",
     marginBottom: TOKENS.spacing.xl,
   },

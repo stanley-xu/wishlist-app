@@ -1,4 +1,4 @@
-import { borderRadius, colors, spacing, typography } from "@/lib/tokens";
+import { borderRadius, colours, spacing, typography } from "@/lib/tokens";
 import React from "react";
 import {
   ActivityIndicator,
@@ -45,8 +45,8 @@ export default function Button({
             size="small"
             color={
               variant === "outline"
-                ? colors.primaryDark
-                : colors.primaryContrast
+                ? colours.primaryDark
+                : colours.primaryContrast
             }
             style={styles.spinner}
           />
@@ -77,17 +77,17 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: colors.primary,
+    backgroundColor: colours.primary,
   },
   secondary: {
-    backgroundColor: colors.surface,
+    backgroundColor: colours.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colours.border,
   },
   outline: {
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: colors.primaryDark,
+    borderColor: colours.primaryDark,
   },
 
   // Sizes
@@ -115,15 +115,15 @@ const styles = StyleSheet.create({
 
   // Text variants
   primaryText: {
-    color: colors.text,
+    color: colours.text,
     fontSize: typography.fontSize.base,
   },
   secondaryText: {
-    color: colors.text,
+    color: colours.text,
     fontSize: typography.fontSize.base,
   },
   outlineText: {
-    color: colors.primaryDark,
+    color: colours.primaryDark,
     fontSize: typography.fontSize.base,
   },
 

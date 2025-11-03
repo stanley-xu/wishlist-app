@@ -1,4 +1,4 @@
-import { colors } from "@/lib/tokens";
+import { colours } from "@/lib/tokens";
 import { ReactNode } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
@@ -13,6 +13,6 @@ export default function Container({ children, style }: ContainerProps) {
 
 const styles = StyleSheet.create({
   base: {
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
   },
 });

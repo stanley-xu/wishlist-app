@@ -1,4 +1,4 @@
-import { colors, spacing } from "@/lib/tokens";
+import { colours, spacing } from "@/lib/tokens";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { metadata as buttonMetadata } from "../(component-previews)/button";
 
@@ -30,7 +30,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
   },
   content: {
     padding: spacing.lg,

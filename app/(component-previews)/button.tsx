@@ -1,5 +1,5 @@
 import { Button, Card } from "@/components";
-import { colors, spacing, typography } from "@/lib/tokens";
+import { colours, spacing, typography } from "@/lib/tokens";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ShowcaseCardProps } from "../(component-previews)/_shared";
@@ -130,7 +130,7 @@ export default function ButtonShowcase() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
   },
   content: {
     padding: spacing.lg,
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize["3xl"],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text,
+    color: colours.text,
     textAlign: "center",
     marginBottom: spacing.xs,
   },
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary,
+    color: colours.textSecondary,
     textAlign: "center",
     marginBottom: spacing.xl,
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text,
+    color: colours.text,
     marginBottom: spacing.md,
   },
   row: {
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary,
+    color: colours.textSecondary,
     flex: 1,
     textTransform: "capitalize",
   },
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   gridTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text,
+    color: colours.text,
     marginBottom: spacing.sm,
   },
   spacer: {

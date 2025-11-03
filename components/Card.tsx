@@ -1,4 +1,4 @@
-import { borderRadius, colors, spacing } from "@/lib/tokens";
+import { borderRadius, colours, spacing } from "@/lib/tokens";
 import React, { ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
@@ -26,17 +26,17 @@ const styles = StyleSheet.create({
   // Base card styles
   base: {
     borderRadius: borderRadius.lg,
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
   },
 
   // Variants
   default: {
-    backgroundColor: colors.surface,
+    backgroundColor: colours.surface,
   },
   elevated: {
-    backgroundColor: colors.surface,
+    backgroundColor: colours.surface,
     // iOS shadow
-    shadowColor: colors.text,
+    shadowColor: colours.text,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   outlined: {
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colours.border,
   },
 
   // Padding options

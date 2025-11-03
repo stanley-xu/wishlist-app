@@ -1,5 +1,5 @@
 import { Card } from "@/components";
-import { colors, spacing, typography } from "@/lib/tokens";
+import { colours, spacing, typography } from "@/lib/tokens";
 import { Link, LinkProps } from "expo-router";
 import { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -53,20 +53,20 @@ const styles = StyleSheet.create({
     minHeight: 100,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colours.surface,
     borderRadius: 8,
     marginBottom: spacing.md,
-    pointerEvents: 'none', // Make preview non-interactive
+    pointerEvents: "none", // Make preview non-interactive
   },
   title: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: colors.text,
+    color: colours.text,
     textAlign: "center",
   },
   subtitle: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary,
+    color: colours.textSecondary,
     textAlign: "center",
   },
 });

@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, TextInputProps } from 'react-native';
-import { colors, spacing, typography, borderRadius } from '@/lib/tokens';
+import { borderRadius, colours, spacing, typography } from "@/lib/tokens";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export default function Input({
   label,
   error,
-  size = 'md',
+  size = "md",
   style,
   ...props
 }: InputProps) {
@@ -19,10 +25,8 @@ export default function Input({
 
   return (
     <View style={styles.container}>
-      {label && (
-        <Text style={styles.label}>{label}</Text>
-      )}
-      
+      {label && <Text style={styles.label}>{label}</Text>}
+
       <TextInput
         style={[
           styles.base,
@@ -31,7 +35,7 @@ export default function Input({
           error && styles.error,
           style,
         ]}
-        placeholderTextColor={colors.textPlaceholder}
+        placeholderTextColor={colours.textPlaceholder}
         onFocus={(e) => {
           setIsFocused(true);
           props.onFocus?.(e);
@@ -42,10 +46,8 @@ export default function Input({
         }}
         {...props}
       />
-      
-      {error && (
-        <Text style={styles.errorText}>{error}</Text>
-      )}
+
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -58,18 +60,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colors.text,
+    color: colours.text,
     marginBottom: spacing.xs,
   },
 
   // Base input styles
   base: {
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colours.border,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.background,
+    backgroundColor: colours.background,
     fontSize: typography.fontSize.base,
-    color: colors.text,
+    color: colours.text,
     paddingHorizontal: spacing.md,
   },
 
@@ -89,16 +91,16 @@ const styles = StyleSheet.create({
 
   // States
   focused: {
-    borderColor: colors.primary,
+    borderColor: colours.primary,
   },
 
   error: {
-    borderColor: colors.error,
+    borderColor: colours.error,
   },
 
   errorText: {
     fontSize: typography.fontSize.sm,
-    color: colors.error,
+    color: colours.error,
     marginTop: spacing.xs,
   },
 });
