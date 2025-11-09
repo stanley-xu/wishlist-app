@@ -1,14 +1,12 @@
 import { Card } from "@/components";
 import { useAuth } from "@/lib/auth";
-import { palette, text } from "@/lib/tokens";
+import { palette } from "@/lib/tokens";
 import { useState } from "react";
 import {
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -38,34 +36,32 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.screen}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView keyboardShouldPersistTaps="handled">
-            <Card variant="elevated" padding="lg" style={styles.card}>
-              <Card.Title>Sign in</Card.Title>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <Card variant="elevated" padding="lg">
+            <Card.Title>Sign in</Card.Title>
 
-              <Card.Input
-                label="Email"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+            <Card.Input
+              label="Email"
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-              <Card.Input
-                label="Password"
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+            <Card.Input
+              label="Password"
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-              <Card.Button onPress={handleLogin} loading={submitting}>
-                Continue
-              </Card.Button>
-            </Card>
-          </ScrollView>
-        </TouchableWithoutFeedback>
+            <Card.Button onPress={handleLogin} loading={submitting}>
+              Continue
+            </Card.Button>
+          </Card>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -79,8 +75,5 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: palette.primary1Darkened,
-  },
-  card: {
-    color: text.white,
   },
 });
