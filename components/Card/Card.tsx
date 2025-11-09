@@ -1,24 +1,11 @@
 import { borderRadius, colours, spacing, text } from "@/lib/tokens";
-import React, { type ReactNode, createContext, useContext } from "react";
+import React, { type ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { Title } from "./Title";
-
-type CardContextType = {
-  textColour: string;
-};
-
-const CardContext = createContext<CardContextType | null>(null);
-
-export const useCardContext = () => {
-  const context = useContext(CardContext);
-  if (!context) {
-    throw new Error("Card compound components must be used within a Card");
-  }
-  return context;
-};
+import { CardContext } from "./context";
 
 interface CardProps {
   children: ReactNode;

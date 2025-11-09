@@ -1,7 +1,7 @@
 import { spacing, typography } from "@/lib/tokens";
 import { type ReactNode } from "react";
 import { StyleSheet, Text } from "react-native";
-import { useCardContext } from "./Card";
+import { useCardContext } from "./context";
 
 export const Title = ({ children }: { children: ReactNode }) => {
   const { textColour } = useCardContext();

@@ -1,8 +1,8 @@
 import {
-  Button as BaseButton,
+  default as BaseButton,
   ButtonProps as BaseButtonProps,
-} from "@/components";
-import { useCardContext } from "./Card";
+} from "@/components/Button";
+import { useCardContext } from "./context";
 
 export const Button = (props: BaseButtonProps) => {
   return (
