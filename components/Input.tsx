@@ -1,10 +1,12 @@
 import { borderRadius, colours, spacing, text, typography } from "@/lib/tokens";
 import React, { useState } from "react";
 import {
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
 } from "react-native";
 
@@ -12,22 +14,22 @@ export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   size?: "sm" | "md" | "lg";
+  labelStyle?: StyleProp<TextStyle>;
 }
 
 export function Input({
   label,
   error,
   size = "md",
+  labelStyle,
   style,
   ...props
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
-  console.log({ style });
-
   return (
     <View style={styles.container}>
-      {label && <Text style={[styles.label, style]}>{label}</Text>}
+      {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
 
       <TextInput
         style={[
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     backgroundColor: colours.background,
     fontSize: typography.fontSize.base,
-    color: text.white,
+    color: text.black,
     paddingHorizontal: spacing.md,
   },
 

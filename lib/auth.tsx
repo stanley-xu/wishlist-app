@@ -96,8 +96,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
   };
 
-  console.log({ value });
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

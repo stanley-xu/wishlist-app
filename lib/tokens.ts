@@ -1,6 +1,7 @@
 export const palette = {
   // https://coolors.co/386641-6a994e-a7c957-f2e8cf-bc4749
   primary1: "hsla(132, 29%, 31%, 1)",
+  primary1Darkened: "hsla(132, 29%, 25%, 1)",
   primary2: "hsla(98, 32%, 45%, 1)",
   primary3: "hsla(78, 51%, 56%, 1)",
   beige: "hsla(43, 57%, 88%, 1)",
