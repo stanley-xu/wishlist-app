@@ -1,26 +1,28 @@
+export const palette = {
+  // https://coolors.co/386641-6a994e-a7c957-f2e8cf-bc4749
+  primary1: "hsla(132, 29%, 31%, 1)",
+  primary2: "hsla(98, 32%, 45%, 1)",
+  primary3: "hsla(78, 51%, 56%, 1)",
+  beige: "hsla(43, 57%, 88%, 1)",
+  secondary: "hsla(359, 47%, 51%, 1)",
+  white: "hsla(0, 0%, 95%, 1.00)",
+} as const;
+
 export const colours = {
-  // Brand colors
-  primary: "hsl(135, 100%, 80%)",
-  primaryDark: "hsl(135, 100%, 30%)",
-  primaryContrast: "hsl(135, 100%, 15%)", // Dark green for text on pastel backgrounds
-
   // Neutral colors (light theme)
-  background: "hsl(135, 100%, 100%)",
-  surface: "hsl(135, 40%, 97%)",
-  border: "hsl(135, 20%, 85%)",
-
-  // Text colors (maintaining accessibility)
-  text: "hsl(135, 15%, 15%)", // Dark green-tinted text (AA compliant)
-  textSecondary: "hsl(135, 10%, 45%)", // Medium green-gray
-  textPlaceholder: "hsl(135, 5%, 60%)", // Light green-gray
+  background: palette.white,
+  surface: palette.primary1,
+  accent: palette.primary3,
 
   // Status colors (pastel theme)
   success: "hsl(135, 60%, 70%)", // Soft success green
   error: "hsl(0, 70%, 75%)", // Soft error pink
   warning: "hsl(35, 80%, 75%)", // Soft warning peach
+} as const;
 
-  // Utility
-  white: "hsl(0, 0, 100%)",
+export const text = {
+  black: "hsl(135, 15%, 15%)",
+  white: palette.white,
 } as const;
 
 export const typography = {
@@ -68,6 +70,7 @@ export const borderRadius = {
 
 // Backward compatibility - keep default export for now
 const TOKENS = {
+  palette,
   colours,
   typography,
   spacing,

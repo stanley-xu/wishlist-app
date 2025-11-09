@@ -1,29 +1,40 @@
-import { borderRadius, colours, spacing, typography } from "@/lib/tokens";
-import React from "react";
+import {
+  borderRadius,
+  colours,
+  palette,
+  spacing,
+  text,
+  typography,
+} from "@/lib/tokens";
+import React, { ReactNode } from "react";
 import {
   ActivityIndicator,
+  StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
 } from "react-native";
 
-interface ButtonProps {
-  title: string;
+export interface ButtonProps {
+  children: ReactNode;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
+  style?: StyleProp<TextStyle>;
 }
 
 export default function Button({
-  title,
+  children,
   onPress,
   variant = "primary",
   size = "md",
   disabled = false,
   loading = false,
+  style: styleOverrides,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -43,11 +54,7 @@ export default function Button({
         {loading && (
           <ActivityIndicator
             size="small"
-            color={
-              variant === "outline"
-                ? colours.primaryDark
-                : colours.primaryContrast
-            }
+            color={colours.background}
             style={styles.spinner}
           />
         )}
@@ -57,9 +64,10 @@ export default function Button({
             styles[`${variant}Text`],
             styles[`${size}Text`],
             loading && styles.hiddenText,
+            styleOverrides,
           ]}
         >
-          {title}
+          {children}
         </Text>
       </View>
     </TouchableOpacity>
@@ -77,17 +85,7 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: colours.primary,
-  },
-  secondary: {
-    backgroundColor: colours.surface,
-    borderWidth: 1,
-    borderColor: colours.border,
-  },
-  outline: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: colours.primaryDark,
+    backgroundColor: palette.primary2,
   },
 
   // Sizes
@@ -115,15 +113,7 @@ const styles = StyleSheet.create({
 
   // Text variants
   primaryText: {
-    color: colours.text,
-    fontSize: typography.fontSize.base,
-  },
-  secondaryText: {
-    color: colours.text,
-    fontSize: typography.fontSize.base,
-  },
-  outlineText: {
-    color: colours.primaryDark,
+    color: text.white,
     fontSize: typography.fontSize.base,
   },
 

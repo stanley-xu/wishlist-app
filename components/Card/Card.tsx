@@ -1,6 +1,23 @@
-import { borderRadius, colours, spacing } from "@/lib/tokens";
-import React, { ReactNode } from "react";
+import { borderRadius, colours, spacing, text } from "@/lib/tokens";
+import React, { type ReactNode, createContext, useContext } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
+
+import { Button } from "./Button";
+import { Title } from "./Title";
+
+type CardContextType = {
+  textColour: string;
+};
+
+const CardContext = createContext<CardContextType | null>(null);
+
+export const useCardContext = () => {
+  const context = useContext(CardContext);
+  if (!context) {
+    throw new Error("Card compound components must be used within a Card");
+  }
+  return context;
+};
 
 interface CardProps {
   children: ReactNode;
@@ -15,10 +32,14 @@ export default function Card({
   padding = "md",
   style,
 }: CardProps) {
+  const textColour = variant === "elevated" ? text.white : text.black;
+
   return (
-    <View style={[styles.base, styles[variant], styles[padding], style]}>
-      {children}
-    </View>
+    <CardContext.Provider value={{ textColour }}>
+      <View style={[styles.base, styles[variant], styles[padding], style]}>
+        {children}
+      </View>
+    </CardContext.Provider>
   );
 }
 
@@ -36,7 +57,7 @@ const styles = StyleSheet.create({
   elevated: {
     backgroundColor: colours.surface,
     // iOS shadow
-    shadowColor: colours.text,
+    shadowColor: text.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -49,7 +70,7 @@ const styles = StyleSheet.create({
   outlined: {
     backgroundColor: colours.background,
     borderWidth: 1,
-    borderColor: colours.border,
+    // borderColor: colours.border,
   },
 
   // Padding options
@@ -63,3 +84,6 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
 });
+
+Card.Title = Title;
+Card.Button = Button;
