@@ -1,4 +1,4 @@
-import { Card, Input } from "@/components";
+import { Card } from "@/components";
 import { useAuth } from "@/lib/auth";
 import { text } from "@/lib/tokens";
 import { useState } from "react";
@@ -41,7 +41,7 @@ export default function LoginScreen() {
           <Card variant="elevated" padding="lg">
             <Card.Title>Sign in</Card.Title>
 
-            <Input
+            <Card.Input
               label="Email"
               placeholder="Enter your email"
               value={email}
@@ -50,7 +50,7 @@ export default function LoginScreen() {
               autoCapitalize="none"
             />
 
-            <Input
+            <Card.Input
               label="Password"
               placeholder="Enter your password"
               value={password}

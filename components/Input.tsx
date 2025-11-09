@@ -1,4 +1,4 @@
-import { borderRadius, colours, spacing, typography } from "@/lib/tokens";
+import { borderRadius, colours, spacing, text, typography } from "@/lib/tokens";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -8,13 +8,13 @@ import {
   View,
 } from "react-native";
 
-interface InputProps extends TextInputProps {
+export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   size?: "sm" | "md" | "lg";
 }
 
-export default function Input({
+export function Input({
   label,
   error,
   size = "md",
@@ -23,9 +23,11 @@ export default function Input({
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
+  console.log({ style });
+
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, style]}>{label}</Text>}
 
       <TextInput
         style={[
@@ -35,7 +37,7 @@ export default function Input({
           error && styles.error,
           style,
         ]}
-        placeholderTextColor={colours.textPlaceholder}
+        placeholderTextColor={text.black}
         onFocus={(e) => {
           setIsFocused(true);
           props.onFocus?.(e);
@@ -60,18 +62,16 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colours.text,
     marginBottom: spacing.xs,
   },
 
   // Base input styles
   base: {
     borderWidth: 1,
-    borderColor: colours.border,
     borderRadius: borderRadius.md,
     backgroundColor: colours.background,
     fontSize: typography.fontSize.base,
-    color: colours.text,
+    color: text.white,
     paddingHorizontal: spacing.md,
   },
 
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
 
   // States
   focused: {
-    borderColor: colours.primary,
+    borderColor: colours.accent,
   },
 
   error: {

@@ -3,6 +3,7 @@ import React, { type ReactNode, createContext, useContext } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { Button } from "./Button";
+import { Input } from "./Input";
 import { Title } from "./Title";
 
 type CardContextType = {
@@ -87,3 +88,4 @@ const styles = StyleSheet.create({
 
 Card.Title = Title;
 Card.Button = Button;
+Card.Input = Input;

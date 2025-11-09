@@ -2,7 +2,7 @@
 export { default as Button, ButtonProps } from "./Button";
 export { Card } from "./Card";
 export { default as Container } from "./Container";
-export { default as Input } from "./Input";
+export * from "./Input";
 export { default as Text } from "./Text";
 
 // Layout Components
