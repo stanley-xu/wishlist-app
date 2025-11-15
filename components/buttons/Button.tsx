@@ -15,16 +15,18 @@ import {
   TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
 
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
-  variant?: "primary";
+  variant?: "primary" | "unstyled";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
-  style?: StyleProp<TextStyle>;
+  textStyle?: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Button({
@@ -34,6 +36,7 @@ export function Button({
   size = "md",
   disabled = false,
   loading = false,
+  textStyle: textStyleOverrides,
   style: styleOverrides,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
@@ -45,6 +48,7 @@ export function Button({
         styles[variant],
         styles[size],
         isDisabled && styles.disabled,
+        styleOverrides,
       ]}
       onPress={onPress}
       disabled={isDisabled}
@@ -58,21 +62,36 @@ export function Button({
             style={styles.spinner}
           />
         )}
-        <Text
-          style={[
-            styles.text,
-            styles[`${variant}Text`],
-            styles[`${size}Text`],
-            loading && styles.hiddenText,
-            styleOverrides,
-          ]}
-        >
-          {children}
-        </Text>
+        <Text style={[textStyles.text, textStyleOverrides]}>{children}</Text>
       </View>
     </TouchableOpacity>
   );
 }
+
+const textStyles = StyleSheet.create({
+  // Text styles
+  text: {
+    color: text.white,
+    fontWeight: typography.fontWeight.semibold,
+    textAlign: "center",
+  },
+
+  // Text variants
+  primary: {
+    fontSize: typography.fontSize.base,
+  },
+
+  // Text sizes
+  sm: {
+    fontSize: typography.fontSize.sm,
+  },
+  md: {
+    fontSize: typography.fontSize.base,
+  },
+  lg: {
+    fontSize: typography.fontSize.lg,
+  },
+});
 
 const styles = StyleSheet.create({
   // Base styles
@@ -86,6 +105,10 @@ const styles = StyleSheet.create({
   // Variants
   primary: {
     backgroundColor: palette.primary2,
+  },
+  unstyled: {
+    backgroundColor: "none",
+    padding: 0,
   },
 
   // Sizes
@@ -103,29 +126,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
     minHeight: 52,
-  },
-
-  // Text styles
-  text: {
-    fontWeight: typography.fontWeight.semibold,
-    textAlign: "center",
-  },
-
-  // Text variants
-  primaryText: {
-    color: text.white,
-    fontSize: typography.fontSize.base,
-  },
-
-  // Text sizes
-  smText: {
-    fontSize: typography.fontSize.sm,
-  },
-  mdText: {
-    fontSize: typography.fontSize.base,
-  },
-  lgText: {
-    fontSize: typography.fontSize.lg,
   },
 
   // Disabled state

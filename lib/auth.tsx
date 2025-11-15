@@ -78,6 +78,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     email: string;
     password: string;
   }) {
+    setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       setSession(data.session);
     }
+    setLoading(false);
   }
 
   async function signIn({
@@ -105,6 +107,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     email: string;
     password: string;
   }) {
+    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -113,10 +116,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (error) throw error;
 
     setSession(data.session);
+    setLoading(false);
   }
 
   async function signOut() {
+    setLoading(true);
     await supabase.auth.signOut();
+    setSession(null);
+    setLoading(false);
   }
 
   return (

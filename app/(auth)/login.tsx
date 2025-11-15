@@ -68,6 +68,23 @@ export default function LoginScreen() {
               Continue
             </Card.Button>
             {error && <Text variant="error">{error}</Text>}
+
+            {__DEV__ && (
+              <Card.Button
+                loading={submitting || loading}
+                onPress={async () => {
+                  setSubmitting(true);
+                  setEmail("dev@example.com");
+                  setPassword("dev@example.com");
+                  await signIn({
+                    email: "dev@example.com",
+                    password: "dev@example.com",
+                  });
+                }}
+              >
+                Dev login
+              </Card.Button>
+            )}
           </Card>
         </ScrollView>
       </KeyboardAvoidingView>

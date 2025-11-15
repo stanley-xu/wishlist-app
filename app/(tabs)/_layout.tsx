@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import { Logout } from "@/components/buttons";
 import { palette, text } from "@/styles/tokens";
 
 export default function TabLayout() {
@@ -12,6 +13,7 @@ export default function TabLayout() {
           backgroundColor: palette.primary1Darkened,
         },
         headerTintColor: text.white,
+        headerRight: () => <Logout variant="unstyled" size="sm" />,
         tabBarActiveTintColor: text.white,
         tabBarStyle: {
           backgroundColor: palette.primary1Darkened,
@@ -31,7 +33,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      {__DEV__ && (
+      <Tabs.Protected guard={__DEV__}>
         <Tabs.Screen
           name="dev"
           options={{
@@ -45,7 +47,7 @@ export default function TabLayout() {
             ),
           }}
         />
-      )}
+      </Tabs.Protected>
     </Tabs>
   );
 }

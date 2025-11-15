@@ -2,10 +2,15 @@ import {
   Button as BaseButton,
   ButtonProps as BaseButtonProps,
 } from "@/components/buttons/Button";
+import { spacing } from "@/styles/tokens";
 import { useCardContext } from "./context";
 
 export const Button = (props: BaseButtonProps) => {
   return (
-    <BaseButton {...props} style={{ color: useCardContext().textColour }} />
+    <BaseButton
+      {...props}
+      textStyle={{ color: useCardContext().textColour }}
+      style={{ margin: spacing.sm }}
+    />
   );
 };

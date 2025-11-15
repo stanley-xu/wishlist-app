@@ -24,11 +24,11 @@ function RootNavigator() {
         headerShown: false,
       }}
     >
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(auth)/login" options={{ presentation: "modal" }} />
+      </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
-      </Stack.Protected>
-      <Stack.Protected guard={!session}>
-        <Stack.Screen name="login" />
       </Stack.Protected>
     </Stack>
   );

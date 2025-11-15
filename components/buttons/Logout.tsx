@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import React from "react";
-import { Button } from "./Button";
+import { Button, ButtonProps } from "./Button";
 
 async function onSignOutButtonPress() {
   const { error } = await supabase.auth.signOut();
@@ -10,6 +10,10 @@ async function onSignOutButtonPress() {
   }
 }
 
-export function Logout() {
-  return <Button onPress={onSignOutButtonPress}>Log out</Button>;
+export function Logout(props: Partial<ButtonProps>) {
+  return (
+    <Button {...props} onPress={onSignOutButtonPress}>
+      Log out
+    </Button>
+  );
 }
