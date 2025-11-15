@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { spacing } from "@/lib/tokens";
+import { spacing } from "@/styles/tokens";
 
 interface SpacerProps {
   /** Size of the spacer. Defaults to 'md' */

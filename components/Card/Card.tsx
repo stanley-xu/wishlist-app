@@ -1,4 +1,4 @@
-import { borderRadius, colours, spacing, text } from "@/lib/tokens";
+import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import React, { type ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 

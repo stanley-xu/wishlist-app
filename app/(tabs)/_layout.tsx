@@ -2,20 +2,19 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { colours } from "@/lib/tokens";
+import { palette, text } from "@/styles/tokens";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: colours.surface,
+          backgroundColor: palette.primary1Darkened,
         },
-        tabBarActiveTintColor: colours.accent,
+        headerTintColor: text.white,
+        tabBarActiveTintColor: text.white,
         tabBarStyle: {
-          backgroundColor: colours.surface,
-          paddingLeft: 16,
-          paddingRight: 16,
+          backgroundColor: palette.primary1Darkened,
         },
       }}
     >
@@ -32,26 +31,11 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: "About",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
       {__DEV__ && (
         <Tabs.Screen
-          name="component-preview"
+          name="dev"
           options={{
-            title: "Components",
+            title: "Preview",
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
                 name={focused ? "code-slash" : "code-slash-outline"}

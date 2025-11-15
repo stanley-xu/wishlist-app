@@ -1,15 +1,19 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 
-import { MaxWidthWrapper, Spacer } from "@/components";
+import { MaxWidthWrapper } from "@/components";
 
-import { colours } from "@/lib/tokens";
+import { Logout } from "@/components/buttons";
+import { colours } from "@/styles/tokens";
+import { Stack } from "expo-router";
 
 export default function Index() {
   return (
     <MaxWidthWrapper>
-      <Spacer />
-      <Text>Testing</Text>
-      <Spacer />
+      <Stack.Screen
+        options={{
+          headerRight: () => <Logout />,
+        }}
+      />
     </MaxWidthWrapper>
   );
 }

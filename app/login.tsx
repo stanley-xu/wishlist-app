@@ -1,6 +1,8 @@
-import { Card } from "@/components";
-import { useAuth } from "@/lib/auth";
-import { palette } from "@/lib/tokens";
+import { Card, Text } from "@/components";
+import { useAuthContext } from "@/lib/auth";
+import { palette } from "@/styles/tokens";
+import { AuthError } from "@supabase/supabase-js";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -13,9 +15,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const { signIn } = useAuth();
+  const { signIn, loading } = useAuthContext();
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
@@ -24,7 +28,10 @@ export default function LoginScreen() {
       // Force navigation after successful login
       router.replace("/(tabs)");
     } catch (e) {
-      console.error(e);
+      const authError = e as AuthError;
+
+      console.error(authError);
+      setError(authError.message);
     } finally {
       setSubmitting(false);
     }
@@ -36,8 +43,8 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.screen}
       >
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Card variant="elevated" padding="lg">
+        <ScrollView>
+          <Card variant="elevated">
             <Card.Title>Sign in</Card.Title>
 
             <Card.Input
@@ -57,9 +64,10 @@ export default function LoginScreen() {
               secureTextEntry
             />
 
-            <Card.Button onPress={handleLogin} loading={submitting}>
+            <Card.Button onPress={handleLogin} loading={submitting || loading}>
               Continue
             </Card.Button>
+            {error && <Text variant="error">{error}</Text>}
           </Card>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -70,7 +78,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: Platform.OS === "web" ? 16 : 0,
   },
   safeArea: {
     flex: 1,

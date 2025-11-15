@@ -1,7 +1,7 @@
 import { Children, ReactNode } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
-import { spacing } from "@/lib/tokens";
+import { spacing } from "@/styles/tokens";
 
 interface RowProps {
   children: ReactNode;

@@ -1,4 +1,4 @@
-import { colours, spacing } from "@/lib/tokens";
+import { colours, spacing } from "@/styles/tokens";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { metadata as buttonMetadata } from "../(component-previews)/button";
 

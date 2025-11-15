@@ -1,5 +1,5 @@
 // UI Components
-export { default as Button, ButtonProps } from "./Button";
+export { Button, ButtonProps } from "./buttons";
 export { Card } from "./Card";
 export { default as Container } from "./Container";
 export * from "./Input";

@@ -1,5 +1,5 @@
 import { Card } from "@/components";
-import { colours, spacing, typography } from "@/lib/tokens";
+import { colours, spacing, typography } from "@/styles/tokens";
 import { Link, LinkProps } from "expo-router";
 import { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";

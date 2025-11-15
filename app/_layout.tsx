@@ -1,7 +1,6 @@
+import { AuthProvider, useAuthContext } from "@/lib/auth";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-
-import { AuthProvider } from "@/lib/auth";
+import { SplashScreenController } from "./splash";
 
 export default function RootLayout() {
   if (__DEV__) {
@@ -10,18 +9,27 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {__DEV__ && (
-          <Stack.Screen
-            name="(component-previews)"
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack>
-      <StatusBar style="light" />
+      <SplashScreenController />
+      <RootNavigator />
     </AuthProvider>
+  );
+}
+
+function RootNavigator() {
+  const { session } = useAuthContext();
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="login" />
+      </Stack.Protected>
+    </Stack>
   );
 }

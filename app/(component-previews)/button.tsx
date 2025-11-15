@@ -1,5 +1,5 @@
 import { Button, Card } from "@/components";
-import { colours, spacing, typography } from "@/lib/tokens";
+import { colours, spacing, typography } from "@/styles/tokens";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ShowcaseCardProps } from "../(component-previews)/_shared";

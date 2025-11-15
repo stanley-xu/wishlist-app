@@ -1,4 +1,10 @@
-import { borderRadius, colours, spacing, text, typography } from "@/lib/tokens";
+import {
+  borderRadius,
+  colours,
+  spacing,
+  text,
+  typography,
+} from "@/styles/tokens";
 import React, { useState } from "react";
 import {
   StyleProp,

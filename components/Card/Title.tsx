@@ -1,4 +1,4 @@
-import { spacing, typography } from "@/lib/tokens";
+import { spacing, typography } from "@/styles/tokens";
 import { type ReactNode } from "react";
 import { StyleSheet, Text } from "react-native";
 import { useCardContext } from "./context";

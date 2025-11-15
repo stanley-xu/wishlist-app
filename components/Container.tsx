@@ -1,4 +1,4 @@
-import { colours } from "@/lib/tokens";
+import { colours } from "@/styles/tokens";
 import { ReactNode } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 

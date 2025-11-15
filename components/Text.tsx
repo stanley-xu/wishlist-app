@@ -1,16 +1,23 @@
-import { ReactNode } from "react";
-import { Text as RNText, StyleSheet } from "react-native";
+import { colours } from "@/styles/tokens";
+import {
+  Text as RNText,
+  TextProps as RNTextProps,
+  StyleSheet,
+} from "react-native";
 
-interface TextProps {
-  children: ReactNode;
+interface TextProps extends RNTextProps {
+  variant?: "regular" | "error";
 }
 
-export default function Text({ children }: TextProps) {
-  return <RNText style={styles.text}>{children}</RNText>;
+export default function Text({ variant = "regular", ...rest }: TextProps) {
+  return <RNText style={styles[variant]} {...rest} />;
 }
 
 const styles = StyleSheet.create({
-  text: {
+  regular: {
     color: "#fff",
+  },
+  error: {
+    color: colours.error,
   },
 });

@@ -1,27 +1,27 @@
-import { useAuth } from "@/lib/auth";
-import TOKENS from "@/lib/tokens";
+import { useAuthContext } from "@/lib/auth";
+import { colours } from "@/styles/tokens";
 import { Redirect } from "expo-router";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
-  const { user, loading } = useAuth();
+  const { session, loading } = useAuthContext();
 
   // Show loading while checking auth state
   if (loading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" />
-        <Text style={styles.text}>Loading...</Text>
+        <Text>Loading...</Text>
       </View>
     );
   }
 
   // Simple declarative redirects based on auth state
-  if (user) {
+  if (session) {
     return <Redirect href="/(tabs)" />;
   }
 
-  return <Redirect href="/(auth)/login" />;
+  return <Redirect href="/login" />;
 }
 
 const styles = StyleSheet.create({
@@ -29,11 +29,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: TOKENS.colours.surface,
-  },
-  text: {
-    fontSize: TOKENS.typography.fontSize.base,
-    color: TOKENS.colours.textSecondary,
-    marginTop: TOKENS.spacing.md,
+    backgroundColor: colours.background,
   },
 });

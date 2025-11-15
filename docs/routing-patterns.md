@@ -3,6 +3,7 @@
 ## The Problem We Were Solving
 
 **Goal**: Automatically redirect users based on authentication state
+
 - If logged in → redirect to main app `/(tabs)`
 - If not logged in → redirect to login `/auth/login`
 - Handle this seamlessly across app startup, page refresh, and auth state changes
@@ -16,20 +17,20 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Index />} />           {/* ← Always mounted */}
+        <Route path="/" element={<Index />} /> {/* ← Always mounted */}
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </AuthProvider>
-  )
+  );
 }
 
 function Index() {
-  const { user } = useAuth()
-  
+  const { user } = useAuthContext();
+
   // This re-renders automatically when auth context changes
-  if (user) return <Navigate to="/dashboard" />
-  return <Navigate to="/login" />
+  if (user) return <Navigate to="/dashboard" />;
+  return <Navigate to="/login" />;
 }
 ```
 
@@ -45,7 +46,7 @@ Current URL: /auth/login
 Component Tree:
 ├─ _layout.tsx (AuthProvider)        ← Re-renders on context changes ✅
 └─ (auth)/
-   ├─ _layout.tsx (Stack)            ← Re-renders on context changes ✅  
+   ├─ _layout.tsx (Stack)            ← Re-renders on context changes ✅
    └─ login.tsx                      ← Current route - mounted
 ```
 
@@ -60,80 +61,90 @@ Component Tree:
 ## Our Solution: Multi-Layered Approach
 
 ### 1. Index Route for Entry Points
+
 ```typescript
 // app/index.tsx - handles app startup, manual navigation, refreshes
 export default function Index() {
-  const { user, loading } = useAuth()
-  
-  if (loading) return <LoadingScreen />
-  if (user) return <Redirect href="/(tabs)" />
-  return <Redirect href="/(auth)/login" />
+  const { user, loading } = useAuthContext();
+
+  if (loading) return <LoadingScreen />;
+  if (user) return <Redirect href="/(tabs)" />;
+  return <Redirect href="/(auth)/login" />;
 }
 ```
 
 **Covers**:
+
 - ✅ App startup
-- ✅ Manual navigation to `/`  
+- ✅ Manual navigation to `/`
 - ✅ Page refresh (any page)
 
 ### 2. Explicit Navigation After Auth Actions
+
 ```typescript
 // app/(auth)/login.tsx
 const handleLogin = async () => {
-  await signIn({ email, password })
-  router.replace('/(tabs)')  // ← Explicit redirect
-}
+  await signIn({ email, password });
+  router.replace("/(tabs)"); // ← Explicit redirect
+};
 ```
 
 **Covers**:
+
 - ✅ Successful login/register
 - ✅ Immediate user feedback
 - ✅ No waiting for context re-evaluation
 
 ### 3. Session Persistence
+
 ```typescript
 // lib/auth.tsx - handles session restoration
 useEffect(() => {
   async function getSession() {
-    const { data: { session } } = await supabase.auth.getSession()
-    setUser(session?.user ?? null)
-    setLoading(false)
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    setUser(session?.user ?? null);
+    setLoading(false);
   }
-  getSession()
-}, [])
+  getSession();
+}, []);
 ```
 
 **Covers**:
+
 - ✅ Automatic session restoration on app start
 - ✅ Maintains login state across refreshes
 
 ## What We Considered But Didn't Implement
 
 ### Layout-Level Navigation Guard
+
 ```typescript
 // Could be added to _layout.tsx
 function NavigationHandler() {
-  const { user, loading } = useAuth()
-  const segments = useSegments()
-  const router = useRouter()
+  const { user, loading } = useAuthContext();
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
-    if (loading) return
-    
-    const inAuthGroup = segments[0] === '(auth)'
-    
-    if (user && inAuthGroup) {
-      router.replace('/(tabs)')
-    } else if (!user && !inAuthGroup) {
-      router.replace('/(auth)/login')
-    }
-  }, [user, loading, segments])
+    if (loading) return;
 
-  return null
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (user && inAuthGroup) {
+      router.replace("/(tabs)");
+    } else if (!user && !inAuthGroup) {
+      router.replace("/(auth)/login");
+    }
+  }, [user, loading, segments]);
+
+  return null;
 }
 ```
 
 **Why we didn't use this**:
+
 - ❌ Runs on every route change (performance overhead)
 - ❌ Harder to debug (multiple redirect sources)
 - ❌ Premature optimization (current solution covers all realistic scenarios)
@@ -143,12 +154,14 @@ function NavigationHandler() {
 ### File-Based Routing Trade-offs
 
 **Benefits**:
+
 - ✅ Automatic code splitting
 - ✅ Only loads components you need
 - ✅ Clear file → route mapping
 - ✅ Better performance (smaller bundles)
 
 **Limitations**:
+
 - ❌ Route components don't "listen" for context changes when unmounted
 - ❌ Need explicit navigation after state changes
 - ❌ Can't rely on traditional "always mounted" redirect patterns
@@ -156,11 +169,13 @@ function NavigationHandler() {
 ### Layout Components Are Special
 
 **Layouts (`_layout.tsx`) are the only components that**:
+
 - Stay mounted across route changes within their scope
 - Re-render on context updates
 - Could handle navigation logic (if needed)
 
 **Regular route components**:
+
 - Only exist when that route is active
 - Don't re-render when unmounted (obviously!)
 - Need explicit navigation logic
@@ -176,6 +191,7 @@ function NavigationHandler() {
 ## Current Architecture Benefits
 
 Our chosen approach is:
+
 - ✅ **Explicit and debuggable** - clear where redirects come from
 - ✅ **Covers all realistic scenarios** - startup, refresh, auth actions
 - ✅ **Performant** - no unnecessary navigation checks

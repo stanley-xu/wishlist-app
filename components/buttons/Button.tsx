@@ -5,7 +5,7 @@ import {
   spacing,
   text,
   typography,
-} from "@/lib/tokens";
+} from "@/styles/tokens";
 import React, { ReactNode } from "react";
 import {
   ActivityIndicator,
@@ -27,7 +27,7 @@ export interface ButtonProps {
   style?: StyleProp<TextStyle>;
 }
 
-export default function Button({
+export function Button({
   children,
   onPress,
   variant = "primary",
