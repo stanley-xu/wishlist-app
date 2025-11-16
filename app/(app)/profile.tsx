@@ -1,9 +1,16 @@
 import { Redirect, useNavigation } from "expo-router";
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { Button, Card } from "@/components";
+import { Button, Card, Text } from "@/components";
 import { useAuthContext } from "@/lib/auth";
-import { borderRadius, colours, palette } from "@/styles/tokens";
+import { borderRadius, colours, palette, spacing } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect } from "react";
 
@@ -25,6 +32,7 @@ export default function ProfileScreen() {
         <Button
           variant="unstyled"
           size="sm"
+          // TODO: implement
           onPress={() => Alert.alert("Share pressed")}
         >
           <Ionicons name="share-outline" size={24} color={palette.white} />
@@ -50,13 +58,25 @@ export default function ProfileScreen() {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Card variant="elevated" corners="squared" style={styles.card}>
-        {profileCardSection}
-      </Card>
-    </ScrollView>
+    <FlatList
+      ListHeaderComponent={
+        <Card variant="elevated" corners="squared" style={styles.card}>
+          {profileCardSection}
+        </Card>
+      }
+      data={Array(12)
+        .fill(null)
+        .map((_, index) => ({ id: index }))}
+      renderItem={({ item }) => <Item item={item} />}
+    />
   );
 }
+
+const Item = ({ item }: { item: { id: number } }) => (
+  <TouchableOpacity style={styles.item}>
+    <Text>{item.id}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -82,4 +102,11 @@ const styles = StyleSheet.create({
     backgroundColor: palette.white,
   },
   profileName: {},
+  item: {
+    backgroundColor: palette.beige,
+    minHeight: 52,
+    padding: spacing.md,
+    marginVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+  },
 });
