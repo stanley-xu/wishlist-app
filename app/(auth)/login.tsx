@@ -26,7 +26,7 @@ export default function LoginScreen() {
       setSubmitting(true);
       await signIn({ email, password });
       // Force navigation after successful login
-      router.replace("/(tabs)");
+      router.replace("/(app)");
     } catch (e) {
       const authError = e as AuthError;
 

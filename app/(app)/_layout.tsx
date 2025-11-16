@@ -10,10 +10,11 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: palette.primary1Darkened,
+          backgroundColor: palette.primary1,
         },
         headerTintColor: text.white,
         headerRight: () => <Logout variant="unstyled" size="sm" />,
+        tabBarShowLabel: false,
         tabBarActiveTintColor: text.white,
         tabBarStyle: {
           backgroundColor: palette.primary1Darkened,
@@ -27,6 +28,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "person-circle-sharp" : "person-circle-outline"}
               color={color}
               size={24}
             />

@@ -3,14 +3,16 @@ import React, { type ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { Button } from "./Button";
-import { Input } from "./Input";
-import { Title } from "./Title";
 import { CardContext } from "./context";
+import { Input } from "./Input";
+import { Text } from "./Text";
+import { Title } from "./Title";
 
 interface CardProps {
   children: ReactNode;
   variant?: "default" | "elevated" | "outlined";
   padding?: "sm" | "md" | "lg";
+  corners?: "rounded" | "squared";
   style?: ViewStyle;
 }
 
@@ -18,13 +20,23 @@ export default function Card({
   children,
   variant = "default",
   padding = "md",
+  corners = "rounded",
   style,
 }: CardProps) {
   const textColour = variant === "elevated" ? text.white : text.black;
+  const cornerRadius = corners === "rounded" ? borderRadius.lg : 0;
 
   return (
     <CardContext.Provider value={{ textColour }}>
-      <View style={[styles.base, styles[variant], styles[padding], style]}>
+      <View
+        style={[
+          styles.base,
+          styles[variant],
+          styles[padding],
+          { borderRadius: cornerRadius },
+          style,
+        ]}
+      >
         {children}
       </View>
     </CardContext.Provider>
@@ -34,7 +46,6 @@ export default function Card({
 const styles = StyleSheet.create({
   // Base card styles
   base: {
-    borderRadius: borderRadius.lg,
     backgroundColor: colours.background,
   },
 
@@ -76,3 +87,4 @@ const styles = StyleSheet.create({
 Card.Title = Title;
 Card.Button = Button;
 Card.Input = Input;
+Card.Text = Text;
