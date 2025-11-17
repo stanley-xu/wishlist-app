@@ -21,3 +21,20 @@ Obey the following rules:
 Use the agents found for this project as you see fit as you (Claude) are likely to receive questions about (mobile) system architecture and UX.
 - The current tasks for this project are documented in docs/tasks.md. Read this document to understand the current todos to help me track my work.
 - I don't want to do this because I prefer to not write any logic in triggers.
+
+## When I ask for some daily tasks
+
+When I ask about what to work on (e.g., "What should I do today?", "What's the plan?", "Where did I leave off?"), follow this workflow:
+
+1. **Use GitHub MCP** to check the status of the project board
+2. **Review roadmap/milestones** to see where we generally want to be
+3. **Check current GitHub issues** that are in progress
+4. **Read `docs/tasks.md`** to find any additional tasks I've jotted down
+5. **Check git status and history** for any work in progress
+
+Then **create a small plan** for me. **Present the smallest task that I could reasonably accomplish** to encourage me to start.
+
+**Example prompts that trigger this:**
+- "What should I do today?"
+- "What's the plan?"
+- "Where did I leave off?"
