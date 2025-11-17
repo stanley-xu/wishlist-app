@@ -38,3 +38,13 @@ Then **create a small plan** for me. **Present the smallest task that I could re
 - "What should I do today?"
 - "What's the plan?"
 - "Where did I leave off?"
+
+## When I ask "What's next?"
+
+When I ask about the next task to work on, follow this workflow:
+
+1. **Check for TODOs** in the codebase (comments, task lists, etc.)
+2. **Use GitHub MCP** to check for upcoming issues
+3. **Read `docs/tasks.md`** for queued tasks
+
+Then suggest the next logical task to tackle.
