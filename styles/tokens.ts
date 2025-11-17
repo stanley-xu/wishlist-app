@@ -1,24 +1,19 @@
 export const palette = {
-  // https://coolors.co/386641-6a994e-a7c957-f2e8cf-bc4749
-  primary1: "hsla(132, 29%, 31%, 1)",
-  primary1Darkened: "hsla(132, 29%, 20%, 1)",
-  primary2: "hsla(98, 32%, 45%, 1)",
-  primary3: "hsla(78, 51%, 56%, 1)",
-  beige: "hsla(43, 57%, 88%, 1)",
-  secondary: "hsla(359, 47%, 51%, 1)",
-  white: "hsla(0, 0%, 95%, 1.00)",
+  primary1: "hsl(81, 25%, 65%)",
+  primary1Darkened: "hsl(81, 25%, 45%)",
+  primary2: "hsl(148, 13%, 51%)",
+  primary3: "hsl(162, 16%, 47%)",
+  secondary: "hsl(9, 51%, 59%)",
+  offwhite: "hsl(45, 55%, 91%)",
+  white: "hsl(0, 0%, 95%)",
 } as const;
 
 export const colours = {
-  // Neutral colors (light theme)
-  background: palette.white,
+  background: palette.offwhite,
   surface: palette.primary1,
+  surfaceWarm: palette.primary2,
   accent: palette.primary3,
-
-  // Status colors (pastel theme)
-  success: "hsl(135, 60%, 70%)", // Soft success green
-  error: "hsl(0, 70%, 75%)", // Soft error pink
-  warning: "hsl(35, 80%, 75%)", // Soft warning peach
+  danger: palette.secondary,
 } as const;
 
 export const text = {
