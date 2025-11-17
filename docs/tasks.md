@@ -1,4 +1,95 @@
-# Secret Santa MVP - 7 Day Development Plan
+# Secret Santa MVP - Development Plan
+
+## This Week's Focus
+
+Given it's Sunday night, here's what I suggest:
+
+This Week (Mon-Fri):
+
+- Monday: Finish onboarding form (Issue #1) - 2 hours
+- Tuesday: REST or light styling
+- Wednesday: Test protected routes (Issue #2) - 1.5 hours
+- Thursday: Start wishlist UI basics - 2 hours
+- Friday: REST
+
+This Weekend:
+
+- Saturday AM: Complete wishlist CRUD - 4 hours
+- Sunday: Testing, bug fixes, prep for Week 2 - 2 hours
+
+By next Sunday: Working onboarding + wishlist. That's 50% of your MVP.
+
+---
+
+Final Pep Talk 🎯
+
+You've got this. You're already ahead of 99% of developers who think about building side projects but never start.
+
+- You picked a scoped project (Secret Santa, not Facebook)
+- You have modern tools (Expo, Supabase, Claude Code)
+- You're being strategic (GitHub Project, clear milestones)
+- You're asking for help (this conversation)
+
+The app doesn't need to be perfect. It needs to work well enough for your friends to have a Secret Santa exchange. That's it.
+
+Every hour you put in is progress. Some nights you'll crush it. Some nights you'll barely touch it. Both are fine.
+
+Now go finish that onboarding form. Issue #1 is waiting, and it's a small, completable win you can knock out tomorrow night.
+
+You've got 30 productive hours ahead of you. Make them count. 💪
+
+---
+
+## 📋 Task Tracking
+
+**All tasks are now tracked in GitHub!**
+
+- **GitHub Project Board**: [Giftful Project](https://github.com/users/stanley-xu/projects/2)
+- **Issues**: [wishlist-app/issues](https://github.com/stanley-xu/wishlist-app/issues)
+
+---
+
+## Deployment Timeline
+
+**Goal**: Deploy to App Store in 2 weeks (by ~Nov 30, 2025)
+
+**Week 1 Focus** (Nov 16-23):
+
+- ✅ Complete onboarding flow
+- ✅ Fix and test db-helpers with RLS
+- ✅ Implement Wishlist UI (creation, editing, display)
+- ✅ Event creation and joining basics
+
+**Week 2 Focus** (Nov 24-30):
+
+- ✅ Secret Santa matching algorithm
+- ✅ Polish core user flows
+- ✅ App store assets (icon, splash, screenshots)
+- ✅ TestFlight beta testing
+- ✅ Submit to App Store
+
+### TestFlight Deployment Checklist
+
+**Prerequisites:**
+
+- [ ] Apple Developer account active ($99/year, 24-48hr activation)
+- [ ] Bundle ID decided: `io.giftful`
+
+**Setup (one-time):**
+
+- [ ] Install EAS CLI: `npm install -g eas-cli`
+- [ ] Configure EAS: `eas build:configure` (creates eas.json)
+- [ ] Login to Expo: `eas login`
+- [ ] Configure iOS bundle ID in app.json
+
+**Build & Deploy:**
+
+- [ ] Create iOS production build: `eas build --platform ios --profile production`
+- [ ] Submit to TestFlight: `eas submit --platform ios`
+- [ ] Add testers in App Store Connect
+- [ ] Send invites via email or public link
+
+---
 
 ## MVP Scope
 
@@ -63,17 +154,23 @@ Core features for end-to-end Secret Santa exchange:
 
 **Files**: `app/_layout.tsx`, `app/(tabs)/_layout.tsx`
 
-#### Session 2B (1.5hrs): User Profile & Settings
+#### Session 2B (1.5hrs): User Profile & Onboarding ⚡ **IN PROGRESS**
 
-**Goal**: User management screens
+**Goal**: User management screens and onboarding flow
 
-- [ ] Add a logout button
-- [ ] Create profile screen
+- [x] Add a logout button
+- [x] Create profile screen
+- [ ] **Complete onboarding form (`app/welcome.tsx`)** ⬅️ Current focus
+  - [ ] React Hook Form setup with name, bio, avatar_url, background_url
+  - [ ] Form validation (name required, min length)
+  - [ ] Submit handler to insert into profiles table
+  - [ ] Redirect to main app on success
+  - [ ] Add illustration to onboarding screen (see TODO)
 - [ ] Profile editing functionality
-- [ ] Basic settings screen
-- [ ] User data management
+- [ ] Add landscape background image to profile (see TODO)
+- [ ] Display user bio on profile screen (see TODO)
 
-**Files**: `app/(tabs)/profile.tsx`, `app/settings.tsx`
+**Files**: `app/welcome.tsx`, `app/(tabs)/profile.tsx`, `app/settings.tsx`
 
 #### Session 2C (1.5hrs): Error Handling & Loading
 
@@ -194,8 +291,9 @@ Core features for end-to-end Secret Santa exchange:
 - [ ] Save/update/delete functions
 - [ ] Data validation
 - [ ] Error handling
+- [ ] Add RLS policy for hosts to view all wishlists in their events (see TODO in migrations)
 
-**Files**: `lib/wishlist.ts`
+**Files**: `lib/wishlist.ts`, `supabase/migrations/`
 
 ---
 
@@ -220,8 +318,9 @@ Core features for end-to-end Secret Santa exchange:
 - [ ] Secure assignment storage
 - [ ] Admin re-matching controls
 - [ ] Assignment validation
+- [ ] Consider moving assignment creation to Supabase Edge Function (see TODO in migrations)
 
-**Files**: `lib/matching.ts`
+**Files**: `lib/matching.ts`, `supabase/functions/`
 
 #### Session 6C (1.5hrs): Assignment Display
 
@@ -254,11 +353,12 @@ Core features for end-to-end Secret Santa exchange:
 **Goal**: Professional app appearance
 
 - [ ] Create app icon
-- [ ] Set up splash screen
+- [ ] Design and set up splash screen (see TODO in `app/splash.tsx`)
 - [ ] iOS build configuration
 - [ ] App store metadata
+- [ ] Add fun daily greeting to login screen (optional polish)
 
-**Files**: `assets/icon.png`, `assets/splash.png`, `app.json`
+**Files**: `assets/icon.png`, `assets/splash.png`, `app.json`, `app/(auth)/login.tsx`
 
 #### Session 7C (1.5hrs): Testing & Bug Fixes
 
@@ -365,3 +465,25 @@ Core features for end-to-end Secret Santa exchange:
 - Focus on core flow, skip edge cases initially
 - Test matching algorithm with small groups first
 - Have backup for push notifications if issues arise
+
+---
+
+## Technical Debt & Future Improvements
+
+**Database & Backend:**
+
+- [ ] Fix and test `data/db-helpers.ts` functions with RLS policies
+- [ ] Consider implementing automatic `updated_at` triggers instead of manual management
+- [ ] Evaluate moving assignment creation to Supabase Edge Function for better security
+
+**UI/UX Polish:**
+
+- [ ] Add illustrations to onboarding screens
+- [ ] Design proper splash screen
+- [ ] Add landscape background images to profile pages
+- [ ] Implement fun daily greetings on login
+
+**Features:**
+
+- [ ] Profile editing functionality (beyond initial onboarding)
+- [ ] Host ability to view all participant wishlists in their events
