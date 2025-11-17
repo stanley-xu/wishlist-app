@@ -3,7 +3,7 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Logout } from "@/components/buttons";
-import { palette, text } from "@/styles/tokens";
+import { colours, palette, text } from "@/styles/tokens";
 
 export default function TabLayout() {
   return (
@@ -17,7 +17,7 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarActiveTintColor: text.white,
         tabBarStyle: {
-          backgroundColor: palette.primary1Darkened,
+          backgroundColor: colours.surfaceDark,
         },
       }}
     >
