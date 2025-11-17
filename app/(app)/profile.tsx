@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   profileName: {},
   item: {
-    backgroundColor: palette.beige,
+    backgroundColor: palette.offwhite,
     minHeight: 52,
     padding: spacing.md,
     marginVertical: spacing.sm,

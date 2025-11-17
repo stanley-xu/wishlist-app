@@ -1,4 +1,4 @@
-import { palette } from "@/styles/tokens";
+import { colours } from "@/styles/tokens";
 import { Slot } from "expo-router";
 import {
   KeyboardAvoidingView,
@@ -29,7 +29,7 @@ export default function AuthLayout() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: palette.primary1Darkened,
+    backgroundColor: colours.surfaceDark,
   },
   screen: {
     flex: 1,
