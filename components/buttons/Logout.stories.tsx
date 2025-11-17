@@ -1,15 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import { Logout } from './Logout';
 
-// Mock the auth context for Storybook
-jest.mock('@/lib/auth', () => ({
-  useAuthContext: () => ({
-    signOut: async () => {
-      console.log('Sign out action triggered');
-    },
-  }),
-}));
+// NOTE: This story may not work properly because Logout depends on auth context
+// jest.mock doesn't work in Storybook - consider using decorators or MSW for proper mocking
+// For now, this will only work if the auth context is available in the Storybook environment
 
 const meta = {
   title: 'Components/Logout',

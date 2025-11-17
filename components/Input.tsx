@@ -5,7 +5,7 @@ import {
   text,
   typography,
 } from "@/styles/tokens";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   StyleProp,
   StyleSheet,

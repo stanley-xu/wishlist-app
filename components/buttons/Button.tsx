@@ -6,7 +6,7 @@ import {
   text,
   typography,
 } from "@/styles/tokens";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import {
   ActivityIndicator,
   StyleProp,
@@ -69,27 +69,10 @@ export function Button({
 }
 
 const textStyles = StyleSheet.create({
-  // Text styles
   text: {
     color: text.white,
     fontWeight: typography.fontWeight.semibold,
     textAlign: "center",
-  },
-
-  // Text variants
-  primary: {
-    fontSize: typography.fontSize.base,
-  },
-
-  // Text sizes
-  sm: {
-    fontSize: typography.fontSize.sm,
-  },
-  md: {
-    fontSize: typography.fontSize.base,
-  },
-  lg: {
-    fontSize: typography.fontSize.lg,
   },
 });
 
@@ -144,8 +127,5 @@ const styles = StyleSheet.create({
   },
   spinner: {
     position: "absolute",
-  },
-  hiddenText: {
-    opacity: 0,
   },
 });

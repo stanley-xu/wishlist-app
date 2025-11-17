@@ -1,5 +1,5 @@
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { Button } from "./Button";
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   outlined: {
     backgroundColor: colours.background,
     borderWidth: 1,
-    // borderColor: colours.border,
+    // TODO: Add borderColor when colours.border token is defined
   },
 
   // Padding options
