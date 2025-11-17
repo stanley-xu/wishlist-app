@@ -1,0 +1,7 @@
+-- Seed file for local development
+--
+-- For seeding test users, use the TypeScript seed script instead:
+-- npx tsx supabase/seed.ts
+--
+-- This is the official recommended approach as it uses auth.admin.createUser()
+-- which properly handles password hashing, identities, and all auth internals.

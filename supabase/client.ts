@@ -4,11 +4,11 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
-import { Database } from './database.types';
+import { Database } from "./database.types";
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
-    console.debug("getItem", { key, getItemAsync });
+    if (__DEV__) console.debug("getItem", { key, getItemAsync });
     return getItemAsync(key);
   },
   setItem: (key: string, value: string) => {

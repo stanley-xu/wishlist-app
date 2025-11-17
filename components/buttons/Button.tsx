@@ -21,7 +21,7 @@ import {
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
-  variant?: "primary" | "unstyled";
+  variant?: "primary" | "unstyled" | "dev";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -109,6 +109,9 @@ const styles = StyleSheet.create({
   unstyled: {
     backgroundColor: "none",
     padding: 0,
+  },
+  dev: {
+    backgroundColor: palette.primary3,
   },
 
   // Sizes

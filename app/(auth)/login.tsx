@@ -1,16 +1,10 @@
 import { Card, Text } from "@/components";
 import { useAuthContext } from "@/lib/auth";
-import { palette } from "@/styles/tokens";
+import { text } from "@/styles/tokens";
 import { AuthError } from "@supabase/supabase-js";
-import { useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
@@ -19,14 +13,13 @@ export default function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   const { signIn, loading } = useAuthContext();
-  const router = useRouter();
 
   const handleLogin = async () => {
     try {
       setSubmitting(true);
+      setError(null);
       await signIn({ email, password });
-      // Force navigation after successful login
-      router.replace("/(app)");
+      // Navigation happens automatically via session state change
     } catch (e) {
       const authError = e as AuthError;
 
@@ -38,66 +31,61 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.screen}
-      >
-        <ScrollView>
-          <Card variant="elevated">
-            <Card.Title>Sign in</Card.Title>
+    <Card variant="elevated">
+      <View style={{ position: "relative" }}>
+        {/* TODO: fun daily greeting */}
+        <Card.Title>Welcome</Card.Title>
+        <Link
+          href="/(auth)/register"
+          style={{ position: "absolute", right: 0 }}
+          asChild
+        >
+          <TouchableOpacity>
+            <Text style={{ color: text.white }}>Sign up</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
 
-            <Card.Input
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+      <Card.Input
+        label="Email"
+        placeholder="Enter your email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
 
-            <Card.Input
-              label="Password"
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
+      <Card.Input
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
 
-            <Card.Button onPress={handleLogin} loading={submitting || loading}>
-              Continue
-            </Card.Button>
-            {error && <Text variant="error">{error}</Text>}
+      <Card.Button onPress={handleLogin} loading={submitting || loading}>
+        Continue
+      </Card.Button>
 
-            {__DEV__ && (
-              <Card.Button
-                loading={submitting || loading}
-                onPress={async () => {
-                  setSubmitting(true);
-                  setEmail("dev@example.com");
-                  setPassword("dev@example.com");
-                  await signIn({
-                    email: "dev@example.com",
-                    password: "dev@example.com",
-                  });
-                }}
-              >
-                Dev login
-              </Card.Button>
-            )}
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      {error && <Text variant="error">{error}</Text>}
+
+      {__DEV__ && (
+        <Card.Button
+          variant="dev"
+          loading={submitting || loading}
+          onPress={async () => {
+            setSubmitting(true);
+            setEmail("dev@example.com");
+            setPassword("dev@example.com");
+            await signIn({
+              email: "dev@example.com",
+              password: "dev@example.com",
+            });
+          }}
+        >
+          Login as Dev
+        </Card.Button>
+      )}
+    </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: palette.primary1Darkened,
-  },
-});

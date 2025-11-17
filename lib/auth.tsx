@@ -1,12 +1,15 @@
-import { supabase } from "@/data/supabase";
+import { supabase } from "@/supabase/client";
 import {
   type PropsWithChildren,
   createContext,
   use,
+  useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
+import { auth as authHelpers } from "@/data/db-helpers";
 import { type Session } from "@supabase/supabase-js";
 
 type SignInArgs = { email: string; password: string };
@@ -71,72 +74,74 @@ export function AuthProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  async function signUp({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+  const signUp = useCallback(
+    async ({ email, password }: { email: string; password: string }) => {
+      setLoading(true);
 
-    if (error) throw error;
+      try {
+        const { data: session, error } = await authHelpers.signUp({
+          email,
+          password,
+        });
 
-    if (data.user) {
-      await supabase.from("users").insert({
-        id: data.user.id,
-        email,
-        // Default user's name to the email hostname
-        // TODO: figure out a proper form
-        name: email.split("@").at(0),
-      });
+        if (error) throw error;
 
-      setSession(data.session);
-    }
-    setLoading(false);
-  }
-
-  async function signIn({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) throw error;
-
-    setSession(data.session);
-    setLoading(false);
-  }
-
-  async function signOut() {
-    setLoading(true);
-    await supabase.auth.signOut();
-    setSession(null);
-    setLoading(false);
-  }
-
-  return (
-    <AuthContext.Provider
-      value={{
-        signIn,
-        signOut,
-        signUp,
-        session,
-        loading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+        if (session) {
+          setSession(session);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
   );
+
+  const signIn = useCallback(
+    async ({ email, password }: { email: string; password: string }) => {
+      setLoading(true);
+
+      try {
+        const { data: session, error } = await authHelpers.signIn({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        if (session) {
+          setSession(session);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const signOut = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const { error } = await authHelpers.signOut();
+
+      if (error) throw error;
+
+      setSession(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      signIn,
+      signOut,
+      signUp,
+      session,
+      loading,
+    }),
+    [signIn, signOut, signUp, session, loading]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

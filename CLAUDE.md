@@ -20,3 +20,4 @@ Obey the following rules:
 
 Use the agents found for this project as you see fit as you (Claude) are likely to receive questions about (mobile) system architecture and UX.
 - The current tasks for this project are documented in docs/tasks.md. Read this document to understand the current todos to help me track my work.
+- I don't want to do this because I prefer to not write any logic in triggers.

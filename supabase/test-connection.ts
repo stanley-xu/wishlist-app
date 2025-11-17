@@ -1,7 +1,7 @@
 // Test script for database connection
 // Run this to verify Supabase setup is working
 
-import { supabase } from "./supabase";
+import { supabase } from "./client";
 
 // Test database connection
 export async function testConnection(): Promise<boolean> {

@@ -15,8 +15,16 @@ export default function RootLayout() {
   );
 }
 
+// stub
+const useUserContext = () => null;
+
 function RootNavigator() {
   const { session } = useAuthContext();
+  const user = useUserContext();
+
+  if (__DEV__ && session) {
+    console.log(`Session changed: ${session?.access_token}`);
+  }
 
   return (
     <Stack
@@ -25,14 +33,12 @@ function RootNavigator() {
       }}
     >
       <Stack.Protected guard={!session}>
-        <Stack.Screen
-          name="(auth)/login"
-          options={{
-            presentation: "modal",
-          }}
-        />
+        <Stack.Screen name="(auth)" />
       </Stack.Protected>
-      <Stack.Protected guard={!!session}>
+      <Stack.Protected guard={!!session && !user}>
+        <Stack.Screen name="welcome" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!session && !!user}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>
     </Stack>

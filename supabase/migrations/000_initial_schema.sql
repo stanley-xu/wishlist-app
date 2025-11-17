@@ -1,8 +1,5 @@
 -- Secret Santa App Database Schema
--- Run this in your Supabase SQL Editor
-
--- Enable RLS (Row Level Security) for all tables
--- This ensures users can only access their own data
+-- Initial schema for all tables
 
 -- Users table (extends Supabase auth.users)
 CREATE TABLE public.users (
@@ -57,21 +54,11 @@ CREATE TABLE public.assignments (
   UNIQUE(event_id, receiver_id)
 );
 
--- Row Level Security (RLS) Policies
--- Security is enforced at the database level to prevent unauthorized access
-
--- Users table: Users can only manage their own profile
+-- Enable RLS on users table and add basic policy
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users manage own profile" ON public.users
   FOR ALL USING (auth.uid() = id);
-
--- Other tables: RLS policies defined in migrations/001_add_rls_policies.sql
--- Run that migration to enable security on events, participants, wishlists, assignments
-
--- Note: No triggers used - all logic handled in application code
--- updated_at timestamps will be set explicitly in app code
--- User profile creation handled during signup flow in auth helpers
 
 -- Indexes for better performance
 CREATE INDEX idx_events_host_id ON public.events(host_id);
