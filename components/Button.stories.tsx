@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Button from './Button';
+import { Button } from './buttons/Button';
 
 const meta = {
   title: 'Components/Button',
@@ -7,7 +7,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline'],
+      options: ['primary', 'unstyled', 'dev'],
     },
     size: {
       control: 'select',
@@ -22,7 +22,7 @@ const meta = {
     onPress: { action: 'pressed' },
   },
   args: {
-    title: 'Button',
+    children: 'Button',
     onPress: () => {},
   },
 } satisfies Meta<typeof Button>;
@@ -35,55 +35,55 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     variant: 'primary',
-    title: 'Primary Button',
+    children: 'Primary Button',
   },
 };
 
-export const Secondary: Story = {
+export const Unstyled: Story = {
   args: {
-    variant: 'secondary',
-    title: 'Secondary Button',
+    variant: 'unstyled',
+    children: 'Unstyled Button',
   },
 };
 
-export const Outline: Story = {
+export const Dev: Story = {
   args: {
-    variant: 'outline',
-    title: 'Outline Button',
+    variant: 'dev',
+    children: 'Dev Button',
   },
 };
 
 export const Small: Story = {
   args: {
     size: 'sm',
-    title: 'Small Button',
+    children: 'Small Button',
   },
 };
 
 export const Medium: Story = {
   args: {
     size: 'md',
-    title: 'Medium Button',
+    children: 'Medium Button',
   },
 };
 
 export const Large: Story = {
   args: {
     size: 'lg',
-    title: 'Large Button',
+    children: 'Large Button',
   },
 };
 
 export const Disabled: Story = {
   args: {
-    title: 'Disabled Button',
+    children: 'Disabled Button',
     disabled: true,
   },
 };
 
 export const Loading: Story = {
   args: {
-    title: 'Loading Button',
+    children: 'Loading Button',
     loading: true,
   },
 };
