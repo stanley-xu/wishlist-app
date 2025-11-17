@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import { auth as authHelpers } from "@/data/db-helpers";
+import { auth as authHelpers } from "@/lib/api";
 import { type Session } from "@supabase/supabase-js";
 
 type SignInArgs = { email: string; password: string };

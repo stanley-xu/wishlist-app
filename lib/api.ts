@@ -10,21 +10,21 @@
 import { supabase } from "@/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { z } from "zod";
-import { isPostgresError, PostgresErrorCodes } from "./postgres-errors";
+import { isPostgresError, PostgresErrorCodes } from "../data/postgres-errors";
 import {
   CreateEventSchema,
   CreateParticipantSchema,
   EventSchema,
   ParticipantSchema,
+  ProfileSchema,
   UpdateEventSchema,
-  UserProfileSchema,
   WishlistSchema,
   type CreateEvent,
   type CreateParticipant,
   type Event,
   type Participant,
+  type Profile,
   type UpdateEvent,
-  type UserProfile,
   type Wishlist,
 } from "./schemas";
 
@@ -71,35 +71,6 @@ export const auth = {
 
       if (!data.session) {
         console.warn(`[Sign Up] check email for verification link`);
-      }
-
-      if (!data.user) {
-        console.warn(`[Sign Up] no user found`);
-      }
-
-      // Create user profile in database
-      const { error: insertError } = await supabase.from("users").insert({
-        id: data.user.id,
-        email,
-        // Default user's name to the email hostname
-        // TODO: figure out a proper form
-        name: email.split("@")[0] || "User",
-      });
-
-      if (insertError) {
-        // Check if this is a duplicate (user already exists)
-        if (
-          isPostgresError(insertError) &&
-          insertError.code === PostgresErrorCodes.UNIQUE_VIOLATION
-        ) {
-          // User profile already exists - this is OK, continue with sign up
-          console.log("User profile already exists, continuing...");
-          return { data: data.session, error: null };
-        }
-
-        // For other errors, log and throw
-        console.error("Failed to create user profile:", insertError);
-        throw new Error("Failed to create user profile. Please try again.");
       }
 
       return { data: data.session, error: null };
@@ -156,24 +127,24 @@ export const auth = {
 };
 
 // ============================================================================
-// Users
+// Profiles
 // ============================================================================
 
 export const users = {
   /**
    * Get user profile by ID
    */
-  async getById(id: string): Promise<DbResult<UserProfile>> {
+  async getById(id: string): Promise<DbResult<Profile>> {
     try {
       const { data, error } = await supabase
-        .from("users")
+        .from("profiles")
         .select("*")
         .eq("id", id)
         .single();
 
       if (error) throw error;
 
-      const validated = UserProfileSchema.parse(data);
+      const validated = ProfileSchema.parse(data);
       return { data: validated, error: null };
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -184,7 +155,7 @@ export const users = {
   /**
    * Get current user profile
    */
-  async getCurrent(): Promise<DbResult<UserProfile>> {
+  async getCurrent(): Promise<DbResult<Profile>> {
     try {
       const {
         data: { user },
@@ -200,7 +171,7 @@ export const users = {
 
       if (error) throw error;
 
-      const validated = UserProfileSchema.parse(data);
+      const validated = ProfileSchema.parse(data);
       return { data: validated, error: null };
     } catch (error) {
       console.error("Error fetching current user:", error);
