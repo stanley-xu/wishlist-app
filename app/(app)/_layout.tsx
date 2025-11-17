@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { Logout } from "@/components/buttons";
+import { Logout } from "@/components/Logout";
 import { colours, palette, text } from "@/styles/tokens";
 
 export default function TabLayout() {
@@ -62,12 +62,12 @@ export default function TabLayout() {
       />
       <Tabs.Protected guard={__DEV__}>
         <Tabs.Screen
-          name="dev"
+          name="storybook"
           options={{
-            title: "Preview",
+            title: "Storybook",
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
-                name={focused ? "code-slash" : "code-slash-outline"}
+                name={focused ? "book" : "book-outline"}
                 color={color}
                 size={24}
               />

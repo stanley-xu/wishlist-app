@@ -14,7 +14,8 @@
     "db:reset": "npx supabase db reset && npm run db:seed",
     "db:migrate": "npx supabase migration",
     "db:push": "npx supabase db push",
-    "db:generate-types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} --schema public > supabase/database.types.ts"
+    "db:generate-types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} --schema public > supabase/database.types.ts",
+    "generate:story": "node ./scripts/generate-story.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -56,6 +57,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@storybook/addon-ondevice-actions": "^8.5.0",
+    "@storybook/addon-ondevice-controls": "^8.5.0",
+    "@storybook/react-native": "^8.5.0",
     "@types/react": "~19.1.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",

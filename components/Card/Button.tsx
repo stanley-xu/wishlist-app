@@ -1,7 +1,7 @@
 import {
   Button as BaseButton,
   ButtonProps as BaseButtonProps,
-} from "@/components/buttons/Button";
+} from "@/components/Button";
 import { spacing } from "@/styles/tokens";
 import { useCardContext } from "./context";
 
