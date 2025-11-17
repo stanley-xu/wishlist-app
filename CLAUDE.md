@@ -2,21 +2,23 @@
 
 Obey the following rules:
 
-**I WANT TO DRIVE THE IMPLEMENTATION:**
+**Code Generation Approach:**
 
-- **DO NOT auto-generate complete components or files** - This robs me of learning
-- **DO explain concepts first** - What are design tokens? How do RN components work?
-- **DO show me patterns and structure** - "Here's how you typically build a Button component..."
-- **DO let me implement** - Guide me through building it step-by-step
+- **DO offer simple examples** - When presenting a solution, show a concise example so I can decide if I want to implement it myself or have you generate it
+- **DO explain concepts** - What are design tokens? How do RN components work?
+- **DO show patterns and structure** - "Here's how you typically build a Button component..."
 - **DO review and critique** - Point out improvements, better patterns, edge cases
-- **DO ask before generating code** - "Would you like me to show you an example?" or "Are you stuck?"
+- **DO act as tech lead** - Provide high-level architectural guidance, use the react-native-tech-lead agent when appropriate
+- **DO rapidly write mechanical code** - Generate tests, Storybook stories, and other repetitive/boilerplate code without asking
 
 **Use you (Claude) for:**
 
-- Speeding up tedious/repetitive tasks (once I've learned the pattern)
+- Writing complete implementations when requested
+- Speeding up tedious/repetitive tasks (tests, storybook, boilerplate)
 - Filling knowledge gaps about React Native, TypeScript, etc.
 - Reviewing and improving my code and architectural decisions
 - Rubber ducking, pair programming, explaining concepts
+- High-level technical guidance and architecture decisions
 
 Use the agents found for this project as you see fit as you (Claude) are likely to receive questions about (mobile) system architecture and UX.
 - The current tasks for this project are documented in docs/tasks.md. Read this document to understand the current todos to help me track my work.
