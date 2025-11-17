@@ -74,6 +74,19 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="storybook"
+          options={{
+            title: "Storybook",
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "book" : "book-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
       </Tabs.Protected>
     </Tabs>
   );

@@ -1,6 +1,8 @@
-import { getStorybookUI } from '@storybook/react-native';
-import './main';
+import { view } from '@storybook/react-native';
 
-const StorybookUI = getStorybookUI({});
+const StorybookUI = view.getStorybookUI({
+  // Enable React DevTools integration
+  enableWebsockets: true,
+});
 
 export default StorybookUI;
