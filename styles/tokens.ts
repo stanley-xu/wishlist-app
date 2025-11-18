@@ -4,7 +4,7 @@ export const palette = {
   primary3: "hsl(162, 16%, 47%)",
   secondary: "hsl(9, 51%, 59%)",
   offwhite: "hsl(45, 55%, 91%)",
-  white: "hsl(0, 0%, 95%)",
+  white: "hsl(0, 0%, 97%)",
 } as const;
 
 export const colours = {

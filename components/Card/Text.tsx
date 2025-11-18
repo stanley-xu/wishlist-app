@@ -1,8 +1,8 @@
 import { Text as BaseText, TextProps } from "@/components/Text";
-import { useCardContext } from "./context";
+import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export const Text = (props: TextProps) => {
-  const { textColour } = useCardContext();
+  const { textColour } = useSurfaceColourContext();
 
   return <BaseText {...props} style={{ color: textColour }} />;
 };

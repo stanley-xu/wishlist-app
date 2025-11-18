@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { Logout } from "@/components/Logout";
+import { Logout } from "@/components/Button/Logout";
 import { colours, palette, text } from "@/styles/tokens";
 
 export default function TabLayout() {
@@ -64,7 +64,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="storybook"
           options={{
-            title: "Storybook",
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
                 name={focused ? "book" : "book-outline"}
@@ -74,6 +74,19 @@ export default function TabLayout() {
             ),
           }}
         />
+        {/* <Tabs.Screen
+          name="test-rls"
+          options={{
+            title: "Test",
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "code-slash" : "code-slash-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        /> */}
       </Tabs.Protected>
     </Tabs>
   );

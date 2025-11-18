@@ -2,8 +2,8 @@ import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { type ReactNode } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
+import { SurfaceColourContext } from "../SurfaceColourContext";
 import { Button } from "./Button";
-import { CardContext } from "./context";
 import { Input } from "./Input";
 import { Text } from "./Text";
 import { Title } from "./Title";
@@ -23,11 +23,10 @@ export default function Card({
   corners = "rounded",
   style,
 }: CardProps) {
-  const textColour = variant === "elevated" ? text.white : text.black;
   const cornerRadius = corners === "rounded" ? borderRadius.lg : 0;
 
   return (
-    <CardContext.Provider value={{ textColour }}>
+    <SurfaceColourContext.Provider value={{ textColour: text.black }}>
       <View
         style={[
           styles.base,
@@ -39,7 +38,7 @@ export default function Card({
       >
         {children}
       </View>
-    </CardContext.Provider>
+    </SurfaceColourContext.Provider>
   );
 }
 

@@ -1,9 +1,8 @@
 // UI Components
-export { Button, ButtonProps } from "./Button";
+export { Button, ButtonProps, Logout } from "./Button";
 export { Card } from "./Card";
 export { Container } from "./Container";
 export * from "./Input";
-export { Logout } from "./Logout";
 export { Text, TextProps } from "./Text";
 
 // Layout Components

@@ -29,13 +29,12 @@ export default function AuthLayout() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colours.surfaceDark,
+    backgroundColor: colours.background,
   },
   screen: {
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
     justifyContent: "center",
     padding: 16,
   },

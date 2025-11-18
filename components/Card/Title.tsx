@@ -1,10 +1,10 @@
 import { spacing, typography } from "@/styles/tokens";
 import { type ReactNode } from "react";
 import { StyleSheet, Text } from "react-native";
-import { useCardContext } from "./context";
+import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export const Title = ({ children }: { children: ReactNode }) => {
-  const { textColour } = useCardContext();
+  const { textColour } = useSurfaceColourContext();
 
   return (
     <Text style={[cardTitleStyles.title, { color: textColour }]}>

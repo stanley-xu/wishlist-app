@@ -1,7 +1,6 @@
 import {
   borderRadius,
   colours,
-  palette,
   spacing,
   text,
   typography,
@@ -17,11 +16,12 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
-  variant?: "primary" | "unstyled" | "dev";
+  variant?: "primary" | "outline" | "unstyled" | "dev";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -40,6 +40,14 @@ export function Button({
   style: styleOverrides,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+
+  const parentSurfaceColourValue = useSurfaceColourContext();
+  let contextualTextStyles = null;
+  if (variant === "outline") {
+    contextualTextStyles = StyleSheet.compose(textStyleOverrides, {
+      color: parentSurfaceColourValue?.textColour,
+    });
+  }
 
   return (
     <TouchableOpacity
@@ -62,7 +70,16 @@ export function Button({
             style={styles.spinner}
           />
         )}
-        <Text style={[textStyles.text, textStyleOverrides]}>{children}</Text>
+        <Text
+          style={[
+            textStyles.text,
+            textStyles[variant],
+            contextualTextStyles,
+            textStyleOverrides,
+          ]}
+        >
+          {children}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -70,14 +87,21 @@ export function Button({
 
 const textStyles = StyleSheet.create({
   text: {
-    color: text.white,
     fontWeight: typography.fontWeight.semibold,
     textAlign: "center",
+  },
+  // Variants
+  primary: {
+    color: text.white,
+  },
+  outline: {},
+  unstyled: {},
+  dev: {
+    color: text.white,
   },
 });
 
 const styles = StyleSheet.create({
-  // Base styles
   base: {
     borderRadius: borderRadius.md,
     alignItems: "center",
@@ -87,14 +111,15 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: palette.primary2,
+    backgroundColor: colours.accent,
   },
+  outline: {},
   unstyled: {
     backgroundColor: "none",
     padding: 0,
   },
   dev: {
-    backgroundColor: palette.primary3,
+    backgroundColor: colours.accent,
   },
 
   // Sizes

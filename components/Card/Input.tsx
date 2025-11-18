@@ -1,6 +1,9 @@
 import { Input as BaseInput, InputProps } from "@/components/Input";
-import { useCardContext } from "./context";
+import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export const Input = (props: InputProps) => (
-  <BaseInput {...props} labelStyle={{ color: useCardContext().textColour }} />
+  <BaseInput
+    {...props}
+    labelStyle={{ color: useSurfaceColourContext().textColour }}
+  />
 );
