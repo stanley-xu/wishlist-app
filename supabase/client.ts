@@ -1,6 +1,27 @@
 /**
- * See https://supabase.com/docs/guides/auth/quickstarts/with-expo-react-native-social-auth?queryGroups=database-method&database-method=sql&queryGroups=auth-store&auth-store=secure-store
+ * Supabase client for React Native
+ *
+ * IMPORTANT: The react-native-url-polyfill import MUST come first.
+ * React Native doesn't have native URL/URLSearchParams APIs that Supabase requires.
+ * Without this polyfill, all database queries will silently hang.
+ *
+ * See https://supabase.com/docs/guides/auth/quickstarts/with-expo-react-native-social-auth
  */
+
+import "react-native-url-polyfill/auto";
+
+// Verify the polyfill loaded correctly
+console.log("🔍 Polyfill check:", {
+  hasURL: typeof URL !== "undefined",
+  hasURLSearchParams: typeof URLSearchParams !== "undefined"
+});
+
+if (typeof URL === "undefined" || typeof URLSearchParams === "undefined") {
+  throw new Error(
+    "❌ URL polyfill failed to load. Supabase requires react-native-url-polyfill. " +
+    "Ensure it's installed and imported before @supabase/supabase-js."
+  );
+}
 
 import { createClient } from "@supabase/supabase-js";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
@@ -9,7 +30,6 @@ import { Database } from "./database.types";
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
-    if (__DEV__) console.debug("getItem", { key, getItemAsync });
     return getItemAsync(key);
   },
   setItem: (key: string, value: string) => {

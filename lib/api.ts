@@ -229,7 +229,6 @@ export const profiles = {
    * Get user profile by user ID
    */
   async getByUserId(userId: string): Promise<DbResult<Profile>> {
-    console.debug("getByUserId", { userId });
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -237,7 +236,6 @@ export const profiles = {
         .eq("id", userId)
         .single();
 
-      console.debug("getByUserId", { data, error });
       if (error) throw error;
 
       const validated = ProfileSchema.parse(data);

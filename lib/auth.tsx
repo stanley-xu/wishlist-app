@@ -3,6 +3,7 @@ import {
   type PropsWithChildren,
   createContext,
   use,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -44,46 +45,42 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  const { loading: loadSessionLoading, action: loadSession } = useLoadingState(
-    async () => {
-      const { data, error } = await auth.getSession();
-      if (error) throw error;
-      setSession(data);
-      return data;
-    }
-  );
+  // Memoize all async functions to prevent recreating on every render
+  const loadSessionFn = useCallback(async () => {
+    const { data, error } = await auth.getSession();
+    if (error) throw error;
+    setSession(data);
+    return data;
+  }, []);
 
-  // TODO: remove after testing
-  // const delayedLoadProfileByUserId = useDelayedCallback(
-  //   async (userId: string) => {
-  //     const { data, error } = await profiles.getByUserId(userId);
-  //     if (error) throw error;
-  //     setProfile(data);
-  //     return data;
-  //   },
-  //   3000
-  // );
+  const { loading: loadSessionLoading, action: loadSession } =
+    useLoadingState(loadSessionFn);
+
+  const loadProfileByUserIdFn = useCallback(async (userId: string) => {
+    const { data, error } = await profiles.getByUserId(userId);
+    if (error) throw error;
+    setProfile(data);
+    return data;
+  }, []);
 
   const { loading: loadProfileByUserIdLoading, action: loadProfileByUserId } =
-    useLoadingState(async (userId: string) => {
-      console.debug("calling");
-      const { data, error } = await profiles.getByUserId(userId);
-      console.debug("loadProfileByUserId", { data, error });
-      if (error) throw error;
-      setProfile(data);
-      return data;
-    });
+    useLoadingState(loadProfileByUserIdFn);
 
-  const { loading: handleSessionChangeLoading, action: handleSessionChange } =
-    useLoadingState(async (session: Session | null) => {
+  // Memoize but allow loadProfileByUserId to update
+  const handleSessionChangeFn = useCallback(
+    async (session: Session | null) => {
       setSession(session);
       if (session) {
-        console.debug("flag");
         await loadProfileByUserId(session.user.id);
       } else {
         setProfile(null);
       }
-    });
+    },
+    [loadProfileByUserId]
+  );
+
+  const { loading: handleSessionChangeLoading, action: handleSessionChange } =
+    useLoadingState(handleSessionChangeFn);
 
   // Fetch the session once, and subscribe to auth state changes
   useEffect(() => {
@@ -102,15 +99,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("Auth state changed:", { event: _event, session });
-      await handleSessionChange(session);
+      // Don't await! Causes deadlock in supabase-js
+      // See: https://github.com/supabase/auth-js/issues/762
+      handleSessionChange(session);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount
 
   const { loading: signUpLoading, action: signUp } = useLoadingState(
     async ({ email, password }: { email: string; password: string }) => {
@@ -136,7 +136,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
         email,
         password,
       });
-      console.log("🔍 result:", { session, error }); // ← Add this
 
       if (error) throw error;
       if (!session) throw new Error("No session returned from sign in");
