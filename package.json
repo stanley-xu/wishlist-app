@@ -18,6 +18,7 @@
     "web:prod": "ENV=production expo start --web",
     "lint": "expo lint",
     "db:start": "npx supabase start",
+    "db:restart": "npx supabase stop && npx supabase start",
     "db:status": "npx supabase status",
     "db:seed": "npx tsx supabase/seed.ts",
     "db:types": "npx supabase gen types typescript --local --schema public > supabase/database.types.ts",

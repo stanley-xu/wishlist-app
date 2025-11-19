@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { fullPageStyles } from "../styles";
+import { fullPageStyles } from "@/styles/styles";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState<string>("");

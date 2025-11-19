@@ -21,6 +21,15 @@ export const PostgresErrorCodes = {
 } as const;
 
 /**
+ * PostgREST Error Codes
+ * https://postgrest.org/en/stable/errors.html
+ */
+export const PostgRESTErrorCodes = {
+  /** No rows returned when .single() expects exactly one row */
+  NO_ROWS: "PGRST116",
+} as const;
+
+/**
  * Type guard to check if an error is a Postgres error with a code
  */
 export function isPostgresError(

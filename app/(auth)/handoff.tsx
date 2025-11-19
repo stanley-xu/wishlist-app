@@ -4,9 +4,10 @@ import { Text } from "@/components";
 import { colours, typography } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { fullPageStyles } from "../styles";
+import { fullPageStyles } from "@/styles/styles";
 
-export default function ConfirmationScreen() {
+// TODO: make this a sheet that is half the height of a modal
+export default function HandoffScreen() {
   return (
     <View style={styles.container}>
       <Ionicons name="paper-plane" size={96} color={colours.accent} />

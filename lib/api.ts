@@ -10,7 +10,11 @@
 import { supabase } from "@/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 import { z } from "zod";
-import { isPostgresError, PostgresErrorCodes } from "../data/postgres-errors";
+import {
+  isPostgresError,
+  PostgresErrorCodes,
+  PostgRESTErrorCodes,
+} from "../data/postgres-errors";
 import {
   CreateEventSchema,
   CreateParticipantSchema,
@@ -34,7 +38,7 @@ import {
 // ============================================================================
 
 type DbResult<T> = {
-  data: T | null;
+  data?: T | null;
   error: Error | null;
 };
 
@@ -228,7 +232,7 @@ export const profiles = {
   /**
    * Get user profile by user ID
    */
-  async getByUserId(userId: string): Promise<DbResult<Profile>> {
+  async getByUserId(userId: string): Promise<DbResult<Profile | null>> {
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -236,7 +240,15 @@ export const profiles = {
         .eq("id", userId)
         .single();
 
+      // No rows found - expected for new users without profiles
+      if (error && error.code === PostgRESTErrorCodes.NO_ROWS) {
+        return { data: null, error: null };
+      }
+
       if (error) throw error;
+      if (!data) {
+        return { data: null, error: null };
+      }
 
       const validated = ProfileSchema.parse(data);
       return { data: validated, error: null };
@@ -248,10 +260,8 @@ export const profiles = {
 
   async createProfile(data: CreateProfile): Promise<DbResult<Profile>> {
     try {
-      console.debug("createProfile");
       const { data: currentUser, error: getCurrentUserError } =
         await auth.getCurrentUser();
-      console.debug("createProfile", { currentUser, getCurrentUserError });
 
       if (!currentUser || getCurrentUserError) {
         throw new Error(
@@ -259,7 +269,7 @@ export const profiles = {
         );
       }
 
-      const { data: resultData, error } = await supabase
+      const { data: profileData, error } = await supabase
         .from("profiles")
         .insert({
           id: currentUser.id,
@@ -267,11 +277,14 @@ export const profiles = {
           bio: data.bio || null,
           avatar_url: data.avatar_url || null,
           background_url: data.background_url || null,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      return { data: resultData, error: null };
+      const validated = ProfileSchema.parse(profileData);
+      return { data: validated, error: null };
     } catch (error) {
       console.error("Error creating user profile:", error);
       return { data: null, error: error as Error };

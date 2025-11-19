@@ -23,6 +23,8 @@ const AuthContext = createContext<{
   session?: Session | null;
   profile?: Profile | null;
   loading: boolean;
+  // Need to expose this because the app can create profiles outside of the provider here
+  setProfile: (profile: Profile | null) => void;
 }>({
   signIn: () => null,
   signOut: () => null,
@@ -30,6 +32,7 @@ const AuthContext = createContext<{
   session: null,
   profile: null,
   loading: false,
+  setProfile: () => null,
 });
 
 export function useAuthContext() {
@@ -49,7 +52,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const loadSessionFn = useCallback(async () => {
     const { data, error } = await auth.getSession();
     if (error) throw error;
-    setSession(data);
+    setSession(data ?? null);
     return data;
   }, []);
 
@@ -59,7 +62,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const loadProfileByUserIdFn = useCallback(async (userId: string) => {
     const { data, error } = await profiles.getByUserId(userId);
     if (error) throw error;
-    setProfile(data);
+    setProfile(data ?? null);
     return data;
   }, []);
 
@@ -69,7 +72,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Memoize but allow loadProfileByUserId to update
   const handleSessionChangeFn = useCallback(
     async (session: Session | null) => {
-      setSession(session);
+      setSession(session ?? null);
       if (session) {
         await loadProfileByUserId(session.user.id);
       } else {
@@ -121,7 +124,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (error) throw error;
 
-      setSession(session);
+      setSession(session ?? null);
       if (session) {
         await loadProfileByUserId(session.user.id);
       }
@@ -140,7 +143,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (error) throw error;
       if (!session) throw new Error("No session returned from sign in");
 
-      setSession(session);
+      setSession(session ?? null);
       await loadProfileByUserId(session.user.id);
 
       return session;
@@ -172,6 +175,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       session,
       profile,
       loading,
+      setProfile,
     }),
     [signIn, signOut, signUp, session, profile, loading]
   );

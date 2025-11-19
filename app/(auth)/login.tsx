@@ -3,8 +3,8 @@ import { useAuthContext } from "@/lib/auth";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
+import { fullPageStyles } from "@/styles/styles";
 import { spacing } from "@/styles/tokens";
-import { fullPageStyles } from "../styles";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");

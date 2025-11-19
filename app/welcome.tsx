@@ -1,10 +1,10 @@
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useEffect } from "react";
 
-import { Button, Text } from "@/components";
+import { Button, Input, Text } from "@/components";
 import { profiles } from "@/lib/api";
 import { CreateProfileSchema, type CreateProfile } from "@/lib/schemas";
-import { colours } from "@/styles/tokens";
+import { colours, spacing } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -12,17 +12,21 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  TextInput,
-  View,
 } from "react-native";
 
-import { fullPageStyles } from "./styles";
+import { useAuthContext } from "@/lib/auth";
+import { fullPageStyles, largeHeaderStyles } from "../styles/styles";
 
 export default function WelcomeScreen() {
+  const { setProfile } = useAuthContext();
+
   const navigation = useNavigation();
 
   useEffect(() => {
-    navigation.setOptions(fullPageStyles);
+    navigation.setOptions({
+      ...largeHeaderStyles,
+      title: "Welcome",
+    });
   }, [navigation]);
 
   const {
@@ -35,15 +39,15 @@ export default function WelcomeScreen() {
 
   const onSubmit = async (data: CreateProfile) => {
     try {
-      console.log("onSubmit");
-      const { data: result, error } = await profiles.createProfile(data);
-
-      console.log({ profileCreated: result });
+      const { data: profileData, error } = await profiles.createProfile(data);
 
       if (error) throw error;
+      if (!profileData)
+        throw new Error("No profile data returned from createProfile");
 
-      // Navigate to main app
-      router.replace("/(app)");
+      setProfile(profileData);
+
+      // Navigation to app route happens automatically via session state change
     } catch (error) {
       console.error("Error creating profile:", error);
       alert("Failed to create profile");
@@ -53,69 +57,64 @@ export default function WelcomeScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.screen}
+      style={fullPageStyles.container}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.form}
+        contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
       >
         {/* TODO: illustration */}
 
-        <Text style={styles.title}>Welcome, fellow gifter!</Text>
-
         {/* Name field (required) */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Name *</Text>
-          <Controller
-            control={control}
-            name="name"
-            rules={{
-              required: "Name is required",
-              minLength: {
-                value: 2,
-                message: "Name must be at least 2 characters",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.name && styles.inputError]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="What's your name?"
-                autoCapitalize="words"
-              />
-            )}
-          />
-          {errors.name && (
-            <Text variant="error" style={styles.errorText}>
-              {errors.name.message}
-            </Text>
+        <Text style={styles.label}>Name *</Text>
+        <Controller
+          control={control}
+          name="name"
+          rules={{
+            required: "Name is required",
+            minLength: {
+              value: 2,
+              message: "Name must be at least 2 characters",
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              style={[styles.input, errors.name && styles.inputError]}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="What's your name?"
+              autoCapitalize="words"
+            />
           )}
-        </View>
+        />
+        {errors.name && (
+          <Text variant="error" style={styles.errorText}>
+            {errors.name.message}
+          </Text>
+        )}
 
         {/* Bio field (optional) */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Bio</Text>
-          <Controller
-            control={control}
-            name="bio"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Tell us about yourself"
-                multiline
-                numberOfLines={4}
-              />
-            )}
-          />
-        </View>
+        <Text style={styles.label}>Bio</Text>
+        <Controller
+          control={control}
+          name="bio"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              style={[styles.input, styles.textArea]}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder="Tell us about yourself"
+              multiline
+              numberOfLines={4}
+            />
+          )}
+        />
 
         {/* Submit button */}
-        <Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
+        <Button loading={isSubmitting} onPress={handleSubmit(onSubmit)}>
           Let&apos;s go!
         </Button>
       </ScrollView>
@@ -124,25 +123,9 @@ export default function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // safeArea: {
-  //   flex: 1,
-  //   backgroundColor: colours.background,
-  // },
-  screen: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: colours.background,
-  },
-  scrollContent: {
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 24,
-  },
-  fieldContainer: {
-    marginBottom: 16,
+  form: {
+    paddingTop: spacing["xl"],
+    gap: spacing.md,
   },
   label: {
     fontSize: 16,
