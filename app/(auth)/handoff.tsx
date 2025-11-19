@@ -17,7 +17,10 @@ export default function ConfirmationScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: fullPageStyles.container,
+  container: {
+    ...fullPageStyles.container,
+    alignItems: "center",
+  },
   title: {
     fontSize: typography.fontSize["3xl"],
     fontWeight: typography.fontWeight.semibold,
