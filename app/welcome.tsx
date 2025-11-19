@@ -1,53 +1,28 @@
-import { router, useNavigation, useRouter } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
 
+import { Button, Text } from "@/components";
+import { profiles } from "@/lib/api";
+import { CreateProfileSchema, type CreateProfile } from "@/lib/schemas";
+import { colours } from "@/styles/tokens";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Text } from "@/components";
-import { profiles } from "@/lib/api";
-import { CreateProfileSchema, type CreateProfile } from "@/lib/schemas";
-import { colours, palette, text } from "@/styles/tokens";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
 
-const Submit = () => {
-  const router = useRouter();
-  return (
-    <TouchableOpacity
-      style={{
-        width: 44,
-      }}
-      onPress={() => {
-        console.log("test");
-        router.replace("/");
-      }}
-    >
-      <Text style={{ textAlign: "center" }}>Save</Text>
-    </TouchableOpacity>
-  );
-};
+import { fullPageStyles } from "./styles";
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      title: "",
-      headerStyle: {
-        backgroundColor: palette.primary1,
-      },
-      headerTintColor: text.white,
-      headerRight: () => <Submit />,
-    });
+    navigation.setOptions(fullPageStyles);
   }, [navigation]);
 
   const {

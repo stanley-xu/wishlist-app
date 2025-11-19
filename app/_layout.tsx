@@ -26,8 +26,6 @@ function RootNavigator() {
   };
 
   if (__DEV__) {
-    console.log({ profileLoading });
-
     console.log(guardStates);
   }
 

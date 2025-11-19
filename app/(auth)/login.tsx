@@ -1,10 +1,10 @@
-import { Card, Text } from "@/components";
+import { Button, Input, Text } from "@/components";
 import { useAuthContext } from "@/lib/auth";
-import { Link } from "expo-router";
 import { useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
-import AuthWrapper from "./wrapper";
+import { spacing } from "@/styles/tokens";
+import { fullPageStyles } from "../styles";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
@@ -46,23 +46,13 @@ export default function LoginScreen() {
   };
 
   return (
-    <AuthWrapper>
-      <Card variant="elevated">
-        <View style={{ position: "relative" }}>
-          {/* TODO: fun daily greeting */}
-          <Card.Title>Welcome</Card.Title>
-          <Link
-            href="/(auth)/register"
-            style={{ position: "absolute", right: 0 }}
-            asChild
-          >
-            <TouchableOpacity>
-              <Text>Sign up</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
-
-        <Card.Input
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.form}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        {/* <Text style={styles.title}>Welcome</Text> */}
+        <Input
           label="Email"
           placeholder="Enter your email"
           value={email}
@@ -71,7 +61,7 @@ export default function LoginScreen() {
           autoCapitalize="none"
         />
 
-        <Card.Input
+        <Input
           label="Password"
           placeholder="Enter your password"
           value={password}
@@ -79,22 +69,32 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-        <Card.Button onPress={handleLogin} loading={submitting || loading}>
+        <Button onPress={handleLogin} loading={submitting || loading}>
           Continue
-        </Card.Button>
+        </Button>
 
         {error && <Text variant="error">{error}</Text>}
 
         {__DEV__ && (
-          <Card.Button
+          <Button
             variant="dev"
             loading={submitting || loading}
             onPress={handleDevLogin}
           >
             Login as Dev
-          </Card.Button>
+          </Button>
         )}
-      </Card>
-    </AuthWrapper>
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: fullPageStyles.container,
+  form: {
+    paddingTop: spacing["xl"],
+    gap: spacing.md,
+  },
+  title: fullPageStyles.title,
+  subtitle: fullPageStyles.subtitle,
+});

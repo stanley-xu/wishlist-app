@@ -1,12 +1,13 @@
-import { Card, Spacer, Text } from "@/components";
+import { Button, Input, Text } from "@/components";
 import { useAuthContext } from "@/lib/auth";
 import { generateFakeUser } from "@/lib/fake-data";
+import { spacing } from "@/styles/tokens";
 import { AuthError } from "@supabase/supabase-js";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import AuthWrapper from "./wrapper";
+import { fullPageStyles } from "../styles";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState<string>("");
@@ -78,30 +79,20 @@ export default function RegisterScreen() {
   };
 
   return (
-    <AuthWrapper>
-      <Card variant="elevated">
-        <View style={{ display: "flex" }}>
-          <Spacer />
-          <Card.Title>Create account</Card.Title>
-          <Link href="/(auth)/login" asChild>
-            <TouchableOpacity>
-              <Text style={{ alignSelf: "center" }}>
-                Already signed up? Login
-              </Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.form}>
+        <Text style={styles.title}>Create account</Text>
 
-        <Card.Input
+        <Input
           label="Email"
-          placeholder="Enter your email"
+          placeholder="giver@giftful.io"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
         />
 
-        <Card.Input
+        <Input
           label="Password"
           placeholder="Enter your password"
           value={password}
@@ -109,7 +100,7 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-        <Card.Input
+        <Input
           label="Confirm Password"
           placeholder="Re-enter your password"
           value={confirmPassword}
@@ -117,22 +108,35 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-        <Card.Button onPress={handleRegister} loading={submitting || loading}>
+        <Button onPress={handleRegister} loading={submitting || loading}>
           Register
-        </Card.Button>
+        </Button>
 
         {error && <Text variant="error">{error}</Text>}
 
         {__DEV__ && (
-          <Card.Button
+          <Button
             loading={submitting || loading}
             onPress={handleDevRegister}
             variant="dev"
           >
             Auto-generate user
-          </Card.Button>
+          </Button>
         )}
-      </Card>
-    </AuthWrapper>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...fullPageStyles.container,
+    alignItems: "center",
+  },
+  form: {
+    gap: spacing.md,
+    width: "100%",
+  },
+  title: fullPageStyles.title,
+  subtitle: fullPageStyles.subtitle,
+});

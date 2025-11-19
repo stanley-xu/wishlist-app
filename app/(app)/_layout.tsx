@@ -2,23 +2,30 @@ import { Tabs } from "expo-router";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { Logout } from "@/components/Button/Logout";
+import { Button } from "@/components";
+import { useAuthContext } from "@/lib/auth";
 import { colours, text } from "@/styles/tokens";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerStyle: {
-          backgroundColor: colours.surface,
-        },
+        headerShown: true,
+        headerStyle: { backgroundColor: colours.surface },
         headerTintColor: text.black,
-        headerRight: () => <Logout variant="unstyled" size="sm" />,
         tabBarShowLabel: false,
         tabBarActiveTintColor: colours.background,
         tabBarInactiveTintColor: text.black,
         tabBarStyle: {
           backgroundColor: colours.surfaceDark,
+        },
+        headerRight: () => {
+          const { signOut } = useAuthContext();
+          return (
+            <Button variant="unstyled" size="sm" onPress={signOut}>
+              <Ionicons name="log-out-outline" size={24} color={text.black} />
+            </Button>
+          );
         },
       }}
     >
@@ -75,19 +82,6 @@ export default function TabLayout() {
             ),
           }}
         />
-        {/* <Tabs.Screen
-          name="test-rls"
-          options={{
-            title: "Test",
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons
-                name={focused ? "code-slash" : "code-slash-outline"}
-                color={color}
-                size={24}
-              />
-            ),
-          }}
-        /> */}
       </Tabs.Protected>
     </Tabs>
   );

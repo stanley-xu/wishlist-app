@@ -4,6 +4,8 @@ import { Text } from "@/components";
 import { colours, typography } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import { fullPageStyles } from "../styles";
+
 export default function ConfirmationScreen() {
   return (
     <View style={styles.container}>
@@ -15,13 +17,7 @@ export default function ConfirmationScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colours.surface,
-  },
+  container: fullPageStyles.container,
   title: {
     fontSize: typography.fontSize["3xl"],
     fontWeight: typography.fontWeight.semibold,
