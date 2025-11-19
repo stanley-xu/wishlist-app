@@ -1,41 +1,29 @@
-import { colours } from "@/styles/tokens";
-import { Slot } from "expo-router";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components";
+import { largeHeaderStyles } from "@/styles/styles";
+import { router, Stack } from "expo-router";
 
 export default function AuthLayout() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.screen}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Slot />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="login"
+        options={{
+          ...largeHeaderStyles,
+          // TODO: fun randomized greetings
+          title: "Welcome, fellow gifter.",
+          headerRight: () => (
+            <Button
+              variant="unstyled"
+              size="sm"
+              onPress={() => router.push("/(auth)/register")}
+            >
+              Sign up
+            </Button>
+          ),
+        }}
+      />
+      <Stack.Screen name="register" options={{ presentation: "modal" }} />
+      <Stack.Screen name="handoff" options={{ presentation: "modal" }} />
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colours.background,
-  },
-  screen: {
-    flex: 1,
-  },
-  scrollContent: {
-    justifyContent: "center",
-    padding: 16,
-  },
-});

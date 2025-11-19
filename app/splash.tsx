@@ -1,18 +1,29 @@
 import { useAuthContext } from "@/lib/auth";
-import { SplashScreen } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useRef } from "react";
 
+SplashScreen.setOptions({
+  // image: "./assets/images/splash-icon.png",
+  duration: 500,
+  fade: true,
+});
+
+// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-/**
- * TODO: okay but how do I actually design this?
- */
-
-export function SplashScreenController() {
+export default function SplashScreenController() {
   const { loading } = useAuthContext();
+  // Added to prevent uncaught errors in register flow
+  const hasHidden = useRef(false);
 
-  if (!loading) {
-    SplashScreen.hide();
-  }
+  useEffect(() => {
+    if (!loading && !hasHidden.current) {
+      hasHidden.current = true;
+      SplashScreen.hideAsync().catch((error) => {
+        console.warn("Error hiding splash screen:", error);
+      });
+    }
+  }, [loading]);
 
   return null;
 }

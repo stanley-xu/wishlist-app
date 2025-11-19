@@ -13,7 +13,7 @@ export const colours = {
   surfaceWarm: palette.primary2,
   surfaceDark: palette.primary3,
   accent: palette.primary3,
-  danger: palette.secondary,
+  error: palette.secondary,
 } as const;
 
 export const text = {

@@ -1,5 +1,5 @@
 import { useAuthContext } from "@/lib/auth";
-import { Button, ButtonProps } from "@/components/Button";
+import { Button, ButtonProps } from "../Button";
 
 export function Logout(props: Partial<ButtonProps>) {
   const { signOut } = useAuthContext();

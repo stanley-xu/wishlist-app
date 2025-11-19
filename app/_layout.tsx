@@ -1,6 +1,6 @@
 import { AuthProvider, useAuthContext } from "@/lib/auth";
 import { Stack } from "expo-router";
-import { SplashScreenController } from "./splash";
+import SplashScreenController from "./splash";
 
 export default function RootLayout() {
   if (__DEV__) {
@@ -15,15 +15,18 @@ export default function RootLayout() {
   );
 }
 
-// stub
-const useUserContext = () => null;
-
 function RootNavigator() {
-  const { session } = useAuthContext();
-  const user = useUserContext();
+  const { session, profile, loading: profileLoading } = useAuthContext();
 
-  if (__DEV__ && session) {
-    console.log(`Session changed: ${session?.access_token}`);
+  const guardStates = {
+    loading: profileLoading,
+    auth: !session,
+    app: Boolean(session && !profileLoading && profile),
+    welcome: Boolean(session && !profileLoading && !profile),
+  };
+
+  if (__DEV__) {
+    console.log(guardStates);
   }
 
   return (
@@ -32,14 +35,17 @@ function RootNavigator() {
         headerShown: false,
       }}
     >
-      <Stack.Protected guard={!session}>
+      <Stack.Protected guard={guardStates.loading}>
+        <Stack.Screen name="loading" />
+      </Stack.Protected>
+      <Stack.Protected guard={guardStates.auth}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
-      <Stack.Protected guard={!!session && !user}>
-        <Stack.Screen name="welcome" />
-      </Stack.Protected>
-      <Stack.Protected guard={!!session && !!user}>
+      <Stack.Protected guard={guardStates.app}>
         <Stack.Screen name="(app)" />
+      </Stack.Protected>
+      <Stack.Protected guard={guardStates.welcome}>
+        <Stack.Screen name="welcome" />
       </Stack.Protected>
     </Stack>
   );

@@ -50,3 +50,4 @@ When I ask about the next task to work on, follow this workflow:
 3. **Read `docs/tasks.md`** for queued tasks
 
 Then suggest the next logical task to tackle.
+- When troubleshoot problems and realizing you're running in circles, take a step back and do web searches for the problems we see at a high level. (e.g. instead of "supabase 2025 polyfill", do "supabase js hangs")
