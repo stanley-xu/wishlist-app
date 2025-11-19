@@ -16,18 +16,19 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session, profile, loading } = useAuthContext();
-
-  console.log({ loading });
+  const { session, profile, loading: profileLoading } = useAuthContext();
 
   const guardStates = {
+    loading: profileLoading,
     auth: !session,
-    app: Boolean(session && profile),
-    welcome: Boolean(session && !profile),
+    app: Boolean(session && !profileLoading && profile),
+    welcome: Boolean(session && !profileLoading && !profile),
   };
 
   if (__DEV__) {
-    console.log({ guardStates });
+    console.log({ profileLoading });
+
+    console.log(guardStates);
   }
 
   return (
@@ -36,6 +37,9 @@ function RootNavigator() {
         headerShown: false,
       }}
     >
+      <Stack.Protected guard={guardStates.loading}>
+        <Stack.Screen name="loading" />
+      </Stack.Protected>
       <Stack.Protected guard={guardStates.auth}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
