@@ -25,15 +25,15 @@ export const ProfileSchema = z.object({
   avatar_url: z.string().url().nullable().optional(),
   background_url: z.string().url().nullable().optional(),
   phone: z.string().nullable().optional(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.string(), // Postgres timestamp, various formats accepted
+  updated_at: z.string(), // Postgres timestamp, various formats accepted
 });
 
 /**
  * Schema for creating a new profile (during onboarding)
  */
 export const CreateProfileSchema = z.object({
-  id: z.string().uuid(),
+  // id: z.string().uuid(),
   name: z.string().min(2, "Name must be at least 2 characters"),
   bio: z.string().optional(),
   avatar_url: z.string().url().optional(),
@@ -69,8 +69,8 @@ export const EventSchema = z.object({
   exchange_date: z.string(), // ISO date string from Postgres
   join_code: z.string(),
   is_active: z.boolean(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.string(), // Postgres timestamp
+  updated_at: z.string(), // Postgres timestamp
 });
 
 export const CreateEventSchema = z.object({
@@ -102,7 +102,7 @@ export const ParticipantSchema = z.object({
   id: z.string().uuid(),
   event_id: z.string().uuid(),
   user_id: z.string().uuid(),
-  joined_at: z.string().datetime(),
+  joined_at: z.string(), // Postgres timestamp
 });
 
 export const CreateParticipantSchema = z.object({
@@ -134,7 +134,7 @@ export const WishlistSchema = z.object({
   event_id: z.string().uuid(),
   user_id: z.string().uuid(),
   items: z.array(WishlistItemSchema),
-  updated_at: z.string().datetime(),
+  updated_at: z.string(), // Postgres timestamp
 });
 
 export const CreateWishlistItemSchema = z.object({
@@ -158,7 +158,7 @@ export const AssignmentSchema = z.object({
   event_id: z.string().uuid(),
   giver_id: z.string().uuid(),
   receiver_id: z.string().uuid(),
-  created_at: z.string().datetime(),
+  created_at: z.string(), // Postgres timestamp
 });
 
 export const CreateAssignmentSchema = z.object({

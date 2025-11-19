@@ -4,6 +4,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
+import Constants from "expo-constants";
 import { Database } from "./database.types";
 
 const ExpoSecureStoreAdapter = {
@@ -24,9 +25,18 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
+// Use Constants.expoConfig.extra to read runtime env vars from app.config.js
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? "";
+const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? "";
+
+console.log("🔧 Supabase Client Config:", {
+  url: supabaseUrl,
+  hasKey: !!supabaseAnonKey,
+});
+
 export const supabase = createClient<Database>(
-  process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       storage: ExpoSecureStoreAdapter as any,

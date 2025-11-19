@@ -3,19 +3,20 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Logout } from "@/components/Button/Logout";
-import { colours, palette, text } from "@/styles/tokens";
+import { colours, text } from "@/styles/tokens";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: palette.primary1,
+          backgroundColor: colours.surface,
         },
-        headerTintColor: text.white,
+        headerTintColor: text.black,
         headerRight: () => <Logout variant="unstyled" size="sm" />,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: text.white,
+        tabBarActiveTintColor: colours.background,
+        tabBarInactiveTintColor: text.black,
         tabBarStyle: {
           backgroundColor: colours.surfaceDark,
         },

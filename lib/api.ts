@@ -8,12 +8,13 @@
  */
 
 import { supabase } from "@/supabase/client";
-import type { Session } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
 import { z } from "zod";
 import { isPostgresError, PostgresErrorCodes } from "../data/postgres-errors";
 import {
   CreateEventSchema,
   CreateParticipantSchema,
+  CreateProfile,
   EventSchema,
   ParticipantSchema,
   ProfileSchema,
@@ -48,8 +49,45 @@ type DbListResult<T> = {
 
 export const auth = {
   /**
+   * Get session
+   * @returns The session or null if there is no session
+   */
+  async getSession(): Promise<DbResult<Session | null>> {
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) throw error;
+
+      return { data: session, error: null };
+    } catch (error) {
+      console.error("Error fetching session:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Get current user
+   */
+  async getCurrentUser(): Promise<DbResult<User>> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) throw new Error("No authenticated user");
+
+      return { data: user, error: null };
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
    * Sign up a new user with email and password
-   * Creates both auth user and profile record
    */
   async signUp({
     email,
@@ -59,7 +97,10 @@ export const auth = {
     password: string;
   }): Promise<DbResult<Session>> {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -69,11 +110,12 @@ export const auth = {
 
       if (error) throw error;
 
-      if (!data.session) {
+      // Note: this is to be expected if the user is not verified yet
+      if (!session) {
         console.warn(`[Sign Up] check email for verification link`);
       }
 
-      return { data: data.session, error: null };
+      return { data: session, error: null };
     } catch (error) {
       console.error("Error signing up:", error);
       return { data: null, error: error as Error };
@@ -130,7 +172,7 @@ export const auth = {
 // Profiles
 // ============================================================================
 
-export const users = {
+export const profiles = {
   /**
    * Get user profile by ID
    */
@@ -155,26 +197,85 @@ export const users = {
   /**
    * Get current user profile
    */
-  async getCurrent(): Promise<DbResult<Profile>> {
+  async getCurrentProfile(): Promise<DbResult<Profile>> {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: currentUser, error: getCurrentUserError } =
+        await auth.getCurrentUser();
 
-      if (!user) throw new Error("No authenticated user");
+      if (!currentUser || getCurrentUserError) {
+        return { data: null, error: getCurrentUserError };
+      }
 
       const { data, error } = await supabase
-        .from("users")
+        .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", currentUser.id)
         .single();
 
+      if (error) throw error;
+      if (!data) {
+        return { data: null, error: null };
+      }
+
+      const validated = ProfileSchema.parse(data);
+      return { data: validated, error: null };
+    } catch (error) {
+      console.error("Error fetching current user profile:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Get user profile by user ID
+   */
+  async getByUserId(userId: string): Promise<DbResult<Profile>> {
+    console.debug("getByUserId", { userId });
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      console.debug("getByUserId", { data, error });
       if (error) throw error;
 
       const validated = ProfileSchema.parse(data);
       return { data: validated, error: null };
     } catch (error) {
-      console.error("Error fetching current user:", error);
+      console.error("Error fetching user profile by user ID:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  async createProfile(data: CreateProfile): Promise<DbResult<Profile>> {
+    try {
+      console.debug("createProfile");
+      const { data: currentUser, error: getCurrentUserError } =
+        await auth.getCurrentUser();
+      console.debug("createProfile", { currentUser, getCurrentUserError });
+
+      if (!currentUser || getCurrentUserError) {
+        throw new Error(
+          `[createProfile] failed to retrieve current user: ${getCurrentUserError}`
+        );
+      }
+
+      const { data: resultData, error } = await supabase
+        .from("profiles")
+        .insert({
+          id: currentUser.id,
+          name: data.name,
+          bio: data.bio || null,
+          avatar_url: data.avatar_url || null,
+          background_url: data.background_url || null,
+        });
+
+      if (error) throw error;
+
+      return { data: resultData, error: null };
+    } catch (error) {
+      console.error("Error creating user profile:", error);
       return { data: null, error: error as Error };
     }
   },

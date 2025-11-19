@@ -1,41 +1,11 @@
-import { colours } from "@/styles/tokens";
-import { Slot } from "expo-router";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack } from "expo-router";
 
 export default function AuthLayout() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.screen}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Slot />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="handoff" options={{ presentation: "modal" }} />
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colours.background,
-  },
-  screen: {
-    flex: 1,
-  },
-  scrollContent: {
-    justifyContent: "center",
-    padding: 16,
-  },
-});

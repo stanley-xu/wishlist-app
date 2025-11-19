@@ -3,7 +3,7 @@
 # For detailed configuration reference documentation, visit:
 # https://supabase.com/docs/guides/local-development/cli/config
 
-project_id = "env(SUPABASE_PROJECT_ID)"
+project_id = "wishlist-app-local"
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
 

@@ -1,4 +1,4 @@
-import { Redirect, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import {
   Alert,
   FlatList,
@@ -16,13 +16,6 @@ import { useEffect } from "react";
 
 export default function ProfileScreen() {
   const { session } = useAuthContext();
-  const user = session?.user;
-
-  if (!user) {
-    console.error(`User not found for session: ${session?.user?.id}`);
-    console.log("Redirecting to login");
-    return <Redirect href="/(auth)/login" />;
-  }
 
   const navigation = useNavigation();
 

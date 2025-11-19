@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
+import Constants from "expo-constants";
 import { Database } from "./database.types";
 // import "react-native-url-polyfill/auto";
 
@@ -16,9 +17,13 @@ const ExpoWebSecureStoreAdapter = {
   },
 };
 
+// Use Constants.expoConfig.extra to read runtime env vars from app.config.js
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? "";
+const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? "";
+
 export const supabase = createClient<Database>(
-  process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       storage: ExpoWebSecureStoreAdapter,

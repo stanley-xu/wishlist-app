@@ -5,11 +5,12 @@
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   name TEXT NOT NULL,
-  phone TEXT,
+  bio TEXT,
+  avatar_url TEXT,
+  background_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-
 -- Events table
 CREATE TABLE public.events (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
