@@ -4,7 +4,7 @@ import SplashScreenController from "./splash";
 
 export default function RootLayout() {
   if (__DEV__) {
-    console.log("🧑‍💻 Launched in dev mode!");
+    console.debug("🧑‍💻 Launched in dev mode!");
   }
 
   return (
@@ -26,7 +26,19 @@ function RootNavigator() {
   };
 
   if (__DEV__) {
-    console.log(guardStates);
+    // Print the available guard states for protected routes
+    const groupedStates = Object.entries(guardStates).reduce(
+      (acc, [key, value]) => {
+        if (value) {
+          acc["open"].push(key);
+        } else {
+          acc["closed"].push(key);
+        }
+        return acc;
+      },
+      { open: [], closed: [] } as { open: string[]; closed: string[] }
+    );
+    console.debug(groupedStates);
   }
 
   return (

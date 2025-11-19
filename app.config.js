@@ -1,5 +1,5 @@
 const envFile = process.env.ENV || "local";
-require("dotenv").config({ path: `.env.${envFile}`, override: true });
+require("dotenv").config({ path: `.env.${envFile}`, override: true, quiet: true });
 
 export default {
   expo: {

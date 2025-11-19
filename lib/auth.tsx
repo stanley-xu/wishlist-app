@@ -103,7 +103,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed:", { event: _event, session });
+      console.log("Auth state changed:", {
+        event: _event,
+        user: { id: session?.user.id, email: session?.user.email },
+      });
       // Don't await! Causes deadlock in supabase-js
       // See: https://github.com/supabase/auth-js/issues/762
       handleSessionChange(session);
