@@ -1,5 +1,6 @@
 import { Button } from "@/components";
 import { largeHeaderStyles } from "@/styles/styles";
+import { colours } from "@/styles/tokens";
 import { router, Stack } from "expo-router";
 
 export default function AuthLayout() {
@@ -16,6 +17,7 @@ export default function AuthLayout() {
               variant="unstyled"
               size="sm"
               onPress={() => router.push("/(auth)/register")}
+              textStyle={{ color: colours.background }}
             >
               Sign up
             </Button>

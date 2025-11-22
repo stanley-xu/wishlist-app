@@ -8,25 +8,42 @@
  * See https://supabase.com/docs/guides/auth/quickstarts/with-expo-react-native-social-auth
  */
 
-import "react-native-url-polyfill/auto";
-
 // Verify the polyfill loaded correctly
-console.log("🔍 Polyfill check:", {
-  hasURL: typeof URL !== "undefined",
-  hasURLSearchParams: typeof URLSearchParams !== "undefined",
-});
-
-if (typeof URL === "undefined" || typeof URLSearchParams === "undefined") {
-  throw new Error(
-    "❌ URL polyfill failed to load. Supabase requires react-native-url-polyfill. " +
-      "Ensure it's installed and imported before @supabase/supabase-js."
-  );
+import "react-native-url-polyfill/auto";
+const hasURL = typeof URL !== "undefined";
+const hasURLSearchParams = typeof URLSearchParams !== "undefined";
+if (!hasURL || !hasURLSearchParams) {
+  throw new Error(`
+    URL polyfill failed to load. Supabase requires react-native-url-polyfill. 
+    Ensure it's installed and imported before @supabase/supabase-js.
+    Has URL: ${hasURL}
+    Has URLSearchParams: ${hasURLSearchParams}
+  `);
 }
 
 import { createClient } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { Database } from "./database.types";
+
+// Use Constants.expoConfig.extra to read runtime env vars from app.config.js
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? "";
+const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? "";
+
+console.log("🔧 Supabase Client Config:", {
+  url: supabaseUrl,
+  hasKey: !!supabaseAnonKey,
+});
+
+// Validate Supabase configuration early
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "❌ Supabase configuration is missing!\n\n" +
+      "Make sure you have set up your environment file (.env.local or .env.device)\n" +
+      `Current URL: "${supabaseUrl}"\n` +
+      `Has Key: ${!!supabaseAnonKey}`
+  );
+}
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -44,20 +61,6 @@ const ExpoSecureStoreAdapter = {
     return deleteItemAsync(key);
   },
 };
-
-// Use Constants.expoConfig.extra to read runtime env vars from app.config.js
-const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? "";
-const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? "";
-
-// Validate Supabase configuration early
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    "❌ Supabase configuration is missing!\n\n" +
-      "Make sure you have set up your environment file (.env.local or .env.device)\n" +
-      `Current URL: "${supabaseUrl}"\n` +
-      `Has Key: ${!!supabaseAnonKey}`
-  );
-}
 
 // Catch common placeholder values that indicate incomplete setup
 const invalidPatterns = ["REPLACE", "TODO", "CHANGEME"];
@@ -80,11 +83,6 @@ if (hasInvalidPattern) {
       "  LOCAL_IP=192.168.1.XXX  # Replace with your actual IP"
   );
 }
-
-console.log("🔧 Supabase Client Config:", {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-});
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {

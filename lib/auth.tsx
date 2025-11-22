@@ -47,6 +47,7 @@ export function useAuthContext() {
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   // Memoize all async functions to prevent recreating on every render
   const loadSessionFn = useCallback(async () => {
@@ -72,9 +73,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Memoize but allow loadProfileByUserId to update
   const handleSessionChangeFn = useCallback(
     async (session: Session | null) => {
-      setSession(session ?? null);
       if (session) {
+        console.log("flag1");
         await loadProfileByUserId(session.user.id);
+        console.log("flag2");
       } else {
         setProfile(null);
       }
@@ -95,6 +97,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setInitialized(true);
       }
     }
 
@@ -109,7 +113,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
       // Don't await! Causes deadlock in supabase-js
       // See: https://github.com/supabase/auth-js/issues/762
-      handleSessionChange(session);
+      setSession(session ?? null);
     });
 
     return () => {
@@ -117,6 +121,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount
+
+  useEffect(() => {
+    handleSessionChange(session);
+  }, [session]);
 
   const { loading: signUpLoading, action: signUp } = useLoadingState(
     async ({ email, password }: { email: string; password: string }) => {
@@ -127,9 +135,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (error) throw error;
 
+      console.log("flag3");
       setSession(session ?? null);
+      console.log("flag4");
       if (session) {
+        console.log("flag5");
         await loadProfileByUserId(session.user.id);
+        console.log("flag6");
       }
 
       return session;
@@ -163,6 +175,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const loading =
+    !initialized ||
     loadSessionLoading ||
     loadProfileByUserIdLoading ||
     handleSessionChangeLoading ||
