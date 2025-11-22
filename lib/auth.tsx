@@ -11,7 +11,6 @@ import {
 
 import { auth, auth as authHelpers, profiles } from "@/lib/api";
 import { type Session } from "@supabase/supabase-js";
-import { useLoadingState } from "./hooks";
 import { Profile } from "./schemas";
 
 type SignInArgs = { email: string; password: string };
@@ -44,56 +43,55 @@ export function useAuthContext() {
   return value;
 }
 
+function useLoadingCallback<T, Args extends any[]>(
+  fn: (...args: Args) => Promise<T>,
+  setLoading: (loading: boolean) => void
+): (...args: Args) => Promise<T> {
+  return useCallback(
+    async (...args: Args): Promise<T> => {
+      setLoading(true);
+      try {
+        return await fn(...args);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fn, setLoading]
+  );
+}
+
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Memoize all async functions to prevent recreating on every render
-  const loadSessionFn = useCallback(async () => {
+  const getSession = useCallback(async () => {
     const { data, error } = await auth.getSession();
     if (error) throw error;
+
     setSession(data ?? null);
     return data;
   }, []);
 
-  const { loading: loadSessionLoading, action: loadSession } =
-    useLoadingState(loadSessionFn);
-
-  const loadProfileByUserIdFn = useCallback(async (userId: string) => {
+  const getProfileByUserId = useCallback(async (userId: string) => {
     const { data, error } = await profiles.getByUserId(userId);
     if (error) throw error;
+
     setProfile(data ?? null);
     return data;
   }, []);
-
-  const { loading: loadProfileByUserIdLoading, action: loadProfileByUserId } =
-    useLoadingState(loadProfileByUserIdFn);
-
-  // Memoize but allow loadProfileByUserId to update
-  const handleSessionChangeFn = useCallback(
-    async (session: Session | null) => {
-      if (session) {
-        console.log("flag1");
-        await loadProfileByUserId(session.user.id);
-        console.log("flag2");
-      } else {
-        setProfile(null);
-      }
-    },
-    [loadProfileByUserId]
-  );
-
-  const { loading: handleSessionChangeLoading, action: handleSessionChange } =
-    useLoadingState(handleSessionChangeFn);
 
   // Fetch the session once, and subscribe to auth state changes
   useEffect(() => {
     async function fetchAndSetSessionAndProfile() {
       try {
-        const session = await loadSession();
+        const session = await getSession();
         if (session) {
-          await loadProfileByUserId(session.user.id);
+          await getProfileByUserId(session.user.id);
         }
       } catch (error) {
         console.error(error);
@@ -123,65 +121,57 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []); // Run once on mount
 
   useEffect(() => {
+    // Inline the same logic as useLoadingCallback
+    async function handleSessionChange(session: Session | null) {
+      setLoading(true);
+
+      try {
+        if (session) {
+          await getProfileByUserId(session.user.id);
+        } else {
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     handleSessionChange(session);
   }, [session]);
 
-  const { loading: signUpLoading, action: signUp } = useLoadingState(
-    async ({ email, password }: { email: string; password: string }) => {
-      const { data: session, error } = await authHelpers.signUp({
-        email,
-        password,
-      });
+  const signUp = useLoadingCallback(async ({ email, password }: SignInArgs) => {
+    const { data: session, error } = await authHelpers.signUp({
+      email,
+      password,
+    });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      console.log("flag3");
-      setSession(session ?? null);
-      console.log("flag4");
-      if (session) {
-        console.log("flag5");
-        await loadProfileByUserId(session.user.id);
-        console.log("flag6");
-      }
+    setSession(session ?? null);
+    return session;
+  }, setLoading);
 
-      return session;
-    }
-  );
+  const signIn = useLoadingCallback(async ({ email, password }: SignInArgs) => {
+    const { data: session, error } = await authHelpers.signIn({
+      email,
+      password,
+    });
 
-  const { loading: signInLoading, action: signIn } = useLoadingState(
-    async ({ email, password }: { email: string; password: string }) => {
-      const { data: session, error } = await authHelpers.signIn({
-        email,
-        password,
-      });
+    if (error) throw error;
+    if (!session) throw new Error("No session returned from sign in");
 
-      if (error) throw error;
-      if (!session) throw new Error("No session returned from sign in");
+    setSession(session ?? null);
+    return session;
+  }, setLoading);
 
-      setSession(session ?? null);
-      await loadProfileByUserId(session.user.id);
-
-      return session;
-    }
-  );
-
-  const { loading: signOutLoading, action: signOut } = useLoadingState(
-    async () => {
-      const { error } = await authHelpers.signOut();
-      if (error) throw error;
-      setSession(null);
-      setProfile(null);
-    }
-  );
-
-  const loading =
-    !initialized ||
-    loadSessionLoading ||
-    loadProfileByUserIdLoading ||
-    handleSessionChangeLoading ||
-    signInLoading ||
-    signUpLoading ||
-    signOutLoading;
+  const signOut = useLoadingCallback(async () => {
+    const { error } = await authHelpers.signOut();
+    if (error) throw error;
+    setSession(null);
+    setProfile(null);
+  }, setLoading);
 
   const value = useMemo(
     () => ({
@@ -190,7 +180,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signUp,
       session,
       profile,
-      loading,
+      loading: loading || !initialized,
       setProfile,
     }),
     [signIn, signOut, signUp, session, profile, loading]
