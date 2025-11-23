@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   outline: {},
   unstyled: {
-    backgroundColor: "none",
+    backgroundColor: "transparent",
     padding: 0,
   },
   dev: {

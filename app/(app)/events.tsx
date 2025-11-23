@@ -1,11 +1,16 @@
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 
 import { Text } from "@/components";
+import { colours } from "@/styles/tokens";
 
 export default function EventsScreen() {
   return (
-    <View>
+    <ScrollView
+      style={{ backgroundColor: colours.background }}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{}}
+    >
       <Text>Events</Text>
-    </View>
+    </ScrollView>
   );
 }
