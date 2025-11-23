@@ -46,7 +46,7 @@ export function generateFakeUser() {
   // Use Gmail + addressing for local testing
   // All emails go to dev@gmail.com but Supabase sees them as unique
   const email = `dev+${firstName.toLowerCase()}${randomNum}@gmail.com`;
-  const password = `${firstName}${lastName}${randomNum}!`;
+  const password = email; // For ease of debugging
   const name = `${firstName} ${lastName}`;
 
   return {

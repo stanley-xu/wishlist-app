@@ -26,6 +26,24 @@ export default function WelcomeScreen() {
     navigation.setOptions({
       ...largeHeaderStyles,
       title: "Welcome",
+      headerRight: () => (
+        <Button variant="unstyled" size="sm" onPress={handleSubmit(onSubmit)}>
+          Let&apos;s go!
+        </Button>
+      ),
+      headerLeft: () => {
+        const { signOut } = useAuthContext();
+
+        return (
+          <Button
+            variant="unstyled"
+            size="sm"
+            onPress={async () => await signOut()}
+          >
+            Sign out
+          </Button>
+        );
+      },
     });
   }, [navigation]);
 
@@ -112,11 +130,6 @@ export default function WelcomeScreen() {
             />
           )}
         />
-
-        {/* Submit button */}
-        <Button loading={isSubmitting} onPress={handleSubmit(onSubmit)}>
-          Let&apos;s go!
-        </Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );

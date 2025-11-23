@@ -66,41 +66,47 @@ function useLoadingCallback<T, Args extends any[]>(
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const getSession = useCallback(async () => {
     const { data, error } = await auth.getSession();
-    if (error) throw error;
 
     setSession(data ?? null);
-    return data;
+    return { data, error };
   }, []);
 
   const getProfileByUserId = useCallback(async (userId: string) => {
     const { data, error } = await profiles.getByUserId(userId);
-    if (error) throw error;
 
     setProfile(data ?? null);
-    return data;
+    return { data, error };
   }, []);
 
   // Fetch the session once, and subscribe to auth state changes
   useEffect(() => {
-    async function fetchAndSetSessionAndProfile() {
+    async function fetchExistingSessionAndProfile() {
+      console.debug(`[fetchExistingSessionAndProfile]`);
+
+      setLoading(true);
       try {
-        const session = await getSession();
+        const { data: session, error: sessionError } = await getSession();
+        if (sessionError) throw sessionError;
+
         if (session) {
-          await getProfileByUserId(session.user.id);
+          console.debug("session detected");
+          const { data, error } = await getProfileByUserId(session.user.id);
+          if (error) {
+            console.warn(`profile not found: ${error.message}`);
+          }
         }
       } catch (error) {
         console.error(error);
       } finally {
-        setInitialized(true);
+        setLoading(false);
       }
     }
 
-    fetchAndSetSessionAndProfile();
+    fetchExistingSessionAndProfile();
 
     const {
       data: { subscription },
@@ -121,15 +127,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []); // Run once on mount
 
   useEffect(() => {
-    // Inline the same logic as useLoadingCallback
+    // Handling loading states manually for now
     async function handleSessionChange(session: Session | null) {
-      setLoading(true);
+      console.debug(
+        `[handleSessionChange] received session: ${session?.user.id}`
+      );
 
+      setLoading(true);
       try {
         if (session) {
-          await getProfileByUserId(session.user.id);
-        } else {
-          setProfile(null);
+          console.debug("session detected");
+          const { data, error } = await getProfileByUserId(session.user.id);
+          if (error) {
+            console.warn(`profile not found: ${error.message}`);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -180,7 +191,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signUp,
       session,
       profile,
-      loading: loading || !initialized,
+      loading,
       setProfile,
     }),
     [signIn, signOut, signUp, session, profile, loading]
