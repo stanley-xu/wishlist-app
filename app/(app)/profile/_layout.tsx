@@ -1,4 +1,5 @@
 import { Button } from "@/components";
+import { useAuthContext } from "@/lib/auth";
 import { colours } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Stack } from "expo-router";
@@ -16,6 +17,16 @@ const ShareButton = () => {
   );
 };
 
+const LogoutButton = () => {
+  const { signOut } = useAuthContext();
+
+  return (
+    <Button variant="unstyled" size="sm" onPress={async () => await signOut()}>
+      <Ionicons name="log-out-outline" size={24} />
+    </Button>
+  );
+};
+
 export default function ProfileLayout() {
   return (
     <Stack>
@@ -27,6 +38,7 @@ export default function ProfileLayout() {
           headerTransparent: true,
           headerStyle: { backgroundColor: colours.surface },
           headerRight: () => <ShareButton />,
+          headerLeft: () => <LogoutButton />,
         }}
       />
     </Stack>
