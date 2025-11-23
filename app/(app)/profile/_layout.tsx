@@ -1,6 +1,5 @@
 import { IconButton } from "@/components/Button";
 import { useAuthContext } from "@/lib/auth";
-import { colours } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { NativeStackHeaderItemProps } from "@react-navigation/native-stack";
 import { Stack } from "expo-router";
@@ -57,7 +56,6 @@ export default function ProfileLayout() {
           headerShown: true,
           title: "",
           headerTransparent: true,
-          headerStyle: { backgroundColor: colours.surface },
           headerRight: () => <ShareButton />,
           headerLeft: () => <LogoutButton />,
         }}

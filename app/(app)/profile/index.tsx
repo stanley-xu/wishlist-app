@@ -79,7 +79,6 @@ export default function ProfileScreen() {
 
   const profileCardSection = (
     <Card
-      variant="elevated"
       corners="squared"
       style={{
         borderBottomStartRadius: borderRadius.lg,
@@ -176,21 +175,38 @@ export default function ProfileScreen() {
   );
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Pressable onPress={() => Keyboard.dismiss()}>
-        {profileCardSection}
-      </Pressable>
-    </ScrollView>
+    <View style={styles.container}>
+      <Overlay />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Pressable onPress={() => Keyboard.dismiss()}>
+          {profileCardSection}
+        </Pressable>
+      </ScrollView>
+    </View>
   );
 }
 
+const Overlay = () => (
+  <View
+    style={{
+      position: "absolute", // Does not require positioned parent in RN
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: colours.surface,
+      height: "30%",
+    }}
+  />
+);
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colours.background,
+    flex: 1,
   },
   fieldElement: {
     borderWidth: 1, // Used for consistent layout spacing in both regular and editing states
