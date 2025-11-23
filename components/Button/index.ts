@@ -1,3 +1,3 @@
 export * from "./Button";
-export { HeaderButton } from "./Header/HeaderButton";
+export { IconButton } from "./Icon/IconButton";
 export { Logout } from "./Logout/Logout";

@@ -1,12 +1,17 @@
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import { Card } from "@/components";
+import Avatar from "@/components/Avatar/Avatar";
+import { profiles } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
-import { borderRadius, colours, palette, spacing } from "@/styles/tokens";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { borderRadius, colours, spacing } from "@/styles/tokens";
+import { useState } from "react";
 
 export default function ProfileScreen() {
   const { profile } = useAuthContext();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    profile?.avatar_url ?? null
+  );
 
   const profileCardSection = (
     <Card
@@ -18,19 +23,15 @@ export default function ProfileScreen() {
       }}
     >
       <View style={styles.profileHeader}>
-        <View style={[styles.profileAvatar, { position: "relative" }]}>
-          {profile?.avatar_url ? (
-            <Image source={{ uri: profile?.avatar_url }} />
-          ) : (
-            <Ionicons
-              name="person-outline"
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-              }}
-            />
-          )}
+        <View style={styles.profileAvatar}>
+          <Avatar
+            url={avatarUrl}
+            size={150}
+            onUpload={(url) => {
+              setAvatarUrl(url);
+              profiles.updateProfile({ avatar_url: url });
+            }}
+          />
         </View>
         <View style={styles.profileName}>
           <Card.Title>{profile?.name}</Card.Title>
@@ -63,10 +64,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   profileAvatar: {
-    width: 150,
-    height: 150,
-    borderRadius: borderRadius.full,
-    backgroundColor: palette.white,
     marginBottom: spacing.md,
   },
   profileName: {},

@@ -23,6 +23,8 @@ import {
   ParticipantSchema,
   ProfileSchema,
   UpdateEventSchema,
+  UpdateProfile,
+  UpdateProfileSchema,
   WishlistSchema,
   type CreateEvent,
   type CreateParticipant,
@@ -290,8 +292,96 @@ export const profiles = {
       return { data: null, error: error as Error };
     }
   },
+
+  /**
+   * Update the current user's profile
+   * @param data - The profile data to update
+   * Note: Only the image path is used and stored in supabase
+   * @returns The updated profile
+   */
+  async updateProfile(data: UpdateProfile): Promise<DbResult<Profile>> {
+    try {
+      const { data: currentUser, error: getCurrentUserError } =
+        await auth.getCurrentUser();
+
+      if (getCurrentUserError) throw getCurrentUserError;
+      if (!currentUser) throw new Error("No current user");
+
+      const validated = UpdateProfileSchema.parse(data);
+      const { data: updatedProfile, error: updateProfileError } = await supabase
+        .from("profiles")
+        .update(validated)
+        .eq("id", currentUser.id)
+        .select()
+        .single();
+
+      if (updateProfileError) throw updateProfileError;
+      if (!updatedProfile) throw new Error("No updated profile");
+
+      return { data: updatedProfile, error: null };
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      return { data: null, error: error as Error };
+    }
+  },
 };
 
+// ============================================================================
+// Avatar Images
+// ============================================================================
+
+export const avatarImage = {
+  /**
+   * Get avatar image by path
+   */
+  async getByPath(path: string): Promise<DbResult<Blob | null>> {
+    try {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .download(path);
+
+      if (error) throw error;
+
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error fetching avatar image:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Upload an avatar image
+   */
+  async upload(
+    imageUri: string,
+    imageMimeType?: string
+  ): Promise<DbResult<{ id: string; path: string; fullPath: string } | null>> {
+    console.debug(
+      `[upload] imageUri: ${imageUri}, imageMimeType: ${imageMimeType}`
+    );
+
+    try {
+      const arraybuffer = await fetch(imageUri).then((res) =>
+        res.arrayBuffer()
+      );
+      const fileExt = imageUri.split(".").pop()?.toLowerCase() ?? "jpeg";
+      const path = `${Date.now()}.${fileExt}`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, arraybuffer, {
+          contentType: imageMimeType ?? "image/jpeg",
+        });
+
+      if (uploadError) throw uploadError;
+
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error uploading avatar image:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+};
 // ============================================================================
 // Events - Full CRUD example
 // ============================================================================

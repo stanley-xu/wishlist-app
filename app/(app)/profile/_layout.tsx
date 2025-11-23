@@ -1,4 +1,4 @@
-import { HeaderButton } from "@/components/Button";
+import { IconButton } from "@/components/Button";
 import { useAuthContext } from "@/lib/auth";
 import { colours } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -8,9 +8,9 @@ import { Alert } from "react-native";
 
 const ShareButton = (_props: NativeStackHeaderItemProps) => {
   return (
-    <HeaderButton onPress={() => Alert.alert("Share pressed")}>
+    <IconButton onPress={() => Alert.alert("Share pressed")}>
       <Ionicons name="share-outline" size={24} />
-    </HeaderButton>
+    </IconButton>
   );
 };
 
@@ -18,9 +18,9 @@ const LogoutButton = () => {
   const { signOut } = useAuthContext();
 
   return (
-    <HeaderButton onPress={async () => await signOut()}>
+    <IconButton onPress={async () => await signOut()}>
       <Ionicons name="log-out-outline" size={24} />
-    </HeaderButton>
+    </IconButton>
   );
 };
 
