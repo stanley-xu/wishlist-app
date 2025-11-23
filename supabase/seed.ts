@@ -26,13 +26,15 @@ const testUsers = [
     id: "00000000-0000-0000-0000-000000000001",
     email: "dev@example.com",
     password: "dev@example.com",
-    name: "Dev User",
+    name: "Dev",
+    bio: "You break, I fix",
   },
   {
     id: "00000000-0000-0000-0000-000000000002",
     email: "alice@example.com",
     password: "alice@example.com",
     name: "Alice",
+    bio: "Hi there, I'm Alice ^_^",
   },
 ];
 
@@ -65,6 +67,7 @@ async function seed() {
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
       name: user.name,
+      bio: user.bio,
     });
 
     if (profileError) {
