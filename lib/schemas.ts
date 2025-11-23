@@ -19,11 +19,11 @@ import { z } from "zod";
  * Note: email is stored in auth.users, not in profiles table
  */
 export const ProfileSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   name: z.string().min(1),
   bio: z.string().nullable().optional(),
-  avatar_url: z.string().url().nullable().optional(),
-  background_url: z.string().url().nullable().optional(),
+  avatar_url: z.url().nullable().optional(),
+  background_url: z.url().nullable().optional(),
   phone: z.string().nullable().optional(),
   created_at: z.string(), // Postgres timestamp, various formats accepted
   updated_at: z.string(), // Postgres timestamp, various formats accepted
@@ -36,8 +36,8 @@ export const CreateProfileSchema = z.object({
   // id: z.string().uuid(),
   name: z.string().min(2, "Name must be at least 2 characters"),
   bio: z.string().optional(),
-  avatar_url: z.string().url().optional(),
-  background_url: z.string().url().optional(),
+  avatar_url: z.url().optional(),
+  background_url: z.url().optional(),
   phone: z.string().optional(),
 });
 
@@ -47,8 +47,8 @@ export const CreateProfileSchema = z.object({
 export const UpdateProfileSchema = z.object({
   name: z.string().min(2).optional(),
   bio: z.string().optional(),
-  avatar_url: z.string().url().optional(),
-  background_url: z.string().url().optional(),
+  avatar_url: z.url({ protocol: /^file$/ }).optional(),
+  background_url: z.url().optional(),
   phone: z.string().optional(),
 });
 
@@ -62,10 +62,10 @@ export type UpdateProfile = z.infer<typeof UpdateProfileSchema>;
 // ============================================================================
 
 export const EventSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
   description: z.string().nullable(),
-  host_id: z.string().uuid(),
+  host_id: z.uuid(),
   exchange_date: z.string(), // ISO date string from Postgres
   join_code: z.string(),
   is_active: z.boolean(),
@@ -76,7 +76,7 @@ export const EventSchema = z.object({
 export const CreateEventSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
-  exchange_date: z.string().date(), // YYYY-MM-DD format
+  exchange_date: z.iso.date(), // YYYY-MM-DD format
   join_code: z
     .string()
     .length(6)
@@ -86,7 +86,7 @@ export const CreateEventSchema = z.object({
 export const UpdateEventSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
-  exchange_date: z.string().date().optional(),
+  exchange_date: z.iso.date().optional(),
   is_active: z.boolean().optional(),
 });
 
@@ -99,15 +99,15 @@ export type UpdateEvent = z.infer<typeof UpdateEventSchema>;
 // ============================================================================
 
 export const ParticipantSchema = z.object({
-  id: z.string().uuid(),
-  event_id: z.string().uuid(),
-  user_id: z.string().uuid(),
+  id: z.uuid(),
+  event_id: z.uuid(),
+  user_id: z.uuid(),
   joined_at: z.string(), // Postgres timestamp
 });
 
 export const CreateParticipantSchema = z.object({
-  event_id: z.string().uuid(),
-  user_id: z.string().uuid(),
+  event_id: z.uuid(),
+  user_id: z.uuid(),
 });
 
 export type Participant = z.infer<typeof ParticipantSchema>;
@@ -121,18 +121,18 @@ export type CreateParticipant = z.infer<typeof CreateParticipantSchema>;
  * Individual wishlist item
  */
 export const WishlistItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
-  url: z.string().url().optional(),
+  url: z.url().optional(),
   price: z.number().positive().optional(),
-  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  priority: z.enum(["low", "medium", "high"]).prefault("medium"),
 });
 
 export const WishlistSchema = z.object({
-  id: z.string().uuid(),
-  event_id: z.string().uuid(),
-  user_id: z.string().uuid(),
+  id: z.uuid(),
+  event_id: z.uuid(),
+  user_id: z.uuid(),
   items: z.array(WishlistItemSchema),
   updated_at: z.string(), // Postgres timestamp
 });
@@ -140,9 +140,9 @@ export const WishlistSchema = z.object({
 export const CreateWishlistItemSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
-  url: z.string().url().optional(),
+  url: z.url().optional(),
   price: z.number().positive().optional(),
-  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  priority: z.enum(["low", "medium", "high"]).prefault("medium"),
 });
 
 export type WishlistItem = z.infer<typeof WishlistItemSchema>;
@@ -154,17 +154,17 @@ export type CreateWishlistItem = z.infer<typeof CreateWishlistItemSchema>;
 // ============================================================================
 
 export const AssignmentSchema = z.object({
-  id: z.string().uuid(),
-  event_id: z.string().uuid(),
-  giver_id: z.string().uuid(),
-  receiver_id: z.string().uuid(),
+  id: z.uuid(),
+  event_id: z.uuid(),
+  giver_id: z.uuid(),
+  receiver_id: z.uuid(),
   created_at: z.string(), // Postgres timestamp
 });
 
 export const CreateAssignmentSchema = z.object({
-  event_id: z.string().uuid(),
-  giver_id: z.string().uuid(),
-  receiver_id: z.string().uuid(),
+  event_id: z.uuid(),
+  giver_id: z.uuid(),
+  receiver_id: z.uuid(),
 });
 
 export type Assignment = z.infer<typeof AssignmentSchema>;
