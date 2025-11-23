@@ -165,25 +165,72 @@ export type Database = {
         }
         Relationships: []
       }
+      wishlist_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          order: number
+          status: string
+          updated_at: string
+          url: string | null
+          wishlist_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          order?: number
+          status?: string
+          updated_at?: string
+          url?: string | null
+          wishlist_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          order?: number
+          status?: string
+          updated_at?: string
+          url?: string | null
+          wishlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_items_wishlist_id_fkey"
+            columns: ["wishlist_id"]
+            isOneToOne: false
+            referencedRelation: "wishlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlists: {
         Row: {
-          event_id: string
+          created_at: string
+          event_id: string | null
           id: string
-          items: Json
+          name: string
           updated_at: string
           user_id: string
         }
         Insert: {
-          event_id: string
+          created_at?: string
+          event_id?: string | null
           id?: string
-          items?: Json
+          name: string
           updated_at?: string
           user_id: string
         }
         Update: {
-          event_id?: string
+          created_at?: string
+          event_id?: string | null
           id?: string
-          items?: Json
+          name?: string
           updated_at?: string
           user_id?: string
         }
