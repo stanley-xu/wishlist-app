@@ -27,21 +27,17 @@ export default function WelcomeScreen() {
       ...largeHeaderStyles,
       title: "Welcome",
       headerRight: () => (
-        <Button variant="unstyled" size="sm" onPress={handleSubmit(onSubmit)}>
-          Let&apos;s go!
-        </Button>
+        <Button.Unstyled onPress={handleSubmit(onSubmit)}>
+          <Text variant="bold">Let&apos;s go!</Text>
+        </Button.Unstyled>
       ),
       headerLeft: () => {
         const { signOut } = useAuthContext();
 
         return (
-          <Button
-            variant="unstyled"
-            size="sm"
-            onPress={async () => await signOut()}
-          >
-            Sign out
-          </Button>
+          <Button.Unstyled onPress={async () => await signOut()}>
+            <Text variant="bold">Sign out</Text>
+          </Button.Unstyled>
         );
       },
     });

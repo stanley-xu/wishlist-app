@@ -1,4 +1,4 @@
-import { colours, spacing } from "@/styles/tokens";
+import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { ReactNode } from "react";
 import {
   ActivityIndicator,
@@ -8,11 +8,16 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import {
+  SurfaceColourContext,
+  useSurfaceColourContext,
+} from "../SurfaceColourContext";
+import { UnstyledButton } from "./Unstyled/Unstyled";
 
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
-  variant?: "primary" | "outline" | "unstyled" | "dev";
+  variant?: "primary" | "outline" | "dev";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -23,37 +28,44 @@ export function Button({
   children,
   onPress,
   variant = "primary",
-  size,
+  size = "md",
   disabled = false,
   loading = false,
   style: styleOverrides,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  let textColour = useSurfaceColourContext()?.textColour ?? text.black;
+
+  if (variant === "primary") {
+    textColour = text.white;
+  }
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.base,
-        styles[variant],
-        size && styles[size],
-        isDisabled && styles.disabled,
-        styleOverrides,
-      ]}
-      onPress={onPress}
-      disabled={isDisabled}
-      activeOpacity={0.7}
-    >
-      <View style={styles.contentContainer}>
-        {loading && (
-          <ActivityIndicator
-            size="small"
-            color={colours.background}
-            style={styles.spinner}
-          />
-        )}
-        {children}
-      </View>
-    </TouchableOpacity>
+    <SurfaceColourContext.Provider value={{ textColour }}>
+      <TouchableOpacity
+        style={[
+          styles.base,
+          styles[variant],
+          styles[size],
+          isDisabled && styles.disabled,
+          styleOverrides,
+        ]}
+        onPress={onPress}
+        disabled={isDisabled}
+        activeOpacity={0.7}
+      >
+        <View style={styles.contentContainer}>
+          {loading && (
+            <ActivityIndicator
+              size="small"
+              color={colours.background}
+              style={styles.spinner}
+            />
+          )}
+          {children}
+        </View>
+      </TouchableOpacity>
+    </SurfaceColourContext.Provider>
   );
 }
 
@@ -63,6 +75,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: borderRadius.md,
   },
 
   // Variants
@@ -111,3 +124,5 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
+
+Button.Unstyled = UnstyledButton;

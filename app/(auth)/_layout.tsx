@@ -1,6 +1,5 @@
-import { Button } from "@/components";
+import { Button, Text } from "@/components";
 import { largeHeaderStyles } from "@/styles/styles";
-import { colours } from "@/styles/tokens";
 import { router, Stack } from "expo-router";
 
 export default function AuthLayout() {
@@ -13,14 +12,12 @@ export default function AuthLayout() {
           // TODO: fun randomized greetings
           title: "Welcome, fellow gifter.",
           headerRight: () => (
-            <Button
-              variant="unstyled"
-              size="sm"
+            <Button.Unstyled
               onPress={() => router.push("/(auth)/register")}
-              textStyle={{ color: colours.background }}
+              size="md"
             >
-              Sign up
-            </Button>
+              <Text variant="bold">Sign up</Text>
+            </Button.Unstyled>
           ),
         }}
       />
