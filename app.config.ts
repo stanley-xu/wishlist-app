@@ -7,11 +7,13 @@ export default {
     slug: "giftful",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/icons/icon.png",
     scheme: "giftful",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
+      icon: "./assets/giftful.icon",
+      bundleIdentifier: "io.giftful",
       supportsTablet: true,
     },
     android: {

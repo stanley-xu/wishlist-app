@@ -3,7 +3,7 @@
 # Note: this only works in my (@stanley-xu's) dev machine!
 
 # Check if Colima is running
-if ! colima status 2>/dev/null | grep -q "Running"; then
+if ! colima status 2>&1 | grep -qi "is running"; then
   echo "❌ Colima is not running"
   echo "   Start it with: colima start"
   exit 1
