@@ -10,9 +10,16 @@ export interface TextProps extends RNTextProps {
   variant?: "regular" | "bold" | "italic" | "error" | "button";
 }
 
-export function Text({ variant = "regular", ...rest }: TextProps) {
-  const textColour = useSurfaceColourContext()?.textColour;
-  return <RNText style={[styles[variant], { color: textColour }]} {...rest} />;
+export function Text({ variant = "regular", style, ...rest }: TextProps) {
+  let textColour = useSurfaceColourContext()?.textColour;
+
+  if (variant === "error") {
+    textColour = colours.error;
+  }
+
+  return (
+    <RNText style={[styles[variant], { color: textColour }, style]} {...rest} />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -27,6 +34,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colours.error,
+    fontWeight: typography.fontWeight.bold,
   },
 
   button: {

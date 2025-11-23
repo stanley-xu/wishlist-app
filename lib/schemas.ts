@@ -23,7 +23,6 @@ export const ProfileSchema = z.object({
   name: z.string().min(1),
   bio: z.string().nullable().optional(),
   avatar_url: z.string().nullable().optional(),
-  background_url: z.url().nullable().optional(),
   phone: z.string().nullable().optional(),
   created_at: z.string(), // Postgres timestamp, various formats accepted
   updated_at: z.string(), // Postgres timestamp, various formats accepted
@@ -37,7 +36,6 @@ export const CreateProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   bio: z.string().optional(),
   avatar_url: z.string().optional(),
-  background_url: z.url().optional(),
   phone: z.string().optional(),
 });
 
@@ -45,10 +43,9 @@ export const CreateProfileSchema = z.object({
  * Schema for updating profile (all fields optional)
  */
 export const UpdateProfileSchema = z.object({
-  name: z.string().min(2).optional(),
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
   bio: z.string().optional(),
   avatar_url: z.string().optional(),
-  background_url: z.url().optional(),
   phone: z.string().optional(),
 });
 

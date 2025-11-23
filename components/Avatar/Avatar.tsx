@@ -126,7 +126,7 @@ export default function Avatar({
       <View style={{ position: "absolute", bottom: 0, right: 0 }}>
         <IconButton
           onPress={uploadAvatar}
-          disabled={uploading}
+          loading={uploading}
           style={{ minWidth: 44 }}
         >
           <Ionicons name="add-circle-sharp" size={32} color={colours.accent} />

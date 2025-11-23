@@ -9,12 +9,13 @@ import { useState } from "react";
 import {
   StyleProp,
   StyleSheet,
-  Text,
   TextInput,
   TextInputProps,
   TextStyle,
   View,
 } from "react-native";
+import { Text } from "../Text";
+import { Unstyled } from "./Unstyled";
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -57,14 +58,18 @@ export function Input({
         {...props}
       />
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <Text variant="error" style={styles.textField}>
+          {error}
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm, // To create space for textField
   },
 
   label: {
@@ -106,9 +111,10 @@ const styles = StyleSheet.create({
     borderColor: colours.error,
   },
 
-  errorText: {
-    fontSize: typography.fontSize.sm,
-    color: colours.error,
-    marginTop: spacing.xs,
+  // Subcomponents
+  textField: {
+    marginTop: spacing.sm,
   },
 });
+
+Input.Unstyled = Unstyled;
