@@ -1,4 +1,11 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Card, Input } from "@/components";
 import Avatar from "@/components/Avatar/Avatar";
@@ -172,8 +179,11 @@ export default function ProfileScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
     >
-      {profileCardSection}
+      <Pressable onPress={() => Keyboard.dismiss()}>
+        {profileCardSection}
+      </Pressable>
     </ScrollView>
   );
 }
