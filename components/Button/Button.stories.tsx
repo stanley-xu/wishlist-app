@@ -7,7 +7,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "unstyled", "dev"],
+      options: ["primary", "outline", "unstyled", "dev"],
     },
     size: {
       control: "select",
@@ -36,6 +36,13 @@ export const Primary: Story = {
   args: {
     variant: "primary",
     children: "Primary Button",
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    variant: "outline",
+    children: "Outline Button",
   },
 };
 
