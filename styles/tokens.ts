@@ -8,7 +8,8 @@ export const palette = {
 } as const;
 
 export const colours = {
-  background: palette.offwhite,
+  background: palette.white,
+  backgroundWarm: palette.offwhite,
   surface: palette.primary1,
   surfaceWarm: palette.primary2,
   surfaceDark: palette.primary3,

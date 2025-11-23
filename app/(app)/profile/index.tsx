@@ -175,38 +175,24 @@ export default function ProfileScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      <Overlay />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Pressable onPress={() => Keyboard.dismiss()}>
-          {profileCardSection}
-        </Pressable>
-      </ScrollView>
-    </View>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      style={{ backgroundColor: colours.surface }}
+    >
+      <Pressable onPress={() => Keyboard.dismiss()}>
+        {profileCardSection}
+        <View style={styles.content}></View>
+      </Pressable>
+    </ScrollView>
   );
 }
 
-const Overlay = () => (
-  <View
-    style={{
-      position: "absolute", // Does not require positioned parent in RN
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: colours.surface,
-      height: "30%",
-    }}
-  />
-);
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  content: {
+    backgroundColor: colours.background,
+    minHeight: "100%",
   },
   fieldElement: {
     borderWidth: 1, // Used for consistent layout spacing in both regular and editing states
