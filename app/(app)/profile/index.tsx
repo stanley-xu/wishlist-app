@@ -9,9 +9,17 @@ import { useState } from "react";
 
 export default function ProfileScreen() {
   const { profile } = useAuthContext();
+  if (!profile) {
+    throw new Error("[Panic] rendering ProfileScreen without a profile");
+  }
+
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    profile?.avatar_url ?? null
+    profile.avatar_url ?? null
   );
+  const abbreviatedName = profile.name
+    .split(" ")
+    .map((name) => name[0].toUpperCase())
+    .join("");
 
   const profileCardSection = (
     <Card
@@ -31,6 +39,7 @@ export default function ProfileScreen() {
               setAvatarUrl(url);
               profiles.updateProfile({ avatar_url: url });
             }}
+            fallbackText={abbreviatedName}
           />
         </View>
         <View style={styles.profileName}>

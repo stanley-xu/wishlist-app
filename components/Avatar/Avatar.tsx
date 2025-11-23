@@ -1,6 +1,7 @@
+import { Text } from "@/components";
 import { IconButton } from "@/components/Button";
 import { avatarImage } from "@/lib/api";
-import { borderRadius, colours, spacing } from "@/styles/tokens";
+import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
@@ -10,9 +11,15 @@ interface Props {
   size: number;
   url: string | null;
   onUpload: (filePath: string) => void;
+  fallbackText?: string;
 }
 
-export default function Avatar({ url, size = 150, onUpload }: Props) {
+export default function Avatar({
+  url,
+  size = 150,
+  onUpload,
+  fallbackText,
+}: Props) {
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const avatarSize = { height: size, width: size };
@@ -103,7 +110,18 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
           style={[avatarSize, styles.avatar, styles.image]}
         />
       ) : (
-        <View style={[avatarSize, styles.avatar, styles.noImage]} />
+        <View style={[avatarSize, styles.avatar, styles.noImage]}>
+          {fallbackText && (
+            <Text
+              variant="bold"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={{ color: text.white, fontSize: size * 0.5 }}
+            >
+              {fallbackText}
+            </Text>
+          )}
+        </View>
       )}
       <View style={{ position: "absolute", bottom: 0, right: 0 }}>
         <IconButton
@@ -130,5 +148,7 @@ const styles = StyleSheet.create({
   },
   noImage: {
     backgroundColor: colours.surfaceDark,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
