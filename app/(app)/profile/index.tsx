@@ -29,13 +29,20 @@ export default function ProfileScreen() {
     null
   );
 
-  const { control, getValues, trigger } = useForm<ProfileForm>({
+  const {
+    control,
+    getValues,
+    trigger,
+    formState: { errors: formErrors },
+  } = useForm<ProfileForm>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
       name: profile.name,
       bio: profile.bio ?? "",
     },
   });
+
+  const hasFormErrors = Object.keys(formErrors).length > 0;
 
   const handleSave = async (field: keyof ProfileForm) => {
     const isValid = await trigger(field);
@@ -106,11 +113,13 @@ export default function ProfileScreen() {
                     styles.fieldElement,
                     styles.profileInput,
                     isDirty && { borderColor: text.black },
+                    error && { borderColor: colours.error, borderWidth: 2 },
                   ]}
                 />
               ) : (
                 <TouchableOpacity
                   onPress={() => setEditingField("name")}
+                  disabled={hasFormErrors}
                   style={styles.fieldElement}
                 >
                   <Card.Title>{value}</Card.Title>
@@ -139,11 +148,13 @@ export default function ProfileScreen() {
                   styles.fieldElement,
                   styles.profileInput,
                   isDirty && { borderColor: text.black },
+                  error && { borderColor: colours.error, borderWidth: 2 },
                 ]}
               />
             ) : (
               <TouchableOpacity
                 onPress={() => setEditingField("bio")}
+                disabled={hasFormErrors}
                 style={styles.fieldElement}
               >
                 <Card.Text variant="italic">

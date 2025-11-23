@@ -25,6 +25,7 @@ export function Unstyled({ error, size, style, ...props }: UnstyledInputProps) {
 
 const styles = StyleSheet.create({
   container: {
+    // TODO: provide enough default spacing so there's no shifting when error text is rendered
     // marginBottom: spacing.sm, // To create space for textField
   },
 
