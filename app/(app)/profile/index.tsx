@@ -1,5 +1,5 @@
+import { useCallback, useEffect, useState } from "react";
 import {
-  Animated,
   Keyboard,
   Pressable,
   ScrollView,
@@ -7,24 +7,29 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
 import { Button, Card, Input, Text } from "@/components";
 import Avatar from "@/components/Avatar/Avatar";
 import { cardTitleStyles } from "@/components/Card/Title";
 import { profiles } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
+import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import { useWishlists } from "@/lib/hooks/useWishlists";
 import { UpdateProfile, UpdateProfileSchema } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
+import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useFocusEffect, useNavigation } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
 
-const PROFILE_CARD_HEIGHT = 280; // Approximate height of profile card
-const COLLAPSED_THRESHOLD = PROFILE_CARD_HEIGHT * 0.5;
+const PROFILE_CARD_HEIGHT = 320;
 
 const ProfileFormSchema = UpdateProfileSchema.pick({ name: true, bio: true });
 type ProfileForm = z.infer<typeof ProfileFormSchema>;
@@ -36,9 +41,19 @@ export default function ProfileScreen() {
   }
 
   const navigation = useNavigation();
-  // Animated.ScrollView ref forwards to underlying ScrollView
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollY = useRef(new Animated.Value(PROFILE_CARD_HEIGHT)).current;
+  const { top, bottom } = useSafeAreaInsets();
+
+  // Nav header height = safe area top + standard header (44-56px typically)
+  // const headerOffset = top;
+
+  const {
+    gesture,
+    animatedProfileCardStyle,
+    animatedSpacerStyle,
+    animatedChevronStyle,
+    toggleExpand,
+    isCollapsed,
+  } = useCollapsibleHeader({ cardHeight: PROFILE_CARD_HEIGHT });
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     profile.avatar_url ?? null
@@ -46,65 +61,42 @@ export default function ProfileScreen() {
 
   const { wishlists, refetch: refetchWishlists } = useWishlists();
 
-  // Refetch wishlists when screen gains focus (e.g., after adding item)
   useFocusEffect(
     useCallback(() => {
       refetchWishlists();
     }, [refetchWishlists])
   );
 
-  const { bottom } = useSafeAreaInsets();
-
   const abbreviatedName = profile.name
     .split(" ")
     .map((name) => name[0].toUpperCase())
     .join("");
 
-  // Toggle expand/collapse
-  const toggleExpand = useCallback(() => {
-    const currentOffset = (scrollY as any)._value;
-    const targetOffset =
-      currentOffset > COLLAPSED_THRESHOLD ? 0 : PROFILE_CARD_HEIGHT;
-
-    scrollViewRef.current?.scrollTo({
-      y: targetOffset,
-      animated: true,
-    });
-  }, [scrollY]);
-
-  // Header opacity interpolation (shows when collapsed)
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, COLLAPSED_THRESHOLD, PROFILE_CARD_HEIGHT],
-    outputRange: [0, 0, 1],
-    extrapolate: "clamp",
-  });
-
-  // Set up navigation header with collapsed view
   useEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
-        <Animated.View
-          style={[styles.collapsedHeader, { opacity: headerOpacity }]}
+        <TouchableOpacity
+          onPress={toggleExpand}
+          style={styles.collapsedHeaderContent}
         >
-          <TouchableOpacity
-            onPress={toggleExpand}
-            style={styles.collapsedHeaderContent}
-          >
-            <Avatar url={avatarUrl} size={32} fallbackText={abbreviatedName} />
-            <Text style={styles.collapsedHeaderName}>{profile.name}</Text>
-          </TouchableOpacity>
-        </Animated.View>
+          <Text style={styles.collapsedHeaderName}>{profile.name}</Text>
+          <Animated.View style={animatedChevronStyle}>
+            <Feather name="chevron-up" size={20} color={text.black} />
+          </Animated.View>
+        </TouchableOpacity>
       ),
+      headerTransparent: false,
+      headerStyle: {
+        backgroundColor: colours.surface,
+      },
     });
   }, [
     navigation,
-    avatarUrl,
-    abbreviatedName,
     profile.name,
-    headerOpacity,
+    isCollapsed,
     toggleExpand,
+    animatedChevronStyle,
   ]);
-
 
   const [editingField, setEditingField] = useState<keyof UpdateProfile | null>(
     null
@@ -132,15 +124,12 @@ export default function ProfileScreen() {
     const value = getValues(field);
     setEditingField(null);
 
-    // Optimistic update
     const previousProfile = profile;
     setProfile({ ...profile, [field]: value });
 
-    // Persist to network
     try {
       await profiles.updateProfile({ [field]: value });
     } catch (error) {
-      // Rollback on error
       setProfile(previousProfile);
       console.error(error);
     }
@@ -152,6 +141,7 @@ export default function ProfileScreen() {
       style={{
         borderBottomStartRadius: borderRadius.lg,
         borderBottomEndRadius: borderRadius.lg,
+        height: "100%",
       }}
     >
       <View style={styles.profileHeader}>
@@ -167,7 +157,6 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {/* Editable Name */}
         <View style={styles.profileName}>
           <Controller
             control={control}
@@ -204,7 +193,6 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {/* Editable Bio */}
         <Controller
           control={control}
           name="bio"
@@ -275,35 +263,36 @@ export default function ProfileScreen() {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        contentInsetAdjustmentBehavior="automatic"
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "white" }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
-        style={{ backgroundColor: colours.surface }}
-        contentOffset={{ x: 0, y: PROFILE_CARD_HEIGHT }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
+        style={{ backgroundColor: colours.background }}
       >
         <Pressable onPress={() => Keyboard.dismiss()}>
-          {profileCardSection}
+          <Animated.View style={animatedSpacerStyle} />
           <View style={styles.content}>{wishlistSection}</View>
         </Pressable>
-      </Animated.ScrollView>
-      <View
-        style={[
-          styles.bottomButton,
-          { bottom: bottom + 60 }, // 60 for tab bar height
-        ]}
-      >
+      </ScrollView>
+
+      <GestureDetector gesture={gesture}>
+        <Animated.View
+          style={[
+            styles.profileCardContainer,
+            { top: 0 },
+            animatedProfileCardStyle,
+          ]}
+        >
+          {profileCardSection}
+        </Animated.View>
+      </GestureDetector>
+
+      <View style={[styles.bottomButton, { bottom: bottom + 60 }]}>
         <Button onPress={() => router.push("/add-item")}>
           <Text>Add Item</Text>
         </Button>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -317,10 +306,6 @@ const styles = StyleSheet.create({
     left: spacing.md,
     right: spacing.md,
   },
-  collapsedHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   collapsedHeaderContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -332,17 +317,23 @@ const styles = StyleSheet.create({
     color: text.black,
   },
   fieldElement: {
-    borderWidth: 1, // Used for consistent layout spacing in both regular and editing states
+    borderWidth: 1,
     borderColor: "transparent",
     minWidth: 150,
     padding: spacing.sm,
     alignItems: "center",
     textAlign: "center",
   },
+  profileCardContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: PROFILE_CARD_HEIGHT,
+  },
   profileHeader: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: -spacing.xl,
   },
   profileAvatar: {
     marginBottom: spacing.md,
@@ -390,6 +381,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     opacity: 0.5,
     marginTop: spacing.xs,
-    textAlign: "center",
   },
 });
