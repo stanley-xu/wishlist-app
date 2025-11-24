@@ -40,4 +40,7 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+# Claude
 .claude/settings.local.json
+.mcp.json
