@@ -43,9 +43,6 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const { top, bottom } = useSafeAreaInsets();
 
-  // Nav header height = safe area top + standard header (44-56px typically)
-  // const headerOffset = top;
-
   const {
     gesture,
     animatedProfileCardStyle,
@@ -67,6 +64,8 @@ export default function ProfileScreen() {
     }, [refetchWishlists])
   );
 
+  const firstName = profile.name.split(" ")[0];
+
   const abbreviatedName = profile.name
     .split(" ")
     .map((name) => name[0].toUpperCase())
@@ -79,7 +78,7 @@ export default function ProfileScreen() {
           onPress={toggleExpand}
           style={styles.collapsedHeaderContent}
         >
-          <Text style={styles.collapsedHeaderName}>{profile.name}</Text>
+          <Text style={styles.collapsedHeaderName}>{firstName}</Text>
           <Animated.View style={animatedChevronStyle}>
             <Feather name="chevron-up" size={20} color={text.black} />
           </Animated.View>
