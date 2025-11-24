@@ -10,6 +10,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
+import { useState } from "react";
 
 interface WishlistItemProps {
   item: WishlistItem;
@@ -19,8 +20,10 @@ interface WishlistItemProps {
   variant?: "neutral" | "warm" | "elevated";
 }
 
-const SWIPE_THRESHOLD = 80;
-const SWIPE_ACTION_THRESHOLD = 120;
+const SWIPE_THRESHOLD = 60;
+const SWIPE_OPEN_POSITION = 80;
+
+type SwipeState = "closed" | "swipedLeft" | "swipedRight";
 
 export default function WishlistItemComponent({
   item,
@@ -30,35 +33,77 @@ export default function WishlistItemComponent({
   variant = "warm",
 }: WishlistItemProps) {
   const translateX = useSharedValue(0);
+  const [swipeState, setSwipeState] = useState<SwipeState>("closed");
   const isPinned = item.status === "pinned";
 
+  const closeSwipe = () => {
+    setSwipeState("closed");
+    translateX.value = withSpring(0);
+  };
+
   const panGesture = Gesture.Pan()
+    .activeOffsetX([-10, 10]) // Require 10px horizontal movement before activating
+    .failOffsetY([-10, 10]) // Fail if vertical movement exceeds 10px (for scrolling)
     .onUpdate((event) => {
-      // Only allow swiping in the appropriate direction
-      // Swipe left (negative) to pin, swipe right (positive) to delete
-      if (event.translationX < 0) {
-        // Swipe left to pin - limit to threshold
-        translateX.value = Math.max(event.translationX, -SWIPE_ACTION_THRESHOLD);
-      } else {
-        // Swipe right to delete - limit to threshold
-        translateX.value = Math.min(event.translationX, SWIPE_ACTION_THRESHOLD);
+      // If already swiped, allow closing gesture
+      if (swipeState === "swipedLeft" && event.translationX > 0) {
+        translateX.value = Math.min(-SWIPE_OPEN_POSITION + event.translationX, 0);
+      } else if (swipeState === "swipedRight" && event.translationX < 0) {
+        translateX.value = Math.max(SWIPE_OPEN_POSITION + event.translationX, 0);
+      } else if (swipeState === "closed") {
+        // Normal swipe behavior when closed
+        if (event.translationX < 0) {
+          // Swipe left to pin
+          translateX.value = Math.max(event.translationX, -SWIPE_OPEN_POSITION);
+        } else {
+          // Swipe right to delete
+          translateX.value = Math.min(event.translationX, SWIPE_OPEN_POSITION);
+        }
       }
     })
     .onEnd((event) => {
-      if (event.translationX < -SWIPE_THRESHOLD) {
-        // Swiped left - pin action
-        if (onPin) {
-          runOnJS(onPin)(item);
+      if (swipeState === "closed") {
+        if (event.translationX < -SWIPE_THRESHOLD) {
+          // Swiped left - stay open showing pin action
+          runOnJS(setSwipeState)("swipedLeft");
+          translateX.value = withSpring(-SWIPE_OPEN_POSITION);
+        } else if (event.translationX > SWIPE_THRESHOLD) {
+          // Swiped right - stay open showing delete action
+          runOnJS(setSwipeState)("swipedRight");
+          translateX.value = withSpring(SWIPE_OPEN_POSITION);
+        } else {
+          // Not enough swipe, close
+          translateX.value = withSpring(0);
         }
-      } else if (event.translationX > SWIPE_THRESHOLD) {
-        // Swiped right - delete action
-        if (onDelete) {
-          runOnJS(onDelete)(item);
+      } else {
+        // Already swiped - check if closing
+        const isClosing =
+          (swipeState === "swipedLeft" && event.translationX > SWIPE_THRESHOLD / 2) ||
+          (swipeState === "swipedRight" && event.translationX < -SWIPE_THRESHOLD / 2);
+
+        if (isClosing) {
+          runOnJS(closeSwipe)();
+        } else {
+          // Return to open position
+          const targetPosition =
+            swipeState === "swipedLeft" ? -SWIPE_OPEN_POSITION : SWIPE_OPEN_POSITION;
+          translateX.value = withSpring(targetPosition);
         }
       }
-      // Reset position
-      translateX.value = withSpring(0);
     });
+
+  const tapGesture = Gesture.Tap()
+    .maxDuration(500)
+    .onEnd(() => {
+      if (swipeState === "closed" && onPress) {
+        runOnJS(onPress)(item);
+      } else if (swipeState !== "closed") {
+        // Close if tapped while swiped
+        runOnJS(closeSwipe)();
+      }
+    });
+
+  const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -76,25 +121,34 @@ export default function WishlistItemComponent({
     <View style={styles.wrapper}>
       {/* Left action (appears when swiping left) - Pin */}
       <Animated.View style={[styles.leftAction, leftActionStyle]}>
-        <Ionicons name="pin" size={24} color={colours.background} />
+        <Pressable
+          style={styles.actionButton}
+          onPress={() => {
+            closeSwipe();
+            onPin?.(item);
+          }}
+        >
+          <Ionicons name="pin" size={24} color={colours.background} />
+        </Pressable>
       </Animated.View>
 
       {/* Right action (appears when swiping right) - Delete */}
       <Animated.View style={[styles.rightAction, rightActionStyle]}>
-        <Ionicons name="trash" size={24} color={colours.background} />
+        <Pressable
+          style={styles.actionButton}
+          onPress={() => {
+            closeSwipe();
+            onDelete?.(item);
+          }}
+        >
+          <Ionicons name="trash" size={24} color={colours.background} />
+        </Pressable>
       </Animated.View>
 
       {/* Main content */}
-      <GestureDetector gesture={panGesture}>
+      <GestureDetector gesture={composedGesture}>
         <Animated.View style={animatedStyle}>
-          <Pressable
-            onPress={() => onPress?.(item)}
-            style={({ pressed }) => [
-              styles.container,
-              styles[variant],
-              pressed && styles.pressed,
-            ]}
-          >
+          <View style={[styles.container, styles[variant]]}>
             {/* Pin indicator */}
             {isPinned && (
               <View style={styles.pinIndicator}>
@@ -118,7 +172,7 @@ export default function WishlistItemComponent({
                 </Text>
               )}
             </View>
-          </Pressable>
+          </View>
         </Animated.View>
       </GestureDetector>
     </View>
@@ -162,10 +216,6 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  pressed: {
-    opacity: 0.8,
-  },
-
   leftAction: {
     position: "absolute",
     right: 0,
@@ -190,6 +240,13 @@ const styles = StyleSheet.create({
     width: 80,
     borderTopLeftRadius: borderRadius.md,
     borderBottomLeftRadius: borderRadius.md,
+  },
+
+  actionButton: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   pinIndicator: {

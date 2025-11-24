@@ -320,7 +320,7 @@ export default function ProfileScreen() {
               <WishlistItem
                 key={item.id}
                 item={item}
-                variant="warm"
+                variant="elevated"
                 onPress={handleEditItem}
                 onPin={handlePinItem}
                 onDelete={handleDeleteItem}

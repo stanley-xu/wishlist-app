@@ -83,7 +83,7 @@ export function useWishlists(
 
 const dummyItems = (wishlistId: string) =>
   Array.from({ length: 10 }, (_, index) => ({
-    id: `item-${index}`,
+    id: `00000000-0000-0000-0000-0000000000${index.toString().padStart(2, "0")}`,
     name: `Item ${index}`,
     description: `Description ${index}`,
     url: `https://www.google.com`,
