@@ -8,13 +8,11 @@ export default function TabLayout() {
   return (
     <NativeTabs
       labelStyle={{
-        // For the text color
         color: DynamicColorIOS({
           dark: text.white,
           light: text.black,
         }),
       }}
-      // For the selected icon color
       tintColor={DynamicColorIOS({
         dark: text.white,
         light: colours.accent,
@@ -22,9 +20,6 @@ export default function TabLayout() {
     >
       <NativeTabs.Trigger name="index" hidden={!Features["home"]}>
         <Label>Home</Label>
-        {/* TODO: Android icons
-        https://docs.expo.dev/router/advanced/native-tabs/#integration-with-expovector-icons
-         */}
         <Icon sf="house.fill" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
@@ -38,6 +33,10 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="storybook" hidden={!__DEV__}>
         <Label>Storybook</Label>
         <Icon sf="book" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="addItem" hidden>
+        <Label>Add Item</Label>
+        <Icon sf="plus" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

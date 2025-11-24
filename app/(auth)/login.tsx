@@ -70,7 +70,7 @@ export default function LoginScreen() {
         />
 
         <Button onPress={handleLogin} loading={submitting || loading}>
-          <Text variant="button">Continue</Text>
+          <Text variant="semibold">Continue</Text>
         </Button>
 
         {error && <Text variant="error">{error}</Text>}
@@ -81,7 +81,7 @@ export default function LoginScreen() {
             loading={submitting || loading}
             onPress={handleDevLogin}
           >
-            <Text variant="button">Login as Dev</Text>
+            <Text variant="semibold">Login as Dev</Text>
           </Button>
         )}
       </ScrollView>

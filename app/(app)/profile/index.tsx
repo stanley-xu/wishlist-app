@@ -7,17 +7,20 @@ import {
   View,
 } from "react-native";
 
-import { Card, Input } from "@/components";
+import { Button, Card, Input, Text } from "@/components";
 import Avatar from "@/components/Avatar/Avatar";
 import { cardTitleStyles } from "@/components/Card/Title";
 import { profiles } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
+import { useWishlists } from "@/lib/hooks/useWishlists";
 import { UpdateProfile, UpdateProfileSchema } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
+import { AddItemModal } from "./AddItemModal";
 
 const ProfileFormSchema = UpdateProfileSchema.pick({ name: true, bio: true });
 type ProfileForm = z.infer<typeof ProfileFormSchema>;
@@ -31,6 +34,11 @@ export default function ProfileScreen() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     profile.avatar_url ?? null
   );
+
+  const { wishlists, refetch: refetchWishlists } = useWishlists();
+  const [showAddItem, setShowAddItem] = useState(false);
+
+  const { bottom } = useSafeAreaInsets();
 
   const [editingField, setEditingField] = useState<keyof UpdateProfile | null>(
     null
@@ -174,25 +182,59 @@ export default function ProfileScreen() {
     </Card>
   );
 
+  const wishlistSection = (
+    <View>
+      {wishlists.map((item) => (
+        <View key={item.id}>
+          <Text>{item.name}</Text>
+          {item.eventId && <Text>{item.eventId}</Text>}
+        </View>
+      ))}
+    </View>
+  );
+
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-      style={{ backgroundColor: colours.surface }}
-    >
-      <Pressable onPress={() => Keyboard.dismiss()}>
-        {profileCardSection}
-        <View style={styles.content}></View>
-      </Pressable>
-    </ScrollView>
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
+        style={{ backgroundColor: colours.surface }}
+      >
+        <Pressable onPress={() => Keyboard.dismiss()}>
+          {profileCardSection}
+          <View style={styles.content}>{wishlistSection}</View>
+        </Pressable>
+      </ScrollView>
+      <View
+        style={[
+          styles.bottomButton,
+          { bottom: bottom + 60 }, // 60 for tab bar height
+        ]}
+      >
+        <Button onPress={() => setShowAddItem(true)}>
+          <Text>Add Item</Text>
+        </Button>
+      </View>
+
+      <AddItemModal
+        visible={showAddItem}
+        onClose={() => setShowAddItem(false)}
+        wishlistId={wishlists[0]?.id ?? ""} // Note: sending a blank string is likely to cause an error
+        onItemAdded={refetchWishlists}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: colours.background,
     minHeight: "100%",
+    backgroundColor: colours.background,
+  },
+  bottomButton: {
+    position: "absolute",
+    left: spacing.md,
+    right: spacing.md,
   },
   fieldElement: {
     borderWidth: 1, // Used for consistent layout spacing in both regular and editing states
@@ -204,6 +246,7 @@ const styles = StyleSheet.create({
   profileHeader: {
     flexDirection: "column",
     alignItems: "center",
+    marginTop: -spacing.xl,
   },
   profileAvatar: {
     marginBottom: spacing.md,

@@ -55,14 +55,79 @@ export type CreateProfile = z.infer<typeof CreateProfileSchema>;
 export type UpdateProfile = z.infer<typeof UpdateProfileSchema>;
 
 // ============================================================================
+// Wishlist schemas
+// ============================================================================
+
+/**
+ * Wishlist - container for items (can be personal or event-tied)
+ */
+export const WishlistSchema = z.object({
+  id: z.guid(),
+  user_id: z.guid(),
+  event_id: z.guid().nullable(),
+  name: z.string().min(1).max(100),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const CreateWishlistSchema = z.object({
+  name: z.string().min(1).max(100),
+  event_id: z.uuid().optional(),
+});
+
+export const UpdateWishlistSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+});
+
+/**
+ * Individual wishlist item
+ */
+export const WishlistItemSchema = z.object({
+  id: z.guid(),
+  wishlist_id: z.guid(),
+  name: z.string().min(1).max(200),
+  url: z.url().nullable().optional(),
+  description: z.string().max(1000).nullable().optional(),
+  order: z.number().int().nonnegative(),
+  status: z.enum(["pending", "claimed"]),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export const CreateWishlistItemSchema = z.object({
+  name: z.string().min(1).max(200),
+  url: z
+    .url()
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  description: z.string().max(1000).optional(),
+  order: z.number().int().nonnegative().optional(),
+});
+
+export const UpdateWishlistItemSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  url: z.url().nullable().optional(),
+  description: z.string().max(1000).nullable().optional(),
+  order: z.number().int().nonnegative().optional(),
+  status: z.enum(["pending", "claimed"]).optional(),
+});
+
+export type Wishlist = z.infer<typeof WishlistSchema>;
+export type CreateWishlist = z.infer<typeof CreateWishlistSchema>;
+export type UpdateWishlist = z.infer<typeof UpdateWishlistSchema>;
+export type WishlistItem = z.infer<typeof WishlistItemSchema>;
+export type CreateWishlistItem = z.infer<typeof CreateWishlistItemSchema>;
+export type UpdateWishlistItem = z.infer<typeof UpdateWishlistItemSchema>;
+
+// ============================================================================
 // Event schemas
 // ============================================================================
 
 export const EventSchema = z.object({
-  id: z.uuid(),
+  id: z.guid(),
   name: z.string().min(1),
   description: z.string().nullable(),
-  host_id: z.uuid(),
+  host_id: z.guid(),
   exchange_date: z.string(), // ISO date string from Postgres
   join_code: z.string(),
   is_active: z.boolean(),
@@ -109,42 +174,6 @@ export const CreateParticipantSchema = z.object({
 
 export type Participant = z.infer<typeof ParticipantSchema>;
 export type CreateParticipant = z.infer<typeof CreateParticipantSchema>;
-
-// ============================================================================
-// Wishlist schemas
-// ============================================================================
-
-/**
- * Individual wishlist item
- */
-export const WishlistItemSchema = z.object({
-  id: z.uuid(),
-  title: z.string().min(1).max(200),
-  description: z.string().max(1000).optional(),
-  url: z.url().optional(),
-  price: z.number().positive().optional(),
-  priority: z.enum(["low", "medium", "high"]).prefault("medium"),
-});
-
-export const WishlistSchema = z.object({
-  id: z.uuid(),
-  event_id: z.uuid(),
-  user_id: z.uuid(),
-  items: z.array(WishlistItemSchema),
-  updated_at: z.string(), // Postgres timestamp
-});
-
-export const CreateWishlistItemSchema = z.object({
-  title: z.string().min(1).max(200),
-  description: z.string().max(1000).optional(),
-  url: z.url().optional(),
-  price: z.number().positive().optional(),
-  priority: z.enum(["low", "medium", "high"]).prefault("medium"),
-});
-
-export type WishlistItem = z.infer<typeof WishlistItemSchema>;
-export type Wishlist = z.infer<typeof WishlistSchema>;
-export type CreateWishlistItem = z.infer<typeof CreateWishlistItemSchema>;
 
 // ============================================================================
 // Assignment schemas

@@ -9,30 +9,21 @@
 
 import { supabase } from "@/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
-import { z } from "zod";
+import { PostgRESTErrorCodes } from "../data/postgres-errors";
 import {
-  isPostgresError,
-  PostgresErrorCodes,
-  PostgRESTErrorCodes,
-} from "../data/postgres-errors";
-import {
-  CreateEventSchema,
-  CreateParticipantSchema,
   CreateProfile,
-  EventSchema,
-  ParticipantSchema,
   ProfileSchema,
-  UpdateEventSchema,
   UpdateProfile,
   UpdateProfileSchema,
   WishlistSchema,
-  type CreateEvent,
-  type CreateParticipant,
-  type Event,
-  type Participant,
+  WishlistItemSchema,
   type Profile,
-  type UpdateEvent,
   type Wishlist,
+  type WishlistItem,
+  type CreateWishlist,
+  type UpdateWishlist,
+  type CreateWishlistItem,
+  type UpdateWishlistItem,
 } from "./schemas";
 
 // ============================================================================
@@ -278,7 +269,6 @@ export const profiles = {
           name: data.name,
           bio: data.bio || null,
           avatar_url: data.avatar_url || null,
-          background_url: data.background_url || null,
         })
         .select()
         .single();
@@ -382,252 +372,6 @@ export const avatarImage = {
     }
   },
 };
-// ============================================================================
-// Events - Full CRUD example
-// ============================================================================
-
-export const events = {
-  /**
-   * Get all events for current user (either as host or participant)
-   */
-  async list(): Promise<DbListResult<Event>> {
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      // Validate response with Zod
-      const validated = z.array(EventSchema).parse(data);
-      return { data: validated, error: null };
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Get a single event by ID
-   */
-  async getById(id: string): Promise<DbResult<Event>> {
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-
-      // Validate response
-      const validated = EventSchema.parse(data);
-      return { data: validated, error: null };
-    } catch (error) {
-      console.error("Error fetching event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Get event by join code
-   */
-  async getByJoinCode(joinCode: string): Promise<DbResult<Event>> {
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("join_code", joinCode.toUpperCase())
-        .single();
-
-      if (error) throw error;
-
-      const validated = EventSchema.parse(data);
-      return { data: validated, error: null };
-    } catch (error) {
-      console.error("Error fetching event by join code:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Create a new event
-   */
-  async create(input: CreateEvent, hostId: string): Promise<DbResult<Event>> {
-    try {
-      // Validate input with Zod
-      const validated = CreateEventSchema.parse(input);
-
-      const { data, error } = await supabase
-        .from("events")
-        .insert({
-          ...validated,
-          host_id: hostId,
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Validate response
-      const event = EventSchema.parse(data);
-      return { data: event, error: null };
-    } catch (error) {
-      console.error("Error creating event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Update an existing event
-   *
-   * Note: With RLS enabled, only the host can update their event.
-   * The database will enforce this, so the manual check is redundant
-   * but provides better error messages.
-   */
-  async update(
-    id: string,
-    input: UpdateEvent,
-    userId: string
-  ): Promise<DbResult<Event>> {
-    try {
-      // Validate input
-      const validated = UpdateEventSchema.parse(input);
-
-      // Update the event - RLS will block if user isn't the host
-      const { data, error } = await supabase
-        .from("events")
-        .update({
-          ...validated,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) {
-        // Check if it's a permission error (user isn't the host)
-        if (
-          isPostgresError(error) &&
-          error.code === PostgresErrorCodes.INSUFFICIENT_PRIVILEGE
-        ) {
-          throw new Error("Only the event host can update the event");
-        }
-        throw error;
-      }
-
-      const updated = EventSchema.parse(data);
-      return { data: updated, error: null };
-    } catch (error) {
-      console.error("Error updating event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Delete an event (soft delete by marking inactive)
-   *
-   * Note: With RLS enabled, only the host can delete their event.
-   * The database will enforce this automatically. The userId parameter
-   * is kept for API consistency but is not strictly needed.
-   */
-  async delete(id: string, _userId?: string): Promise<DbResult<boolean>> {
-    try {
-      // Soft delete - RLS will block if user isn't the host
-      const { error } = await supabase
-        .from("events")
-        .update({ is_active: false, updated_at: new Date().toISOString() })
-        .eq("id", id);
-
-      if (error) {
-        // Check if it's a permission error (user isn't the host)
-        if (
-          isPostgresError(error) &&
-          error.code === PostgresErrorCodes.INSUFFICIENT_PRIVILEGE
-        ) {
-          throw new Error("Only the event host can delete the event");
-        }
-        throw error;
-      }
-
-      return { data: true, error: null };
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-};
-
-// ============================================================================
-// Participants
-// ============================================================================
-
-export const participants = {
-  /**
-   * Join an event as a participant
-   */
-  async join(input: CreateParticipant): Promise<DbResult<Participant>> {
-    try {
-      const validated = CreateParticipantSchema.parse(input);
-
-      const { data, error } = await supabase
-        .from("participants")
-        .insert(validated)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const participant = ParticipantSchema.parse(data);
-      return { data: participant, error: null };
-    } catch (error) {
-      console.error("Error joining event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Get all participants for an event
-   */
-  async listByEvent(eventId: string): Promise<DbListResult<Participant>> {
-    try {
-      const { data, error } = await supabase
-        .from("participants")
-        .select("*")
-        .eq("event_id", eventId);
-
-      if (error) throw error;
-
-      const validated = z.array(ParticipantSchema).parse(data);
-      return { data: validated, error: null };
-    } catch (error) {
-      console.error("Error fetching participants:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-
-  /**
-   * Leave an event
-   */
-  async leave(eventId: string, userId: string): Promise<DbResult<boolean>> {
-    try {
-      const { error } = await supabase
-        .from("participants")
-        .delete()
-        .eq("event_id", eventId)
-        .eq("user_id", userId);
-
-      if (error) throw error;
-
-      return { data: true, error: null };
-    } catch (error) {
-      console.error("Error leaving event:", error);
-      return { data: null, error: error as Error };
-    }
-  },
-};
 
 // ============================================================================
 // Wishlists
@@ -635,21 +379,51 @@ export const participants = {
 
 export const wishlists = {
   /**
-   * Get wishlist for a user in a specific event
+   * Get all wishlists for current user
    */
-  async get(eventId: string, userId: string): Promise<DbResult<Wishlist>> {
+  async getAll(): Promise<DbListResult<Wishlist>> {
     try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
       const { data, error } = await supabase
         .from("wishlists")
         .select("*")
-        .eq("event_id", eventId)
-        .eq("user_id", userId)
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const validated = data?.map((w) => WishlistSchema.parse(w)) ?? [];
+      return { data: validated, error: null };
+    } catch (error) {
+      console.error("Error fetching wishlists:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Get wishlist by ID with items
+   */
+  async getById(
+    id: string
+  ): Promise<DbResult<Wishlist & { items: WishlistItem[] }>> {
+    try {
+      const { data, error } = await supabase
+        .from("wishlists")
+        .select("*, wishlist_items(*)")
+        .eq("id", id)
         .single();
 
       if (error) throw error;
 
-      const validated = WishlistSchema.parse(data);
-      return { data: validated, error: null };
+      const wishlist = WishlistSchema.parse(data);
+      const items = (data.wishlist_items ?? [])
+        .map((item: unknown) => WishlistItemSchema.parse(item))
+        .sort((a: WishlistItem, b: WishlistItem) => a.order - b.order);
+
+      return { data: { ...wishlist, items }, error: null };
     } catch (error) {
       console.error("Error fetching wishlist:", error);
       return { data: null, error: error as Error };
@@ -657,37 +431,180 @@ export const wishlists = {
   },
 
   /**
-   * Update wishlist items (creates if doesn't exist)
+   * Create a new wishlist
    */
-  async upsert(
-    eventId: string,
-    userId: string,
-    items: Wishlist["items"]
-  ): Promise<DbResult<Wishlist>> {
+  async create(data: CreateWishlist): Promise<DbResult<Wishlist>> {
     try {
-      const { data, error } = await supabase
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      const { data: wishlist, error } = await supabase
         .from("wishlists")
-        .upsert(
-          {
-            event_id: eventId,
-            user_id: userId,
-            items,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "event_id,user_id",
-          }
-        )
+        .insert({
+          user_id: currentUser.id,
+          name: data.name,
+          event_id: data.event_id || null,
+        })
         .select()
         .single();
 
       if (error) throw error;
 
-      const validated = WishlistSchema.parse(data);
-      return { data: validated, error: null };
+      return { data: WishlistSchema.parse(wishlist), error: null };
+    } catch (error) {
+      console.error("Error creating wishlist:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Update a wishlist
+   */
+  async update(id: string, data: UpdateWishlist): Promise<DbResult<Wishlist>> {
+    try {
+      const { data: wishlist, error } = await supabase
+        .from("wishlists")
+        .update(data)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { data: WishlistSchema.parse(wishlist), error: null };
     } catch (error) {
       console.error("Error updating wishlist:", error);
       return { data: null, error: error as Error };
     }
   },
+
+  /**
+   * Delete a wishlist
+   */
+  async delete(id: string): Promise<DbResult<boolean>> {
+    try {
+      const { error } = await supabase.from("wishlists").delete().eq("id", id);
+      if (error) throw error;
+      return { data: true, error: null };
+    } catch (error) {
+      console.error("Error deleting wishlist:", error);
+      return { data: null, error: error as Error };
+    }
+  },
 };
+
+// ============================================================================
+// Wishlist Items
+// ============================================================================
+
+export const wishlistItems = {
+  /**
+   * Add item to wishlist
+   */
+  async create(
+    wishlistId: string,
+    data: CreateWishlistItem
+  ): Promise<DbResult<WishlistItem>> {
+    try {
+      // Get max order for this wishlist
+      const { data: maxOrderResult } = await supabase
+        .from("wishlist_items")
+        .select("order")
+        .eq("wishlist_id", wishlistId)
+        .order("order", { ascending: false })
+        .limit(1)
+        .single();
+
+      const nextOrder = data.order ?? ((maxOrderResult?.order ?? -1) + 1);
+
+      const { data: item, error } = await supabase
+        .from("wishlist_items")
+        .insert({
+          wishlist_id: wishlistId,
+          name: data.name,
+          url: data.url || null,
+          description: data.description || null,
+          order: nextOrder,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { data: WishlistItemSchema.parse(item), error: null };
+    } catch (error) {
+      console.error("Error creating wishlist item:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Update a wishlist item
+   */
+  async update(
+    id: string,
+    data: UpdateWishlistItem
+  ): Promise<DbResult<WishlistItem>> {
+    try {
+      const { data: item, error } = await supabase
+        .from("wishlist_items")
+        .update(data)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { data: WishlistItemSchema.parse(item), error: null };
+    } catch (error) {
+      console.error("Error updating wishlist item:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Delete a wishlist item
+   */
+  async delete(id: string): Promise<DbResult<boolean>> {
+    try {
+      const { error } = await supabase
+        .from("wishlist_items")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      return { data: true, error: null };
+    } catch (error) {
+      console.error("Error deleting wishlist item:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Reorder items in a wishlist
+   */
+  async reorder(
+    wishlistId: string,
+    itemIds: string[]
+  ): Promise<DbResult<boolean>> {
+    try {
+      const updates = itemIds.map((id, index) =>
+        supabase.from("wishlist_items").update({ order: index }).eq("id", id)
+      );
+
+      await Promise.all(updates);
+      return { data: true, error: null };
+    } catch (error) {
+      console.error("Error reordering wishlist items:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+};
+
+// ============================================================================
+// Events - Full CRUD example
+// ============================================================================
+
+// ============================================================================
+// Participants
+// ============================================================================

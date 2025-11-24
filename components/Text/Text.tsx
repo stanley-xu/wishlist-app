@@ -7,10 +7,16 @@ import {
 import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export interface TextProps extends RNTextProps {
-  variant?: "regular" | "bold" | "italic" | "error" | "button";
+  variant?: "regular" | "bold" | "semibold" | "italic" | "error";
+  fontSize?: keyof typeof typography.fontSize;
 }
 
-export function Text({ variant = "regular", style, ...rest }: TextProps) {
+export function Text({
+  variant = "regular",
+  fontSize = "base",
+  style,
+  ...rest
+}: TextProps) {
   let textColour = useSurfaceColourContext()?.textColour;
 
   if (variant === "error") {
@@ -18,7 +24,15 @@ export function Text({ variant = "regular", style, ...rest }: TextProps) {
   }
 
   return (
-    <RNText style={[styles[variant], { color: textColour }, style]} {...rest} />
+    <RNText
+      style={[
+        styles[variant],
+        fontSize && { fontSize: typography.fontSize[fontSize] },
+        { color: textColour },
+        style,
+      ]}
+      {...rest}
+    />
   );
 }
 
@@ -29,16 +43,14 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: typography.fontWeight.bold,
   },
+  semibold: {
+    fontWeight: typography.fontWeight.semibold,
+  },
   italic: {
     fontStyle: "italic",
   },
   error: {
     color: colours.error,
     fontWeight: typography.fontWeight.bold,
-  },
-
-  button: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
   },
 });

@@ -16,7 +16,7 @@ export default function AuthLayout() {
               onPress={() => router.push("/(auth)/register")}
               size="md"
             >
-              <Text variant="bold">Sign up</Text>
+              <Text variant="semibold">Sign up</Text>
             </Button.Unstyled>
           ),
         }}

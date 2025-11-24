@@ -109,7 +109,7 @@ export default function RegisterScreen() {
         />
 
         <Button onPress={handleRegister} loading={submitting || loading}>
-          <Text variant="button">Register</Text>
+          <Text variant="semibold">Register</Text>
         </Button>
 
         {error && <Text variant="error">{error}</Text>}
@@ -120,7 +120,7 @@ export default function RegisterScreen() {
             onPress={handleDevRegister}
             variant="dev"
           >
-            <Text variant="button">Auto-generate user</Text>
+            <Text variant="semibold">Auto-generate user</Text>
           </Button>
         )}
       </View>

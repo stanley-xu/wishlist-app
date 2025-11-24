@@ -82,7 +82,12 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: colours.accent,
   },
-  outline: {},
+  outline: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: colours.accent,
+    borderRadius: borderRadius.lg,
+  },
   unstyled: {
     backgroundColor: "transparent",
     padding: 0,
