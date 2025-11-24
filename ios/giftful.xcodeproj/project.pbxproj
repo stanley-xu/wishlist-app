@@ -8,27 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		32C60EFBFD3B8AB3BEB42030 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0A330F690EEAA8EC7AAD91A4 /* PrivacyInfo.xcprivacy */; };
+		38480672F4F53D060635F6B1 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A84C3105899D5A72F26A8B5 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		5FCFF8026435017F535EFEF6 /* libPods-giftful.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AB7AC311A42B3CF330B1F94 /* libPods-giftful.a */; };
+		4DCB7D8DD8F7392B462ED543 /* libPods-giftful.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDA3B69E2E051EB5D16F7F3E /* libPods-giftful.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CB1D329A65D1B49C34132763 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135BA821D4E785E917A47C8B /* ExpoModulesProvider.swift */; };
-		EF7A84BDE5EB4595AEBECCA2 /* giftful.icon in Resources */ = {isa = PBXBuildFile; fileRef = 870B88016C4E429FA89817D7 /* giftful.icon */; };
+		D79C8D1DD1BC530C3D61DD31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D5E040B861651239A23900C4 /* PrivacyInfo.xcprivacy */; };
+		F01C3A8A5BB64448A5A43A34 /* giftful.icon in Resources */ = {isa = PBXBuildFile; fileRef = 5ED9A730EA054EFB9079040D /* giftful.icon */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A330F690EEAA8EC7AAD91A4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = giftful/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		135BA821D4E785E917A47C8B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-giftful/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* giftful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = giftful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = giftful/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = giftful/Info.plist; sourceTree = "<group>"; };
-		2AB7AC311A42B3CF330B1F94 /* libPods-giftful.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-giftful.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		870B88016C4E429FA89817D7 /* giftful.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = giftful.icon; path = giftful/giftful.icon; sourceTree = "<group>"; };
-		A93A6F6EA67336E3A1E99F3A /* Pods-giftful.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-giftful.release.xcconfig"; path = "Target Support Files/Pods-giftful/Pods-giftful.release.xcconfig"; sourceTree = "<group>"; };
+		5ED9A730EA054EFB9079040D /* giftful.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = giftful.icon; path = giftful/giftful.icon; sourceTree = "<group>"; };
+		8A84C3105899D5A72F26A8B5 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-giftful/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = giftful/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		DBD42BB0A35EB7173E408E78 /* Pods-giftful.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-giftful.debug.xcconfig"; path = "Target Support Files/Pods-giftful/Pods-giftful.debug.xcconfig"; sourceTree = "<group>"; };
+		BDA3B69E2E051EB5D16F7F3E /* libPods-giftful.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-giftful.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5E040B861651239A23900C4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = giftful/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E364E914DB30E04C1E6F4E7D /* Pods-giftful.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-giftful.debug.xcconfig"; path = "Target Support Files/Pods-giftful/Pods-giftful.debug.xcconfig"; sourceTree = "<group>"; };
+		E502C0B51797618CF3D5456E /* Pods-giftful.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-giftful.release.xcconfig"; path = "Target Support Files/Pods-giftful/Pods-giftful.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = giftful/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* giftful-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "giftful-Bridging-Header.h"; path = "giftful/giftful-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -39,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FCFF8026435017F535EFEF6 /* libPods-giftful.a in Frameworks */,
+				4DCB7D8DD8F7392B462ED543 /* libPods-giftful.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,8 +55,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				870B88016C4E429FA89817D7 /* giftful.icon */,
-				0A330F690EEAA8EC7AAD91A4 /* PrivacyInfo.xcprivacy */,
+				5ED9A730EA054EFB9079040D /* giftful.icon */,
+				D5E040B861651239A23900C4 /* PrivacyInfo.xcprivacy */,
 			);
 			name = giftful;
 			sourceTree = "<group>";
@@ -65,25 +65,27 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				2AB7AC311A42B3CF330B1F94 /* libPods-giftful.a */,
+				BDA3B69E2E051EB5D16F7F3E /* libPods-giftful.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		45E620C1FA7FDEBBF6A2AEC5 /* giftful */ = {
+		6A4710BE12B7B1E250595AB2 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				135BA821D4E785E917A47C8B /* ExpoModulesProvider.swift */,
-			);
-			name = giftful;
-			sourceTree = "<group>";
-		};
-		5677811EFF398C61FEDA8183 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				45E620C1FA7FDEBBF6A2AEC5 /* giftful */,
+				CC9650B1183DA00DB9178B06 /* giftful */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		7F8DCDBDBD25ADF50117622A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E364E914DB30E04C1E6F4E7D /* Pods-giftful.debug.xcconfig */,
+				E502C0B51797618CF3D5456E /* Pods-giftful.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -100,8 +102,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				F9802020ED0E5683D559B273 /* Pods */,
-				5677811EFF398C61FEDA8183 /* ExpoModulesProviders */,
+				7F8DCDBDBD25ADF50117622A /* Pods */,
+				6A4710BE12B7B1E250595AB2 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -125,14 +127,12 @@
 			path = giftful/Supporting;
 			sourceTree = "<group>";
 		};
-		F9802020ED0E5683D559B273 /* Pods */ = {
+		CC9650B1183DA00DB9178B06 /* giftful */ = {
 			isa = PBXGroup;
 			children = (
-				DBD42BB0A35EB7173E408E78 /* Pods-giftful.debug.xcconfig */,
-				A93A6F6EA67336E3A1E99F3A /* Pods-giftful.release.xcconfig */,
+				8A84C3105899D5A72F26A8B5 /* ExpoModulesProvider.swift */,
 			);
-			name = Pods;
-			path = Pods;
+			name = giftful;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,13 +143,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "giftful" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				9C9C7663A129781CDA693E41 /* [Expo] Configure project */,
+				DF5BCE4E5A971365B6BFA196 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				0A84A3117A7FEA14EF41B8A8 /* [CP] Embed Pods Frameworks */,
+				9CC54C42E05A3D72D06C7393 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -199,8 +199,8 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				EF7A84BDE5EB4595AEBECCA2 /* giftful.icon in Resources */,
-				32C60EFBFD3B8AB3BEB42030 /* PrivacyInfo.xcprivacy in Resources */,
+				F01C3A8A5BB64448A5A43A34 /* giftful.icon in Resources */,
+				D79C8D1DD1BC530C3D61DD31 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,28 +246,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		0A84A3117A7FEA14EF41B8A8 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-giftful/Pods-giftful-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-giftful/Pods-giftful-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,7 +282,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-giftful/Pods-giftful-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9C9C7663A129781CDA693E41 /* [Expo] Configure project */ = {
+		9CC54C42E05A3D72D06C7393 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-giftful/Pods-giftful-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-giftful/Pods-giftful-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DF5BCE4E5A971365B6BFA196 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -336,7 +336,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				CB1D329A65D1B49C34132763 /* ExpoModulesProvider.swift in Sources */,
+				38480672F4F53D060635F6B1 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +345,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBD42BB0A35EB7173E408E78 /* Pods-giftful.debug.xcconfig */;
+			baseConfigurationReference = E364E914DB30E04C1E6F4E7D /* Pods-giftful.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = giftful;
 				CLANG_ENABLE_MODULES = YES;
@@ -381,7 +381,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A93A6F6EA67336E3A1E99F3A /* Pods-giftful.release.xcconfig */;
+			baseConfigurationReference = E502C0B51797618CF3D5456E /* Pods-giftful.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = giftful;
 				CLANG_ENABLE_MODULES = YES;
