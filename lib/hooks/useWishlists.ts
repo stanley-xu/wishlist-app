@@ -14,6 +14,7 @@ type WishlistWithItems = {
 };
 
 export function useWishlists(
+  addDummyItems: boolean = __DEV__,
   singleWishlist: boolean = !Features["multi-wishlists"]
 ) {
   const [wishlists, setWishlists] = useState<WishlistWithItems[]>([]);
@@ -50,6 +51,10 @@ export function useWishlists(
         wishlist.id
       );
 
+      if (addDummyItems && items) {
+        items.push(...dummyItems(wishlist.id));
+      }
+
       setWishlists([
         {
           id: wishlist.id,
@@ -75,3 +80,16 @@ export function useWishlists(
     refetch: fetchWishlists,
   };
 }
+
+const dummyItems = (wishlistId: string) =>
+  Array.from({ length: 10 }, (_, index) => ({
+    id: `item-${index}`,
+    name: `Item ${index}`,
+    description: `Description ${index}`,
+    url: `https://www.google.com`,
+    wishlist_id: wishlistId,
+    order: index,
+    status: "pending" as const,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }));

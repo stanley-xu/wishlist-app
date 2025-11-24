@@ -1,4 +1,5 @@
 import {
+  Animated,
   Keyboard,
   Pressable,
   ScrollView,
@@ -16,11 +17,14 @@ import { useWishlists } from "@/lib/hooks/useWishlists";
 import { UpdateProfile, UpdateProfileSchema } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
+
+const PROFILE_CARD_HEIGHT = 280; // Approximate height of profile card
+const COLLAPSED_THRESHOLD = PROFILE_CARD_HEIGHT * 0.5;
 
 const ProfileFormSchema = UpdateProfileSchema.pick({ name: true, bio: true });
 type ProfileForm = z.infer<typeof ProfileFormSchema>;
@@ -30,6 +34,11 @@ export default function ProfileScreen() {
   if (!profile) {
     throw new Error("[Panic] rendering ProfileScreen without a profile");
   }
+
+  const navigation = useNavigation();
+  // Animated.ScrollView ref forwards to underlying ScrollView
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollY = useRef(new Animated.Value(PROFILE_CARD_HEIGHT)).current;
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     profile.avatar_url ?? null
@@ -45,6 +54,57 @@ export default function ProfileScreen() {
   );
 
   const { bottom } = useSafeAreaInsets();
+
+  const abbreviatedName = profile.name
+    .split(" ")
+    .map((name) => name[0].toUpperCase())
+    .join("");
+
+  // Toggle expand/collapse
+  const toggleExpand = useCallback(() => {
+    const currentOffset = (scrollY as any)._value;
+    const targetOffset =
+      currentOffset > COLLAPSED_THRESHOLD ? 0 : PROFILE_CARD_HEIGHT;
+
+    scrollViewRef.current?.scrollTo({
+      y: targetOffset,
+      animated: true,
+    });
+  }, [scrollY]);
+
+  // Header opacity interpolation (shows when collapsed)
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, COLLAPSED_THRESHOLD, PROFILE_CARD_HEIGHT],
+    outputRange: [0, 0, 1],
+    extrapolate: "clamp",
+  });
+
+  // Set up navigation header with collapsed view
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <Animated.View
+          style={[styles.collapsedHeader, { opacity: headerOpacity }]}
+        >
+          <TouchableOpacity
+            onPress={toggleExpand}
+            style={styles.collapsedHeaderContent}
+          >
+            <Avatar url={avatarUrl} size={32} fallbackText={abbreviatedName} />
+            <Text style={styles.collapsedHeaderName}>{profile.name}</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      ),
+    });
+  }, [
+    navigation,
+    avatarUrl,
+    abbreviatedName,
+    profile.name,
+    headerOpacity,
+    toggleExpand,
+  ]);
+
 
   const [editingField, setEditingField] = useState<keyof UpdateProfile | null>(
     null
@@ -85,11 +145,6 @@ export default function ProfileScreen() {
       console.error(error);
     }
   };
-
-  const abbreviatedName = profile.name
-    .split(" ")
-    .map((name) => name[0].toUpperCase())
-    .join("");
 
   const profileCardSection = (
     <Card
@@ -221,16 +276,23 @@ export default function ProfileScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView
+      <Animated.ScrollView
+        ref={scrollViewRef}
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
         style={{ backgroundColor: colours.surface }}
+        contentOffset={{ x: 0, y: PROFILE_CARD_HEIGHT }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
       >
         <Pressable onPress={() => Keyboard.dismiss()}>
           {profileCardSection}
           <View style={styles.content}>{wishlistSection}</View>
         </Pressable>
-      </ScrollView>
+      </Animated.ScrollView>
       <View
         style={[
           styles.bottomButton,
@@ -254,6 +316,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: spacing.md,
     right: spacing.md,
+  },
+  collapsedHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  collapsedHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  collapsedHeaderName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: text.black,
   },
   fieldElement: {
     borderWidth: 1, // Used for consistent layout spacing in both regular and editing states

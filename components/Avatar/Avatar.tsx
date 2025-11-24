@@ -10,7 +10,7 @@ import { Alert, Image, StyleSheet, View } from "react-native";
 interface Props {
   size: number;
   url: string | null;
-  onUpload: (filePath: string) => void;
+  onUpload?: (filePath: string) => void;
   fallbackText?: string;
 }
 
@@ -81,7 +81,7 @@ export default function Avatar({
       console.debug(`[uploadAvatar] data`);
       console.debug(data);
 
-      onUpload(data.path);
+      onUpload?.(data.path);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -123,15 +123,21 @@ export default function Avatar({
           )}
         </View>
       )}
-      <View style={{ position: "absolute", bottom: 0, right: 0 }}>
-        <IconButton
-          onPress={uploadAvatar}
-          loading={uploading}
-          style={{ minWidth: 44 }}
-        >
-          <Ionicons name="add-circle-sharp" size={32} color={colours.accent} />
-        </IconButton>
-      </View>
+      {onUpload && (
+        <View style={{ position: "absolute", bottom: 0, right: 0 }}>
+          <IconButton
+            onPress={uploadAvatar}
+            loading={uploading}
+            style={{ minWidth: 44 }}
+          >
+            <Ionicons
+              name="add-circle-sharp"
+              size={32}
+              color={colours.accent}
+            />
+          </IconButton>
+        </View>
+      )}
     </View>
   );
 }
