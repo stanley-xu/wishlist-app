@@ -156,27 +156,40 @@ export default function ProfileScreen() {
   };
 
   const handlePinItem = async (item: WishlistItemType) => {
+    const wishlist = wishlists.find((w) =>
+      w.items.some((i) => i.id === item.id)
+    );
+    if (!wishlist) return;
+
     const newStatus = item.status === "pinned" ? "pending" : "pinned";
 
-    // Optimistic update
-    const previousWishlists = [...wishlists];
-    const updatedWishlists = wishlists.map((wishlist) => ({
-      ...wishlist,
-      items: wishlist.items.map((i) =>
-        i.id === item.id ? { ...i, status: newStatus as any } : i
-      ),
-    }));
-
-    // Update local state (would need to expose setWishlists from useWishlists hook)
-    // For now, we'll refetch after the API call
-
     try {
-      const { error } = await wishlistItemsApi.update(item.id, { status: newStatus as any });
-      if (error) throw error;
+      // Update the status first
+      const { error: updateError } = await wishlistItemsApi.update(item.id, {
+        status: newStatus as any,
+      });
+      if (updateError) throw updateError;
+
+      // Reorder items: pinned items at the top, then unpinned items
+      const items = wishlist.items.map((i) =>
+        i.id === item.id ? { ...i, status: newStatus as any } : i
+      );
+
+      // Sort: pinned items first, maintaining relative order
+      const pinnedItems = items.filter((i) => i.status === "pinned");
+      const unpinnedItems = items.filter((i) => i.status !== "pinned");
+      const reorderedItems = [...pinnedItems, ...unpinnedItems];
+
+      // Update order for all items
+      const { error: reorderError } = await wishlistItemsApi.reorder(
+        wishlist.id,
+        reorderedItems.map((i) => i.id)
+      );
+      if (reorderError) throw reorderError;
+
       await refetchWishlists();
     } catch (error) {
       console.error("Failed to pin item:", error);
-      // Revert on error
       await refetchWishlists();
     }
   };
