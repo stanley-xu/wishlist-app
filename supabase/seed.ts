@@ -63,7 +63,7 @@ async function seed() {
 
     console.log(`  ✅ Auth user created`);
 
-    // Create profile in public.users
+    // Create profile in public.profiles
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
       name: user.name,
@@ -74,6 +74,20 @@ async function seed() {
       console.error(`  ❌ Error creating profile: ${profileError.message}`);
     } else {
       console.log(`  ✅ Profile created`);
+    }
+
+    // Create default wishlist
+    // Mirrors the single wishlist stage of the app.
+    // TODO: remove this once multi-wishlist is implemented
+    const { error: wishlistError } = await supabase.from("wishlists").insert({
+      user_id: user.id,
+      name: "My Wishlist",
+    });
+
+    if (wishlistError) {
+      console.error(`  ❌ Error creating wishlist: ${wishlistError.message}`);
+    } else {
+      console.log(`  ✅ Default wishlist created`);
     }
 
     console.log("");
