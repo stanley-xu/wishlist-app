@@ -13,14 +13,14 @@ import {
 } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
-import { Button, Card, Input, Text } from "@/components";
+import { Button, Card, Input, Text, WishlistItem, EditItemModal } from "@/components";
 import Avatar from "@/components/Avatar/Avatar";
 import { cardTitleStyles } from "@/components/Card/Title";
-import { profiles } from "@/lib/api";
+import { profiles, wishlistItems as wishlistItemsApi } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import { useWishlists } from "@/lib/hooks/useWishlists";
-import { UpdateProfile, UpdateProfileSchema } from "@/lib/schemas";
+import { UpdateProfile, UpdateProfileSchema, WishlistItem as WishlistItemType } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -101,6 +101,9 @@ export default function ProfileScreen() {
     null
   );
 
+  const [editingItem, setEditingItem] = useState<WishlistItemType | null>(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
   const {
     control,
     getValues,
@@ -131,6 +134,64 @@ export default function ProfileScreen() {
     } catch (error) {
       setProfile(previousProfile);
       console.error(error);
+    }
+  };
+
+  const handleEditItem = (item: WishlistItemType) => {
+    setEditingItem(item);
+    setIsEditModalVisible(true);
+  };
+
+  const handleSaveItem = async (
+    item: WishlistItemType,
+    updates: { name: string; url?: string; description?: string }
+  ) => {
+    const { data, error } = await wishlistItemsApi.update(item.id, updates);
+    if (!error) {
+      await refetchWishlists();
+    } else {
+      console.error("Failed to update item:", error);
+      throw error;
+    }
+  };
+
+  const handlePinItem = async (item: WishlistItemType) => {
+    const newStatus = item.status === "pinned" ? "pending" : "pinned";
+
+    // Optimistic update
+    const previousWishlists = [...wishlists];
+    const updatedWishlists = wishlists.map((wishlist) => ({
+      ...wishlist,
+      items: wishlist.items.map((i) =>
+        i.id === item.id ? { ...i, status: newStatus as any } : i
+      ),
+    }));
+
+    // Update local state (would need to expose setWishlists from useWishlists hook)
+    // For now, we'll refetch after the API call
+
+    try {
+      const { error } = await wishlistItemsApi.update(item.id, { status: newStatus as any });
+      if (error) throw error;
+      await refetchWishlists();
+    } catch (error) {
+      console.error("Failed to pin item:", error);
+      // Revert on error
+      await refetchWishlists();
+    }
+  };
+
+  const handleDeleteItem = async (item: WishlistItemType) => {
+    // Optimistic delete (would need to expose setWishlists from useWishlists hook)
+    // For now, we'll refetch after the API call
+
+    try {
+      const { error } = await wishlistItemsApi.delete(item.id);
+      if (error) throw error;
+      await refetchWishlists();
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+      await refetchWishlists();
     }
   };
 
@@ -243,17 +304,14 @@ export default function ProfileScreen() {
             </View>
           ) : (
             wishlist.items.map((item) => (
-              <View key={item.id} style={styles.wishlistItem}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                {item.description && (
-                  <Text style={styles.itemDescription}>{item.description}</Text>
-                )}
-                {item.url && (
-                  <Text style={styles.itemUrl} numberOfLines={1}>
-                    {item.url}
-                  </Text>
-                )}
-              </View>
+              <WishlistItem
+                key={item.id}
+                item={item}
+                variant="warm"
+                onPress={handleEditItem}
+                onPin={handlePinItem}
+                onDelete={handleDeleteItem}
+              />
             ))
           )}
         </View>
@@ -291,6 +349,16 @@ export default function ProfileScreen() {
           <Text>Add Item</Text>
         </Button>
       </View>
+
+      <EditItemModal
+        visible={isEditModalVisible}
+        item={editingItem}
+        onSave={handleSaveItem}
+        onClose={() => {
+          setIsEditModalVisible(false);
+          setEditingItem(null);
+        }}
+      />
     </GestureHandlerRootView>
   );
 }
@@ -345,27 +413,6 @@ const styles = StyleSheet.create({
   },
   wishlistSection: {
     padding: spacing.md,
-  },
-  wishlistItem: {
-    backgroundColor: colours.surface,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
-  },
-  itemName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: text.black,
-  },
-  itemDescription: {
-    fontSize: 14,
-    opacity: 0.7,
-    marginTop: spacing.xs,
-  },
-  itemUrl: {
-    fontSize: 12,
-    color: colours.accent,
-    marginTop: spacing.xs,
   },
   emptyState: {
     alignItems: "center",
