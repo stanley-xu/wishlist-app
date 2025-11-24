@@ -2,7 +2,8 @@ import { useNavigation } from "expo-router";
 import { useEffect } from "react";
 
 import { Button, Input, Text } from "@/components";
-import { profiles } from "@/lib/api";
+import { Features } from "@/config";
+import { profiles, wishlists } from "@/lib/api";
 import { CreateProfileSchema, type CreateProfile } from "@/lib/schemas";
 import { colours, spacing } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,6 +59,18 @@ export default function WelcomeScreen() {
       if (error) throw error;
       if (!profileData)
         throw new Error("No profile data returned from createProfile");
+
+      // Seed default wishlist if multi-wishlist feature is off
+      if (!Features["multi-wishlists"]) {
+        const { error: wishlistError } = await wishlists.create({
+          name: "My Wishlist",
+        });
+
+        if (wishlistError) {
+          console.error("Error creating default wishlist:", wishlistError);
+          // Non-blocking - continue with profile creation
+        }
+      }
 
       setProfile(profileData);
 
