@@ -34,10 +34,6 @@ export default function TabLayout() {
         <Label>Storybook</Label>
         <Icon sf="book" />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="addItem" hidden>
-        <Label>Add Item</Label>
-        <Icon sf="plus" />
-      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

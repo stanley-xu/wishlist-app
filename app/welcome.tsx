@@ -3,9 +3,9 @@ import { useEffect } from "react";
 
 import { Button, Input, Text } from "@/components";
 import { Features } from "@/config";
-import { profiles, wishlists } from "@/lib/api";
-import { CreateProfileSchema, type CreateProfile } from "@/lib/schemas";
-import { colours, spacing } from "@/styles/tokens";
+import { profiles, wishlistItems, wishlists } from "@/lib/api";
+import { CreateProfileSchema, CreateWishlistItemSchema } from "@/lib/schemas";
+import { spacing } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -13,10 +13,23 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  View,
 } from "react-native";
+import { z } from "zod";
 
 import { useAuthContext } from "@/lib/auth";
 import { fullPageStyles, largeHeaderStyles } from "../styles/styles";
+
+// Combined schema for onboarding
+const OnboardingSchema = z.object({
+  name: CreateProfileSchema.shape.name,
+  bio: CreateProfileSchema.shape.bio,
+  firstItemName: CreateWishlistItemSchema.shape.name
+    .optional()
+    .or(z.literal("")),
+});
+
+type OnboardingForm = z.infer<typeof OnboardingSchema>;
 
 export default function WelcomeScreen() {
   const { setProfile } = useAuthContext();
@@ -29,7 +42,7 @@ export default function WelcomeScreen() {
       title: "Welcome",
       headerRight: () => (
         <Button.Unstyled onPress={handleSubmit(onSubmit)}>
-          <Text variant="bold">Let&apos;s go!</Text>
+          <Text variant="semibold">Let&apos;s go!</Text>
         </Button.Unstyled>
       ),
       headerLeft: () => {
@@ -37,7 +50,7 @@ export default function WelcomeScreen() {
 
         return (
           <Button.Unstyled onPress={async () => await signOut()}>
-            <Text variant="bold">Sign out</Text>
+            <Text variant="semibold">Sign out</Text>
           </Button.Unstyled>
         );
       },
@@ -48,13 +61,21 @@ export default function WelcomeScreen() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<CreateProfile>({
-    resolver: zodResolver(CreateProfileSchema),
+  } = useForm<OnboardingForm>({
+    resolver: zodResolver(OnboardingSchema),
+    defaultValues: {
+      name: "",
+      bio: "",
+      firstItemName: "",
+    },
   });
 
-  const onSubmit = async (data: CreateProfile) => {
+  const onSubmit = async (data: OnboardingForm) => {
     try {
-      const { data: profileData, error } = await profiles.createProfile(data);
+      const { data: profileData, error } = await profiles.createProfile({
+        name: data.name,
+        bio: data.bio,
+      });
 
       if (error) throw error;
       if (!profileData)
@@ -62,13 +83,25 @@ export default function WelcomeScreen() {
 
       // Seed default wishlist if multi-wishlist feature is off
       if (!Features["multi-wishlists"]) {
-        const { error: wishlistError } = await wishlists.create({
-          name: "My Wishlist",
-        });
+        const { data: wishlistData, error: wishlistError } =
+          await wishlists.create({
+            name: "My Wishlist",
+          });
 
         if (wishlistError) {
           console.error("Error creating default wishlist:", wishlistError);
-          // Non-blocking - continue with profile creation
+        } else if (wishlistData && data.firstItemName) {
+          // Add first item if provided
+          const { error: itemError } = await wishlistItems.create(
+            wishlistData.id,
+            {
+              name: data.firstItemName,
+            }
+          );
+
+          if (itemError) {
+            console.error("Error creating first wishlist item:", itemError);
+          }
         }
       }
 
@@ -91,54 +124,64 @@ export default function WelcomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
       >
-        {/* TODO: illustration */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About you</Text>
 
-        {/* Name field (required) */}
-        <Text style={styles.label}>Name *</Text>
-        <Controller
-          control={control}
-          name="name"
-          rules={{
-            required: "Name is required",
-            minLength: {
-              value: 2,
-              message: "Name must be at least 2 characters",
-            },
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              style={[styles.input, errors.name && styles.inputError]}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="What's your name?"
-              autoCapitalize="words"
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Name"
+                placeholder="What's your name?"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.name?.message}
+                autoCapitalize="words"
+                autoFocus
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="bio"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Bio (optional)"
+                placeholder="Tell us about yourself"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.bio?.message}
+                multiline
+                numberOfLines={3}
+              />
+            )}
+          />
+        </View>
+
+        {!Features["multi-wishlists"] && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Your first wish</Text>
+
+            <Controller
+              control={control}
+              name="firstItemName"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Item name (optional)"
+                  placeholder="What do you want?"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.firstItemName?.message}
+                />
+              )}
             />
-          )}
-        />
-        {errors.name && (
-          <Text variant="error" style={styles.errorText}>
-            {errors.name.message}
-          </Text>
+          </View>
         )}
-
-        {/* Bio field (optional) */}
-        <Text style={styles.label}>Bio</Text>
-        <Controller
-          control={control}
-          name="bio"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              style={[styles.input, styles.textArea]}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Tell us about yourself"
-              multiline
-              numberOfLines={4}
-            />
-          )}
-        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -146,30 +189,16 @@ export default function WelcomeScreen() {
 
 const styles = StyleSheet.create({
   form: {
-    paddingTop: spacing["xl"],
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.xl,
+    gap: spacing.lg,
+  },
+  section: {
     gap: spacing.md,
   },
-  label: {
-    fontSize: 16,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: "600",
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  inputError: {
-    borderColor: colours.error,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  errorText: {
-    fontSize: 14,
-    marginTop: 4,
+    marginBottom: spacing.xs,
   },
 });

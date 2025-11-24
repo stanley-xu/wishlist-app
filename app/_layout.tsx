@@ -59,6 +59,15 @@ function RootNavigator() {
       <Stack.Protected guard={guardStates.welcome}>
         <Stack.Screen name="welcome" />
       </Stack.Protected>
+      <Stack.Protected guard={guardStates.app}>
+        <Stack.Screen
+          name="add-item"
+          options={{
+            presentation: "modal",
+            headerShown: false,
+          }}
+        />
+      </Stack.Protected>
     </Stack>
   );
 }

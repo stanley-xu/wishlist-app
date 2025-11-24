@@ -16,11 +16,11 @@ import { useWishlists } from "@/lib/hooks/useWishlists";
 import { UpdateProfile, UpdateProfileSchema } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
-import { AddItemModal } from "./AddItemModal";
 
 const ProfileFormSchema = UpdateProfileSchema.pick({ name: true, bio: true });
 type ProfileForm = z.infer<typeof ProfileFormSchema>;
@@ -36,7 +36,13 @@ export default function ProfileScreen() {
   );
 
   const { wishlists, refetch: refetchWishlists } = useWishlists();
-  const [showAddItem, setShowAddItem] = useState(false);
+
+  // Refetch wishlists when screen gains focus (e.g., after adding item)
+  useFocusEffect(
+    useCallback(() => {
+      refetchWishlists();
+    }, [refetchWishlists])
+  );
 
   const { bottom } = useSafeAreaInsets();
 
@@ -183,11 +189,31 @@ export default function ProfileScreen() {
   );
 
   const wishlistSection = (
-    <View>
-      {wishlists.map((item) => (
-        <View key={item.id}>
-          <Text>{item.name}</Text>
-          {item.eventId && <Text>{item.eventId}</Text>}
+    <View style={styles.wishlistSection}>
+      {wishlists.map((wishlist) => (
+        <View key={wishlist.id}>
+          {wishlist.items.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>No items yet</Text>
+              <Text style={styles.emptyStateSubtext}>
+                Tap the button below to add your first wish
+              </Text>
+            </View>
+          ) : (
+            wishlist.items.map((item) => (
+              <View key={item.id} style={styles.wishlistItem}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                {item.description && (
+                  <Text style={styles.itemDescription}>{item.description}</Text>
+                )}
+                {item.url && (
+                  <Text style={styles.itemUrl} numberOfLines={1}>
+                    {item.url}
+                  </Text>
+                )}
+              </View>
+            ))
+          )}
         </View>
       ))}
     </View>
@@ -211,17 +237,10 @@ export default function ProfileScreen() {
           { bottom: bottom + 60 }, // 60 for tab bar height
         ]}
       >
-        <Button onPress={() => setShowAddItem(true)}>
+        <Button onPress={() => router.push("/add-item")}>
           <Text>Add Item</Text>
         </Button>
       </View>
-
-      <AddItemModal
-        visible={showAddItem}
-        onClose={() => setShowAddItem(false)}
-        wishlistId={wishlists[0]?.id ?? ""} // Note: sending a blank string is likely to cause an error
-        onItemAdded={refetchWishlists}
-      />
     </View>
   );
 }
@@ -242,6 +261,7 @@ const styles = StyleSheet.create({
     minWidth: 150,
     padding: spacing.sm,
     alignItems: "center",
+    textAlign: "center",
   },
   profileHeader: {
     flexDirection: "column",
@@ -256,5 +276,44 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderColor: colours.accent,
     borderRadius: borderRadius.md,
+  },
+  wishlistSection: {
+    padding: spacing.md,
+  },
+  wishlistItem: {
+    backgroundColor: colours.surface,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.sm,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: text.black,
+  },
+  itemDescription: {
+    fontSize: 14,
+    opacity: 0.7,
+    marginTop: spacing.xs,
+  },
+  itemUrl: {
+    fontSize: 12,
+    color: colours.accent,
+    marginTop: spacing.xs,
+  },
+  emptyState: {
+    alignItems: "center",
+    padding: spacing.xl,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: "600",
+    opacity: 0.5,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    opacity: 0.5,
+    marginTop: spacing.xs,
+    textAlign: "center",
   },
 });

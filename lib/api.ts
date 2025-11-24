@@ -500,6 +500,29 @@ export const wishlists = {
 
 export const wishlistItems = {
   /**
+   * Get all items for a wishlist
+   */
+  async getByWishlistId(wishlistId: string): Promise<DbResult<WishlistItem[]>> {
+    try {
+      const { data, error } = await supabase
+        .from("wishlist_items")
+        .select("*")
+        .eq("wishlist_id", wishlistId)
+        .order("order", { ascending: true });
+
+      if (error) throw error;
+
+      return {
+        data: data.map((item) => WishlistItemSchema.parse(item)),
+        error: null,
+      };
+    } catch (error) {
+      console.error("Error fetching wishlist items:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
    * Add item to wishlist
    */
   async create(
