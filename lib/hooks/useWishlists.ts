@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
 import { Features } from "@/config";
 import {
   wishlists as wishlistApi,
   wishlistItems as wishlistItemsApi,
 } from "@/lib/api";
 import type { WishlistItem } from "@/lib/schemas";
+import { useCallback, useEffect, useState } from "react";
 
 type WishlistWithItems = {
   id: string;
@@ -13,7 +13,9 @@ type WishlistWithItems = {
   items: WishlistItem[];
 };
 
-export function useWishlists() {
+export function useWishlists(
+  singleWishlist: boolean = !Features["multi-wishlists"]
+) {
   const [wishlists, setWishlists] = useState<WishlistWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -35,20 +37,30 @@ export function useWishlists() {
       normalized = [normalized[0]];
     }
 
-    // Fetch items for each wishlist
-    const wishlistsWithItems = await Promise.all(
-      normalized.map(async (w) => {
-        const { data: items } = await wishlistItemsApi.getByWishlistId(w.id);
-        return {
-          id: w.id,
-          name: w.name,
-          eventId: w.event_id ?? null,
-          items: items ?? [],
-        };
-      })
-    );
+    if (singleWishlist) {
+      // Fetch items for the wishlist (typically just one when multi-wishlists is off)
+      const wishlist = normalized[0];
+      if (!wishlist) {
+        setWishlists([]);
+        setLoading(false);
+        return;
+      }
 
-    setWishlists(wishlistsWithItems);
+      const { data: items } = await wishlistItemsApi.getByWishlistId(
+        wishlist.id
+      );
+
+      setWishlists([
+        {
+          id: wishlist.id,
+          name: wishlist.name,
+          eventId: wishlist.event_id ?? null,
+          items: items ?? [],
+        },
+      ]);
+    } else {
+      throw new Error("Multi-wishlist mode not supported");
+    }
     setLoading(false);
   }, []);
 
