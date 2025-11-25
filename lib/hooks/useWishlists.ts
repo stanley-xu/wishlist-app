@@ -3,21 +3,14 @@ import {
   wishlists as wishlistApi,
   wishlistItems as wishlistItemsApi,
 } from "@/lib/api";
-import type { WishlistItem } from "@/lib/schemas";
+import { WishlistItem, type Wishlist } from "@/lib/schemas";
 import { useCallback, useEffect, useState } from "react";
 
-type WishlistWithItems = {
-  id: string;
-  name: string;
-  eventId: string | null;
-  items: WishlistItem[];
-};
-
 export function useWishlists(
-  addDummyItems: boolean = __DEV__,
   singleWishlist: boolean = !Features["multi-wishlists"]
 ) {
-  const [wishlists, setWishlists] = useState<WishlistWithItems[]>([]);
+  const [wishlists, setWishlists] = useState<Wishlist[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -31,65 +24,62 @@ export function useWishlists(
       return;
     }
 
-    let normalized = data ?? [];
-
-    // Filter to first wishlist if multi-wishlists is off
-    if (!Features["multi-wishlists"] && normalized.length > 0) {
-      normalized = [normalized[0]];
+    if (data == null || data?.length === 0) {
+      setLoading(false);
+      setWishlists([]);
+      return;
     }
 
     if (singleWishlist) {
-      // Fetch items for the wishlist (typically just one when multi-wishlists is off)
-      const wishlist = normalized[0];
-      if (!wishlist) {
-        setWishlists([]);
-        setLoading(false);
-        return;
-      }
-
-      const { data: items } = await wishlistItemsApi.getByWishlistId(
-        wishlist.id
-      );
-
-      if (addDummyItems && items) {
-        items.push(...dummyItems(wishlist.id));
-      }
-
-      setWishlists([
-        {
-          id: wishlist.id,
-          name: wishlist.name,
-          eventId: wishlist.event_id ?? null,
-          items: items ?? [],
-        },
-      ]);
+      // Fetch items for the wishlist (the default wishlist when multi-wishlists is off)
+      const wishlist = data.at(0)!;
+      setWishlists([wishlist]);
     } else {
       throw new Error("Multi-wishlist mode not supported");
     }
     setLoading(false);
   }, []);
 
+  const fetchWishlistItems = useCallback(async (wishlistId: string) => {
+    setLoading(true);
+    const { data: items, error } = await wishlistItemsApi.getByWishlistId(
+      wishlistId
+    );
+
+    if (error) {
+      setError(error);
+      setLoading(false);
+      return;
+    }
+
+    if (items == null || items?.length === 0) {
+      setLoading(false);
+      setWishlistItems([]);
+      return;
+    }
+
+    setWishlistItems(items);
+  }, []);
+
   useEffect(() => {
     fetchWishlists();
   }, [fetchWishlists]);
 
+  useEffect(() => {
+    if (!Features["multi-wishlists"]) {
+      const firstWishlist = wishlists?.at(0);
+      if (firstWishlist) {
+        fetchWishlistItems(firstWishlist.id);
+      }
+    }
+  }, [wishlists]);
+
   return {
     wishlists,
+    wishlistItems,
     loading,
     error,
-    refetch: fetchWishlists,
+    refetchWishlist: fetchWishlists,
+    refetchWishlistItems: fetchWishlistItems,
   };
 }
-
-const dummyItems = (wishlistId: string) =>
-  Array.from({ length: 10 }, (_, index) => ({
-    id: `00000000-0000-0000-0000-0000000000${index.toString().padStart(2, "0")}`,
-    name: `Item ${index}`,
-    description: `Description ${index}`,
-    url: `https://www.google.com`,
-    wishlist_id: wishlistId,
-    order: index,
-    status: "pending" as const,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }));
