@@ -14,8 +14,8 @@ interface WishlistSectionProps {
   error: Error | null;
   onItemPress?: (item: WishlistItemType) => void;
   refetch: (wishlistId: string) => void;
-  // Used for local updates
-  setWishlistItems?: ReturnType<typeof useWishlists>["setWishlistItems"];
+  optimisticUpdateItem?: ReturnType<typeof useWishlists>["updateLocalItem"];
+  optimisticRemoveItem?: ReturnType<typeof useWishlists>["removeLocalItem"];
 }
 
 export default function WishlistSection({
@@ -24,7 +24,8 @@ export default function WishlistSection({
   error,
   onItemPress,
   refetch,
-  setWishlistItems,
+  optimisticUpdateItem,
+  optimisticRemoveItem,
 }: WishlistSectionProps) {
   if (error) {
     return null;
@@ -46,17 +47,7 @@ export default function WishlistSection({
   }
 
   const handlePin = async (item: WishlistItemType) => {
-    // Optimistic update
-    setWishlistItems?.((items) => {
-      const toPinIndex = items.findIndex((i) => i.id === item.id)!;
-      items[toPinIndex].status = "pinned";
-
-      return [
-        ...items.slice(0, toPinIndex),
-        items[toPinIndex],
-        ...items.slice(toPinIndex + 1),
-      ];
-    });
+    optimisticUpdateItem?.(item.id, { status: "pinned" });
 
     try {
       // Toggle pin status (no reordering needed - sorting happens at query time)
@@ -72,8 +63,7 @@ export default function WishlistSection({
   };
 
   const handleDelete = async (item: WishlistItemType) => {
-    // Optimistic update
-    setWishlistItems?.((items) => items.filter((i) => i.id !== item.id));
+    optimisticRemoveItem?.(item.id);
 
     try {
       const { error } = await wishlistItemsApi.delete(item.id);

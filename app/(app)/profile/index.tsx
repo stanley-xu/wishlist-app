@@ -102,7 +102,8 @@ export default function ProfileScreen() {
     wishlistItems,
     error,
     refetchWishlistItems,
-    setWishlistItems,
+    updateLocalItem,
+    removeLocalItem,
   } = useWishlists();
   const [editingItem, setEditingItem] = useState<WishlistItemType | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -262,7 +263,8 @@ export default function ProfileScreen() {
               error={error}
               onItemPress={handleItemPress}
               refetch={memoRefetchWishlistItems}
-              setWishlistItems={setWishlistItems}
+              optimisticUpdateItem={updateLocalItem}
+              optimisticRemoveItem={removeLocalItem}
             />
           </View>
         </Pressable>
@@ -289,7 +291,7 @@ export default function ProfileScreen() {
       <WishlistItemEditModal
         visible={isEditModalVisible}
         item={editingItem}
-        setWishlistItems={setWishlistItems}
+        optimisticUpdateItem={updateLocalItem}
         onSave={memoRefetchWishlistItems}
         onClose={() => {
           setIsEditModalVisible(false);

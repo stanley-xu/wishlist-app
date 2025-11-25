@@ -10,22 +10,23 @@ export function useWishlists(
   singleWishlist: boolean = !Features["multi-wishlists"]
 ) {
   const [wishlists, setWishlists] = useState<Wishlist[]>([]);
+  const [wishlistsLoading, setWishlistsLoading] = useState(true);
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [wishlistItemsLoading, setWishlistItemsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchWishlists = useCallback(async () => {
-    setLoading(true);
+    setWishlistsLoading(true);
     const { data, error } = await wishlistApi.getAll();
 
     if (error) {
       setError(error);
-      setLoading(false);
+      setWishlistsLoading(false);
       return;
     }
 
-    if (data == null || data.length === 0) {
-      setLoading(false);
+    if (!data || data.length === 0) {
+      setWishlistsLoading(false);
       setWishlists([]);
       return;
     }
@@ -37,29 +38,29 @@ export function useWishlists(
     } else {
       throw new Error("Multi-wishlist mode not supported");
     }
-    setLoading(false);
+    setWishlistsLoading(false);
   }, [singleWishlist]);
 
   const fetchWishlistItems = useCallback(async (wishlistId: string) => {
-    setLoading(true);
+    setWishlistItemsLoading(true);
     const { data: items, error } = await wishlistItemsApi.getByWishlistId(
       wishlistId
     );
 
     if (error) {
       setError(error);
-      setLoading(false);
+      setWishlistItemsLoading(false);
       return;
     }
 
-    if (items == null || items.length === 0) {
-      setLoading(false);
+    if (!items || items.length === 0) {
+      setWishlistItemsLoading(false);
       setWishlistItems([]);
       return;
     }
 
     setWishlistItems(items);
-    setLoading(false);
+    setWishlistItemsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -68,20 +69,40 @@ export function useWishlists(
 
   useEffect(() => {
     if (!Features["multi-wishlists"]) {
-      const firstWishlist = wishlists?.at(0);
+      const firstWishlist = wishlists.at(0);
       if (firstWishlist) {
         fetchWishlistItems(firstWishlist.id);
       }
     }
   }, [wishlists, fetchWishlistItems]);
 
+  // Optimistic updates
+  const updateLocalItem = useCallback(
+    (itemId: string, updates: Partial<WishlistItem>) => {
+      setWishlistItems((prevItems) =>
+        prevItems.map((prevItem) =>
+          prevItem.id === itemId ? { ...prevItem, ...updates } : prevItem
+        )
+      );
+    },
+    []
+  );
+
+  // Optimistic updates
+  const removeLocalItem = useCallback((itemId: string) => {
+    setWishlistItems((prevItems) =>
+      prevItems.filter((prevItem) => prevItem.id !== itemId)
+    );
+  }, []);
+
   return {
     wishlists,
     wishlistItems,
-    loading,
+    loading: wishlistsLoading || wishlistItemsLoading,
     error,
     refetchWishlist: fetchWishlists,
     refetchWishlistItems: fetchWishlistItems,
-    setWishlistItems, // expose state updater for optimistic UI control
+    updateLocalItem,
+    removeLocalItem,
   };
 }

@@ -13,8 +13,7 @@ interface EditItemModalProps {
   item: WishlistItem | null;
   onSave?: () => void;
   onClose: () => void;
-  // Used for optimistic updates
-  setWishlistItems?: ReturnType<typeof useWishlists>["setWishlistItems"];
+  optimisticUpdateItem?: ReturnType<typeof useWishlists>["updateLocalItem"];
 }
 
 export default function WishlistItemEditModal({
@@ -22,7 +21,7 @@ export default function WishlistItemEditModal({
   item,
   onSave,
   onClose,
-  setWishlistItems,
+  optimisticUpdateItem,
 }: EditItemModalProps) {
   const [name, setName] = useState(item?.name || "");
   const [url, setUrl] = useState(item?.url || "");
@@ -39,24 +38,17 @@ export default function WishlistItemEditModal({
   const handleSave = async () => {
     if (!item || !name.trim()) return;
 
-    // Optimistic update
-    setWishlistItems?.((items) => {
-      const updateIndex = items.findIndex((i) => i.id === item.id);
+    const updatedData = {
+      name: name.trim(),
+      url: url.trim() || undefined,
+      description: description.trim() || undefined,
+    };
 
-      return [
-        ...items.slice(0, updateIndex),
-        items[updateIndex],
-        ...items.slice(updateIndex + 1),
-      ];
-    });
+    optimisticUpdateItem?.(item.id, updatedData);
 
     setIsSaving(true);
     try {
-      const { data, error } = await wishlistItems.update(item.id, {
-        name: name.trim(),
-        url: url.trim() || undefined,
-        description: description.trim() || undefined,
-      });
+      const { data, error } = await wishlistItems.update(item.id, updatedData);
 
       if (error) {
         console.error("Failed to update item:", error);
