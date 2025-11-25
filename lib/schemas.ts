@@ -106,8 +106,8 @@ export const CreateWishlistItemSchema = z.object({
 
 export const UpdateWishlistItemSchema = z.object({
   name: z.string().min(1).max(200).optional(),
-  url: z.url().nullable().optional(),
-  description: z.string().max(1000).nullable().optional(),
+  url: z.url().or(z.literal("")).nullable().optional(),
+  description: z.string().max(1000).or(z.literal("")).nullable().optional(),
   order: z.number().int().nonnegative().optional(),
   status: z.enum(["claimed", "pinned"]).nullable().optional(),
 });

@@ -1,12 +1,15 @@
 import { Input } from "@/components/Input";
 import { ModalHeader } from "@/components/ModalHeader";
-import type { WishlistItem } from "@/lib/schemas";
+import type { UpdateWishlistItem, WishlistItem } from "@/lib/schemas";
+import { UpdateWishlistItemSchema } from "@/lib/schemas";
 import { colours, spacing } from "@/styles/tokens";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, ScrollView, StyleSheet, View } from "react-native";
 
 import { wishlistItems } from "@/lib/api";
 import { useWishlists } from "@/lib/hooks/useWishlists";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 
 interface EditItemModalProps {
   visible: boolean;
@@ -23,32 +26,80 @@ export default function WishlistItemEditModal({
   onClose,
   optimisticUpdateItem,
 }: EditItemModalProps) {
-  const [name, setName] = useState(item?.name || "");
-  const [url, setUrl] = useState(item?.url || "");
-  const [description, setDescription] = useState(item?.description || "");
   const [isSaving, setIsSaving] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, dirtyFields, isValid },
+  } = useForm<UpdateWishlistItem>({
+    resolver: zodResolver(UpdateWishlistItemSchema),
+    defaultValues: {
+      name: item?.name || "",
+      url: item?.url || null,
+      description: item?.description || null,
+    },
+  });
+
   // Update form when item changes
-  if (item && name === "" && item.name !== name) {
-    setName(item.name);
-    setUrl(item.url || "");
-    setDescription(item.description || "");
-  }
+  useEffect(() => {
+    if (item) {
+      reset({
+        name: item.name,
+        url: item.url || null,
+        description: item.description || null,
+      });
+    }
+  }, [item, reset]);
 
-  const handleSave = async () => {
-    if (!item || !name.trim()) return;
+  const onSubmit = async (data: UpdateWishlistItem) => {
+    if (!item) return;
 
-    const updatedData = {
-      name: name.trim(),
-      url: url.trim() || undefined,
-      description: description.trim() || undefined,
-    };
+    // Build update object with only dirty fields
+    const updatedData: UpdateWishlistItem = {};
+
+    if (dirtyFields.name) {
+      updatedData.name = data.name?.trim();
+    }
+
+    if (dirtyFields.url) {
+      // Empty string becomes null for URL field
+      const url = (() => {
+        if (data.url) {
+          if (data.url === "") {
+            return null;
+          } else {
+            return data.url.trim();
+          }
+        } else {
+          return null;
+        }
+      })();
+
+      updatedData.url = url;
+    }
+
+    if (dirtyFields.description) {
+      // Empty string becomes null for description field
+      updatedData.description = data.description?.trim() ?? null;
+    }
+
+    // If nothing changed, just close
+    if (Object.keys(updatedData).length === 0) {
+      handleClose();
+      return;
+    }
 
     optimisticUpdateItem?.(item.id, updatedData);
 
     setIsSaving(true);
     try {
-      const { data, error } = await wishlistItems.update(item.id, updatedData);
+      console.debug("Updating item with:", updatedData);
+      const { data: result, error } = await wishlistItems.update(
+        item.id,
+        updatedData
+      );
 
       if (error) {
         console.error("Failed to update item:", error);
@@ -65,9 +116,7 @@ export default function WishlistItemEditModal({
   };
 
   const handleClose = () => {
-    setName("");
-    setUrl("");
-    setDescription("");
+    reset();
     onClose();
   };
 
@@ -84,37 +133,61 @@ export default function WishlistItemEditModal({
         <ModalHeader
           title="Edit Item"
           onCancel={handleClose}
-          onSave={handleSave}
-          saveDisabled={!name.trim() || isSaving}
+          onSave={handleSubmit(onSubmit)}
+          saveDisabled={!isValid || isSaving}
           saveLoading={isSaving}
         />
 
         <ScrollView keyboardShouldPersistTaps="handled">
           <View style={styles.form}>
-            <Input
-              label="Name"
-              value={name}
-              onChangeText={setName}
-              placeholder="Item name"
-              autoFocus
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Name"
+                  value={value || ""}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Item name"
+                  autoFocus
+                  error={errors.name?.message}
+                />
+              )}
             />
 
-            <Input
-              label="URL (optional)"
-              value={url}
-              onChangeText={setUrl}
-              placeholder="https://..."
-              keyboardType="url"
-              autoCapitalize="none"
+            <Controller
+              control={control}
+              name="url"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="URL (optional)"
+                  value={value || ""}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="https://..."
+                  keyboardType="url"
+                  autoCapitalize="none"
+                  error={errors.url?.message}
+                />
+              )}
             />
 
-            <Input
-              label="Description (optional)"
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Add notes or details..."
-              multiline
-              numberOfLines={4}
+            <Controller
+              control={control}
+              name="description"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Description (optional)"
+                  value={value || ""}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Add notes or details..."
+                  multiline
+                  numberOfLines={4}
+                  error={errors.description?.message}
+                />
+              )}
             />
           </View>
         </ScrollView>
