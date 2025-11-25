@@ -253,6 +253,7 @@ export default function ProfileScreen() {
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
         style={{ backgroundColor: colours.background }}
+        contentContainerStyle={{ paddingBottom: 50 }}
       >
         <Pressable onPress={() => Keyboard.dismiss()}>
           <Animated.View style={animatedSpacerStyle} />
