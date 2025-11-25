@@ -1,7 +1,6 @@
-import { View } from "react-native";
-
+import { Loader } from "@/components";
 import { colours } from "@/styles/tokens";
-import { LoaderCircle } from "lucide-react-native";
+import { View } from "react-native";
 
 export default function LoadingScreen() {
   return (
@@ -13,8 +12,7 @@ export default function LoadingScreen() {
         backgroundColor: colours.surface,
       }}
     >
-      {/* TODO rotate animation */}
-      <LoaderCircle size={96} />
+      <Loader />
     </View>
   );
 }

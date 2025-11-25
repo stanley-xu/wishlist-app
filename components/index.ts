@@ -8,6 +8,7 @@ export { WishlistItem } from "./WishlistItem";
 export { WishlistItemEditModal } from "./WishlistItemEditModal";
 export { WishlistSection } from "./WishlistSection";
 export { ModalHeader } from "./ModalHeader";
+export { Loader } from "./Loader";
 
 // Layout Components
 export { Center } from "./Center";
