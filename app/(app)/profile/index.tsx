@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Keyboard,
   Pressable,
@@ -13,18 +13,30 @@ import {
 } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
-import { Button, Card, Input, Text, WishlistItem, EditItemModal } from "@/components";
+import {
+  Button,
+  Card,
+  Input,
+  Text,
+  WishlistItemEditModal,
+  WishlistSection,
+} from "@/components";
 import Avatar from "@/components/Avatar/Avatar";
 import { cardTitleStyles } from "@/components/Card/Title";
-import { profiles, wishlistItems as wishlistItemsApi } from "@/lib/api";
+import { Features } from "@/config";
+import { profiles } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import { useWishlists } from "@/lib/hooks/useWishlists";
-import { UpdateProfile, UpdateProfileSchema, WishlistItem as WishlistItemType } from "@/lib/schemas";
+import {
+  UpdateProfile,
+  UpdateProfileSchema,
+  WishlistItem as WishlistItemType,
+} from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -40,8 +52,14 @@ export default function ProfileScreen() {
     throw new Error("[Panic] rendering ProfileScreen without a profile");
   }
 
-  const navigation = useNavigation();
-  const { top, bottom } = useSafeAreaInsets();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    profile.avatar_url ?? null
+  );
+  const firstName = profile.name.split(" ")[0];
+  const abbreviatedName = profile.name
+    .split(" ")
+    .map((name) => name[0].toUpperCase())
+    .join("");
 
   const {
     gesture,
@@ -52,27 +70,15 @@ export default function ProfileScreen() {
     isCollapsed,
   } = useCollapsibleHeader({ cardHeight: PROFILE_CARD_HEIGHT });
 
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    profile.avatar_url ?? null
-  );
-
-  const { wishlists, refetch: refetchWishlists } = useWishlists();
-
-  useFocusEffect(
-    useCallback(() => {
-      refetchWishlists();
-    }, [refetchWishlists])
-  );
-
-  const firstName = profile.name.split(" ")[0];
-
-  const abbreviatedName = profile.name
-    .split(" ")
-    .map((name) => name[0].toUpperCase())
-    .join("");
+  const navigation = useNavigation();
+  const { bottom } = useSafeAreaInsets();
 
   useEffect(() => {
     navigation.setOptions({
+      headerTransparent: false,
+      headerStyle: {
+        backgroundColor: colours.surface,
+      },
       headerTitle: () => (
         <TouchableOpacity
           onPress={toggleExpand}
@@ -84,23 +90,15 @@ export default function ProfileScreen() {
           </Animated.View>
         </TouchableOpacity>
       ),
-      headerTransparent: false,
-      headerStyle: {
-        backgroundColor: colours.surface,
-      },
     });
-  }, [
-    navigation,
-    profile.name,
-    isCollapsed,
-    toggleExpand,
-    animatedChevronStyle,
-  ]);
+  }, [navigation, isCollapsed, toggleExpand, animatedChevronStyle, firstName]);
 
   const [editingField, setEditingField] = useState<keyof UpdateProfile | null>(
     null
   );
 
+  const { wishlists, wishlistItems, error, refetchWishlistItems } =
+    useWishlists();
   const [editingItem, setEditingItem] = useState<WishlistItemType | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
@@ -137,75 +135,9 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleEditItem = (item: WishlistItemType) => {
+  const handleItemPress = (item: WishlistItemType) => {
     setEditingItem(item);
     setIsEditModalVisible(true);
-  };
-
-  const handleSaveItem = async (
-    item: WishlistItemType,
-    updates: { name: string; url?: string; description?: string }
-  ) => {
-    const { data, error } = await wishlistItemsApi.update(item.id, updates);
-    if (!error) {
-      await refetchWishlists();
-    } else {
-      console.error("Failed to update item:", error);
-      throw error;
-    }
-  };
-
-  const handlePinItem = async (item: WishlistItemType) => {
-    const wishlist = wishlists.find((w) =>
-      w.items.some((i) => i.id === item.id)
-    );
-    if (!wishlist) return;
-
-    const newStatus = item.status === "pinned" ? "pending" : "pinned";
-
-    try {
-      // Update the status first
-      const { error: updateError } = await wishlistItemsApi.update(item.id, {
-        status: newStatus as any,
-      });
-      if (updateError) throw updateError;
-
-      // Reorder items: pinned items at the top, then unpinned items
-      const items = wishlist.items.map((i) =>
-        i.id === item.id ? { ...i, status: newStatus as any } : i
-      );
-
-      // Sort: pinned items first, maintaining relative order
-      const pinnedItems = items.filter((i) => i.status === "pinned");
-      const unpinnedItems = items.filter((i) => i.status !== "pinned");
-      const reorderedItems = [...pinnedItems, ...unpinnedItems];
-
-      // Update order for all items
-      const { error: reorderError } = await wishlistItemsApi.reorder(
-        wishlist.id,
-        reorderedItems.map((i) => i.id)
-      );
-      if (reorderError) throw reorderError;
-
-      await refetchWishlists();
-    } catch (error) {
-      console.error("Failed to pin item:", error);
-      await refetchWishlists();
-    }
-  };
-
-  const handleDeleteItem = async (item: WishlistItemType) => {
-    // Optimistic delete (would need to expose setWishlists from useWishlists hook)
-    // For now, we'll refetch after the API call
-
-    try {
-      const { error } = await wishlistItemsApi.delete(item.id);
-      if (error) throw error;
-      await refetchWishlists();
-    } catch (error) {
-      console.error("Failed to delete item:", error);
-      await refetchWishlists();
-    }
   };
 
   const profileCardSection = (
@@ -304,34 +236,6 @@ export default function ProfileScreen() {
     </Card>
   );
 
-  const wishlistSection = (
-    <View style={styles.wishlistSection}>
-      {wishlists.map((wishlist) => (
-        <View key={wishlist.id}>
-          {wishlist.items.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>No items yet</Text>
-              <Text style={styles.emptyStateSubtext}>
-                Tap the button below to add your first wish
-              </Text>
-            </View>
-          ) : (
-            wishlist.items.map((item) => (
-              <WishlistItem
-                key={item.id}
-                item={item}
-                variant="elevated"
-                onPress={handleEditItem}
-                onPin={handlePinItem}
-                onDelete={handleDeleteItem}
-              />
-            ))
-          )}
-        </View>
-      ))}
-    </View>
-  );
-
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView
@@ -341,7 +245,19 @@ export default function ProfileScreen() {
       >
         <Pressable onPress={() => Keyboard.dismiss()}>
           <Animated.View style={animatedSpacerStyle} />
-          <View style={styles.content}>{wishlistSection}</View>
+          <View style={styles.content}>
+            <WishlistSection
+              wishlists={wishlists}
+              wishlistItems={wishlistItems}
+              error={error}
+              onItemPress={handleItemPress}
+              refetch={() => {
+                if (wishlists.length > 0 && !Features["multi-wishlists"]) {
+                  refetchWishlistItems(wishlists[0].id);
+                }
+              }}
+            />
+          </View>
         </Pressable>
       </ScrollView>
 
@@ -363,10 +279,14 @@ export default function ProfileScreen() {
         </Button>
       </View>
 
-      <EditItemModal
+      <WishlistItemEditModal
         visible={isEditModalVisible}
         item={editingItem}
-        onSave={handleSaveItem}
+        onSave={() => {
+          if (wishlists.length > 0 && !Features["multi-wishlists"]) {
+            refetchWishlistItems(wishlists[0].id);
+          }
+        }}
         onClose={() => {
           setIsEditModalVisible(false);
           setEditingItem(null);
@@ -423,22 +343,5 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderColor: colours.accent,
     borderRadius: borderRadius.md,
-  },
-  wishlistSection: {
-    padding: spacing.md,
-  },
-  emptyState: {
-    alignItems: "center",
-    padding: spacing.xl,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    fontWeight: "600",
-    opacity: 0.5,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    opacity: 0.5,
-    marginTop: spacing.xs,
   },
 });
