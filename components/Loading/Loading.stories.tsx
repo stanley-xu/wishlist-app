@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { View } from "react-native";
 
 import { colours } from "@/styles/tokens";
-import { Loader } from "./";
+import { Loading } from ".";
 
 const meta = {
-  title: "Components/Loader",
-  component: Loader,
+  title: "Components/Loading",
+  component: Loading,
   decorators: [
     (Story) => (
       <View
@@ -22,7 +22,7 @@ const meta = {
       </View>
     ),
   ],
-} satisfies Meta<typeof Loader>;
+} satisfies Meta<typeof Loading>;
 
 export default meta;
 

@@ -8,12 +8,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-interface LoaderProps {
+interface LoadingProps {
   size?: number;
   color?: string;
 }
 
-export default function Loader({ size = 96, color }: LoaderProps) {
+export default function Loading({ size = 96, color }: LoadingProps) {
   const rotation = useSharedValue(0);
 
   useEffect(() => {

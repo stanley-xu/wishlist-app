@@ -1,4 +1,4 @@
-import { Loader } from "@/components";
+import { Loading } from "@/components/Loading";
 import { colours } from "@/styles/tokens";
 import { View } from "react-native";
 
@@ -12,7 +12,7 @@ export default function LoadingScreen() {
         backgroundColor: colours.surface,
       }}
     >
-      <Loader />
+      <Loading />
     </View>
   );
 }
