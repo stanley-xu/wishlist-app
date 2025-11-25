@@ -24,6 +24,19 @@ Use the agents found for this project as you see fit as you (Claude) are likely 
 - The current tasks for this project are documented in docs/tasks.md. Read this document to understand the current todos to help me track my work.
 - I don't want to do this because I prefer to not write any logic in triggers.
 
+## GitHub Workflow
+
+**Always use MCP GitHub tools** (`mcp__github__*`) instead of `gh` CLI commands for GitHub operations:
+- **Creating/updating issues**: Use `mcp__github__issue_write` with `method: "create"` or `method: "update"`
+- **Searching issues**: Use `mcp__github__search_issues` for queries with criteria
+- **Listing issues**: Use `mcp__github__list_issues` for board-style views
+- **Reading issue details**: Use `mcp__github__issue_read` with appropriate method
+- **Creating PRs**: Use `mcp__github__create_pull_request`
+
+MCP tools provide better structure, type safety, error handling, and integration with planning workflows.
+
+Only use `gh` CLI when MCP doesn't support the specific operation.
+
 ## When I ask for some daily tasks
 
 When I ask about what to work on (e.g., "What should I do today?", "What's the plan?", "Where did I leave off?"), follow this workflow:
