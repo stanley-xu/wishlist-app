@@ -1,4 +1,4 @@
-import { Button, Input, Text } from "@/components";
+import { Input, ModalHeader, Text } from "@/components";
 import { Features } from "@/config";
 import { wishlistItems, wishlists } from "@/lib/api";
 import {
@@ -92,20 +92,13 @@ export default function AddItemScreen() {
 
   return (
     <View style={styles.content}>
-      <View style={styles.header}>
-        <Button variant="outline" size="sm" onPress={handleCancel}>
-          <Text>Cancel</Text>
-        </Button>
-        <Text style={{ fontSize: 18, fontWeight: "600" }}>Add Item</Text>
-        <Button
-          size="sm"
-          onPress={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-          disabled={isSubmitting || !wishlistId}
-        >
-          <Text>Save</Text>
-        </Button>
-      </View>
+      <ModalHeader
+        title="Add Item"
+        onCancel={handleCancel}
+        onSave={handleSubmit(onSubmit)}
+        saveDisabled={isSubmitting || !wishlistId}
+        saveLoading={isSubmitting}
+      />
 
       <View style={styles.form}>
         <Controller
@@ -167,12 +160,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.lg,
     backgroundColor: colours.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.lg,
   },
   form: {
     gap: spacing.md,

@@ -1,0 +1,86 @@
+import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
+
+import { Button } from "@/components/Button";
+import { Text } from "@/components/Text";
+import { spacing, typography } from "@/styles/tokens";
+
+interface ModalHeaderProps {
+  title: string;
+
+  // Left action (Cancel)
+  onCancel?: () => void;
+  cancelText?: string;
+  cancelDisabled?: boolean;
+
+  // Right action (Save)
+  onSave?: () => void;
+  saveText?: string;
+  saveDisabled?: boolean;
+  saveLoading?: boolean;
+
+  // Styling
+  style?: StyleProp<ViewStyle>;
+}
+
+export default function ModalHeader({
+  title,
+  onCancel,
+  cancelText = "Cancel",
+  cancelDisabled = false,
+  onSave,
+  saveText = "Save",
+  saveDisabled = false,
+  saveLoading = false,
+  style,
+}: ModalHeaderProps) {
+  return (
+    <View style={[styles.header, style]}>
+      {/* Left Action */}
+      {onCancel ? (
+        <Button
+          variant="outline"
+          size="sm"
+          onPress={onCancel}
+          disabled={cancelDisabled}
+        >
+          <Text>{cancelText}</Text>
+        </Button>
+      ) : (
+        <View style={styles.placeholder} />
+      )}
+
+      {/* Center Title */}
+      <Text style={styles.title}>{title}</Text>
+
+      {/* Right Action */}
+      {onSave ? (
+        <Button
+          size="sm"
+          onPress={onSave}
+          loading={saveLoading}
+          disabled={saveDisabled}
+        >
+          <Text>{saveText}</Text>
+        </Button>
+      ) : (
+        <View style={styles.placeholder} />
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.lg,
+  },
+  title: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+  },
+  placeholder: {
+    width: 70, // Approximate width of a small button for alignment
+  },
+});

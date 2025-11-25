@@ -5,7 +5,9 @@ export { Container } from "./Container";
 export * from "./Input";
 export { Text, TextProps } from "./Text";
 export { WishlistItem } from "./WishlistItem";
-export { EditItemModal } from "./EditItemModal";
+export { WishlistItemEditModal } from "./WishlistItemEditModal";
+export { WishlistSection } from "./WishlistSection";
+export { ModalHeader } from "./ModalHeader";
 
 // Layout Components
 export { Center } from "./Center";
