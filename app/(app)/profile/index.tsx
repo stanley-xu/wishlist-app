@@ -36,7 +36,7 @@ import {
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useNavigation } from "expo-router";
-import { ChevronUp } from "lucide-react-native";
+import { ChevronUp, CirclePlus } from "lucide-react-native";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -278,9 +278,23 @@ export default function ProfileScreen() {
         </Animated.View>
       </GestureDetector>
 
-      <View style={[styles.bottomButton, { bottom: bottom + 60 }]}>
-        <Button onPress={() => router.push("/add-item")}>
-          <Text>Add Item</Text>
+      <View style={styles.bottomButtonWrapper}>
+        <Button
+          onPress={() => router.push("/add-item")}
+          style={[styles.bottomButton, { bottom: bottom + 60 }]}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              gap: spacing.xs,
+            }}
+          >
+            <CirclePlus color={colours.background} />
+            <Text variant="semibold" fontSize="xs">
+              Add Item
+            </Text>
+          </View>
         </Button>
       </View>
 
@@ -303,10 +317,15 @@ const styles = StyleSheet.create({
     minHeight: "100%",
     backgroundColor: colours.background,
   },
+  bottomButtonWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   bottomButton: {
     position: "absolute",
-    left: spacing.md,
-    right: spacing.md,
+    borderRadius: borderRadius.full,
+    width: 200,
+    paddingVertical: spacing.sm,
   },
   collapsedHeaderContent: {
     flexDirection: "row",
