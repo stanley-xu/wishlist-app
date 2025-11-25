@@ -41,44 +41,60 @@ const Box = ({ children }: { children: string }) => (
 export const Default: Story = {
   args: {
     fill: true,
-    children: <Box>Centered Content</Box>,
   },
+  render: (args) => (
+    <Center {...args}>
+      <Box>Centered Content</Box>
+    </Center>
+  ),
 };
 
 export const NoFill: Story = {
   args: {
     fill: false,
-    children: <Box>Centered (no fill)</Box>,
   },
+  render: (args) => (
+    <Center {...args}>
+      <Box>Centered (no fill)</Box>
+    </Center>
+  ),
 };
 
 export const LoadingState: Story = {
   args: {
     fill: true,
-    children: <Text style={{ fontSize: 24 }}>Loading...</Text>,
   },
+  render: (args) => (
+    <Center {...args}>
+      <Text style={{ fontSize: 24 }}>Loading...</Text>
+    </Center>
+  ),
 };
 
 export const EmptyState: Story = {
   args: {
     fill: true,
-    children: (
+  },
+  render: (args) => (
+    <Center {...args}>
       <View style={{ alignItems: 'center' }}>
         <Text style={{ fontSize: 18, marginBottom: 8 }}>No items found</Text>
         <Text style={{ color: '#666' }}>Try adding some items</Text>
       </View>
-    ),
-  },
+    </Center>
+  ),
 };
 
 export const MultipleItems: Story = {
   args: {
     fill: true,
-    children: (
+  },
+  render: (args) => (
+    <Center {...args}>
       <View style={{ alignItems: 'center', gap: 16 }}>
         <Text style={{ fontSize: 24 }}>✓</Text>
         <Text>Success!</Text>
       </View>
-    ),
-  },
+    </Center>
+  ),
 };

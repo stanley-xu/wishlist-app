@@ -19,33 +19,33 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    children: (
+  render: (args) => (
+    <Container {...args}>
       <View style={{ padding: 20 }}>
         <Text>Container with background color</Text>
       </View>
-    ),
-  },
+    </Container>
+  ),
 };
 
 export const WithMultipleChildren: Story = {
-  args: {
-    children: (
+  render: (args) => (
+    <Container {...args}>
       <View style={{ padding: 20 }}>
         <Text>First child</Text>
         <Text>Second child</Text>
         <Text>Third child</Text>
       </View>
-    ),
-  },
+    </Container>
+  ),
 };
 
 export const Tall: Story = {
-  args: {
-    children: (
+  render: (args) => (
+    <Container {...args}>
       <View style={{ padding: 20, height: 300, justifyContent: 'center' }}>
         <Text>Tall container (300px height)</Text>
       </View>
-    ),
-  },
+    </Container>
+  ),
 };

@@ -43,46 +43,66 @@ const Content = () => (
 );
 
 export const Default: Story = {
-  args: {
-    children: <Content />,
-  },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
+      <Content />
+    </MaxWidthWrapper>
+  ),
 };
 
 export const NarrowWidth: Story = {
   args: {
     maxWidth: 400,
-    children: <Content />,
   },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
+      <Content />
+    </MaxWidthWrapper>
+  ),
 };
 
 export const WideWidth: Story = {
   args: {
     maxWidth: 800,
-    children: <Content />,
   },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
+      <Content />
+    </MaxWidthWrapper>
+  ),
 };
 
 export const SmallPadding: Story = {
   args: {
     maxWidth: 600,
     paddingX: 'sm',
-    children: <Content />,
   },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
+      <Content />
+    </MaxWidthWrapper>
+  ),
 };
 
 export const LargePadding: Story = {
   args: {
     maxWidth: 600,
     paddingX: 'xl',
-    children: <Content />,
   },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
+      <Content />
+    </MaxWidthWrapper>
+  ),
 };
 
 export const ArticleLayout: Story = {
   args: {
     maxWidth: 700,
     paddingX: 'lg',
-    children: (
+  },
+  render: (args) => (
+    <MaxWidthWrapper {...args}>
       <View>
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
           Article Title
@@ -99,6 +119,6 @@ export const ArticleLayout: Story = {
           Perfect for blog posts, documentation, or any long-form content.
         </Text>
       </View>
-    ),
-  },
+    </MaxWidthWrapper>
+  ),
 };

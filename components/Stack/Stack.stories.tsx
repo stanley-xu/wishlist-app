@@ -33,68 +33,66 @@ const Box = ({ children }: { children: string }) => (
 );
 
 export const Default: Story = {
-  args: {
-    children: (
-      <>
-        <Box>First Item</Box>
-        <Box>Second Item</Box>
-        <Box>Third Item</Box>
-      </>
-    ),
-  },
+  render: (args) => (
+    <Stack {...args}>
+      <Box>First Item</Box>
+      <Box>Second Item</Box>
+      <Box>Third Item</Box>
+    </Stack>
+  ),
 };
 
 export const SmallSpacing: Story = {
   args: {
     spacing: 'sm',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Stack {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+    </Stack>
+  ),
 };
 
 export const LargeSpacing: Story = {
   args: {
     spacing: 'lg',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Stack {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+    </Stack>
+  ),
 };
 
 export const ExtraLargeSpacing: Story = {
   args: {
     spacing: '2xl',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Stack {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+    </Stack>
+  ),
 };
 
 export const ManyItems: Story = {
   args: {
     spacing: 'md',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-        <Box>Item 4</Box>
-        <Box>Item 5</Box>
-        <Box>Item 6</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Stack {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+      <Box>Item 4</Box>
+      <Box>Item 5</Box>
+      <Box>Item 6</Box>
+    </Stack>
+  ),
 };

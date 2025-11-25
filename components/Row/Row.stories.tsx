@@ -55,97 +55,95 @@ const Box = ({ children, height }: { children: string; height?: number }) => (
 );
 
 export const Default: Story = {
-  args: {
-    children: (
-      <>
-        <Box>First</Box>
-        <Box>Second</Box>
-        <Box>Third</Box>
-      </>
-    ),
-  },
+  render: (args) => (
+    <Row {...args}>
+      <Box>First</Box>
+      <Box>Second</Box>
+      <Box>Third</Box>
+    </Row>
+  ),
 };
 
 export const SpaceBetween: Story = {
   args: {
     justify: 'space-between',
-    children: (
-      <>
-        <Box>Left</Box>
-        <Box>Right</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box>Left</Box>
+      <Box>Right</Box>
+    </Row>
+  ),
 };
 
 export const Centered: Story = {
   args: {
     justify: 'center',
     align: 'center',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+    </Row>
+  ),
 };
 
 export const VerticalAlignment: Story = {
   args: {
     align: 'flex-start',
-    children: (
-      <>
-        <Box height={40}>Short</Box>
-        <Box height={80}>Tall</Box>
-        <Box height={60}>Medium</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box height={40}>Short</Box>
+      <Box height={80}>Tall</Box>
+      <Box height={60}>Medium</Box>
+    </Row>
+  ),
 };
 
 export const Wrapping: Story = {
   args: {
     wrap: true,
     spacing: 'sm',
-    children: (
-      <>
-        <Box>Item 1</Box>
-        <Box>Item 2</Box>
-        <Box>Item 3</Box>
-        <Box>Item 4</Box>
-        <Box>Item 5</Box>
-        <Box>Item 6</Box>
-        <Box>Item 7</Box>
-        <Box>Item 8</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box>Item 1</Box>
+      <Box>Item 2</Box>
+      <Box>Item 3</Box>
+      <Box>Item 4</Box>
+      <Box>Item 5</Box>
+      <Box>Item 6</Box>
+      <Box>Item 7</Box>
+      <Box>Item 8</Box>
+    </Row>
+  ),
 };
 
 export const SmallSpacing: Story = {
   args: {
     spacing: 'sm',
-    children: (
-      <>
-        <Box>A</Box>
-        <Box>B</Box>
-        <Box>C</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box>A</Box>
+      <Box>B</Box>
+      <Box>C</Box>
+    </Row>
+  ),
 };
 
 export const LargeSpacing: Story = {
   args: {
     spacing: 'lg',
-    children: (
-      <>
-        <Box>A</Box>
-        <Box>B</Box>
-        <Box>C</Box>
-      </>
-    ),
   },
+  render: (args) => (
+    <Row {...args}>
+      <Box>A</Box>
+      <Box>B</Box>
+      <Box>C</Box>
+    </Row>
+  ),
 };
