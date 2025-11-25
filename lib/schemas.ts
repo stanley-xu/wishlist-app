@@ -89,7 +89,7 @@ export const WishlistItemSchema = z.object({
   url: z.url().nullable().optional(),
   description: z.string().max(1000).nullable().optional(),
   order: z.number().int().nonnegative(),
-  status: z.enum(["pending", "claimed", "pinned"]),
+  status: z.enum(["claimed", "pinned"]).nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -109,7 +109,7 @@ export const UpdateWishlistItemSchema = z.object({
   url: z.url().nullable().optional(),
   description: z.string().max(1000).nullable().optional(),
   order: z.number().int().nonnegative().optional(),
-  status: z.enum(["pending", "claimed"]).optional(),
+  status: z.enum(["claimed", "pinned"]).nullable().optional(),
 });
 
 export type Wishlist = z.infer<typeof WishlistSchema>;

@@ -172,7 +172,7 @@ export type Database = {
           id: string
           name: string
           order: number
-          status: string
+          status: string | null
           updated_at: string
           url: string | null
           wishlist_id: string
@@ -183,7 +183,7 @@ export type Database = {
           id?: string
           name: string
           order?: number
-          status?: string
+          status?: string | null
           updated_at?: string
           url?: string | null
           wishlist_id: string
@@ -194,7 +194,7 @@ export type Database = {
           id?: string
           name?: string
           order?: number
-          status?: string
+          status?: string | null
           updated_at?: string
           url?: string | null
           wishlist_id?: string
