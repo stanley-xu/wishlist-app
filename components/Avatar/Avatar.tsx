@@ -2,8 +2,8 @@ import { Text } from "@/components";
 import { IconButton } from "@/components/Button";
 import { avatarImage } from "@/lib/api";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
+import { CirclePlus } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
 
@@ -130,11 +130,7 @@ export default function Avatar({
             loading={uploading}
             style={{ minWidth: 44 }}
           >
-            <Ionicons
-              name="add-circle-sharp"
-              size={32}
-              color={colours.accent}
-            />
+            <CirclePlus size={32} color={colours.accent} />
           </IconButton>
         </View>
       )}

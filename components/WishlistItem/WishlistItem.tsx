@@ -1,16 +1,22 @@
-import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import type { WishlistItem } from "@/lib/schemas";
-import { StyleSheet, View, Pressable } from "react-native";
 import { Text } from "@/components/Text";
-import { Ionicons } from "@expo/vector-icons";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import type { WishlistItem } from "@/lib/schemas";
+import { borderRadius, colours, spacing, text } from "@/styles/tokens";
+import { ExternalPathString, Link } from "expo-router";
+import {
+  Pin,
+  PinOff,
+  SquareArrowOutUpRight,
+  Trash2,
+} from "lucide-react-native";
+import { useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  runOnJS,
 } from "react-native-reanimated";
-import { useState } from "react";
 
 interface WishlistItemProps {
   item: WishlistItem;
@@ -47,9 +53,15 @@ export default function WishlistItemComponent({
     .onUpdate((event) => {
       // If already swiped, allow closing gesture
       if (swipeState === "swipedLeft" && event.translationX > 0) {
-        translateX.value = Math.min(-SWIPE_OPEN_POSITION + event.translationX, 0);
+        translateX.value = Math.min(
+          -SWIPE_OPEN_POSITION + event.translationX,
+          0
+        );
       } else if (swipeState === "swipedRight" && event.translationX < 0) {
-        translateX.value = Math.max(SWIPE_OPEN_POSITION + event.translationX, 0);
+        translateX.value = Math.max(
+          SWIPE_OPEN_POSITION + event.translationX,
+          0
+        );
       } else if (swipeState === "closed") {
         // Normal swipe behavior when closed
         if (event.translationX < 0) {
@@ -78,15 +90,19 @@ export default function WishlistItemComponent({
       } else {
         // Already swiped - check if closing
         const isClosing =
-          (swipeState === "swipedLeft" && event.translationX > SWIPE_THRESHOLD / 2) ||
-          (swipeState === "swipedRight" && event.translationX < -SWIPE_THRESHOLD / 2);
+          (swipeState === "swipedLeft" &&
+            event.translationX > SWIPE_THRESHOLD / 2) ||
+          (swipeState === "swipedRight" &&
+            event.translationX < -SWIPE_THRESHOLD / 2);
 
         if (isClosing) {
           runOnJS(closeSwipe)();
         } else {
           // Return to open position
           const targetPosition =
-            swipeState === "swipedLeft" ? -SWIPE_OPEN_POSITION : SWIPE_OPEN_POSITION;
+            swipeState === "swipedLeft"
+              ? -SWIPE_OPEN_POSITION
+              : SWIPE_OPEN_POSITION;
           translateX.value = withSpring(targetPosition);
         }
       }
@@ -128,7 +144,11 @@ export default function WishlistItemComponent({
             onPin?.(item);
           }}
         >
-          <Ionicons name="pin" size={24} color={colours.background} />
+          {isPinned ? (
+            <PinOff size={24} color={colours.background} />
+          ) : (
+            <Pin size={24} color={colours.background} />
+          )}
         </Pressable>
       </Animated.View>
 
@@ -141,7 +161,7 @@ export default function WishlistItemComponent({
             onDelete?.(item);
           }}
         >
-          <Ionicons name="trash" size={24} color={colours.background} />
+          <Trash2 size={24} color={colours.background} />
         </Pressable>
       </Animated.View>
 
@@ -152,25 +172,29 @@ export default function WishlistItemComponent({
             {/* Pin indicator */}
             {isPinned && (
               <View style={styles.pinIndicator}>
-                <Ionicons name="pin" size={14} color={text.black} />
+                <Pin size={14} fill={colours.accent} color={colours.accent} />
               </View>
             )}
 
             {/* Item content */}
             <View style={styles.content}>
-              <Text style={styles.itemName}>{item.name}</Text>
+              <View style={styles.contentColumn1}>
+                <Text style={styles.itemName}>{item.name}</Text>
 
-              {item.description && (
-                <Text style={styles.itemDescription} numberOfLines={2}>
-                  {item.description}
-                </Text>
-              )}
+                {item.description && (
+                  <Text style={styles.itemDescription} numberOfLines={2}>
+                    {item.description}
+                  </Text>
+                )}
+              </View>
 
-              {item.url && (
-                <Text style={styles.itemUrl} numberOfLines={1}>
-                  {item.url}
-                </Text>
-              )}
+              <View style={styles.contentColumn2}>
+                {item.url && (
+                  <Link href={item.url as ExternalPathString}>
+                    <SquareArrowOutUpRight size={24} color={colours.accent} />
+                  </Link>
+                )}
+              </View>
             </View>
           </View>
         </Animated.View>
@@ -251,14 +275,21 @@ const styles = StyleSheet.create({
 
   pinIndicator: {
     position: "absolute",
-    top: spacing.sm,
-    right: spacing.sm,
-    zIndex: 1,
+    top: spacing.xs,
+    left: spacing.xs,
+    transform: "rotate(-45deg)",
   },
 
   content: {
     flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
+  contentColumn1: {
+    flex: 1,
+  },
+  contentColumn2: {},
 
   itemName: {
     fontSize: 16,

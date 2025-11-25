@@ -34,9 +34,9 @@ import {
   WishlistItem as WishlistItemType,
 } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useNavigation } from "expo-router";
+import { ChevronUp } from "lucide-react-native";
 import { Controller, useForm } from "react-hook-form";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -86,7 +86,7 @@ export default function ProfileScreen() {
         >
           <Text style={styles.collapsedHeaderName}>{firstName}</Text>
           <Animated.View style={animatedChevronStyle}>
-            <Feather name="chevron-up" size={20} color={text.black} />
+            <ChevronUp size={20} color={text.black} />
           </Animated.View>
         </TouchableOpacity>
       ),
@@ -248,7 +248,7 @@ export default function ProfileScreen() {
   );
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "white" }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
@@ -272,11 +272,7 @@ export default function ProfileScreen() {
 
       <GestureDetector gesture={gesture}>
         <Animated.View
-          style={[
-            styles.profileCardContainer,
-            { top: 0 },
-            animatedProfileCardStyle,
-          ]}
+          style={[styles.profileCardContainer, animatedProfileCardStyle]}
         >
           {profileCardSection}
         </Animated.View>

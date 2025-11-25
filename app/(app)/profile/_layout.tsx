@@ -1,14 +1,14 @@
 import { IconButton } from "@/components/Button";
 import { useAuthContext } from "@/lib/auth";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { NativeStackHeaderItemProps } from "@react-navigation/native-stack";
 import { Stack } from "expo-router";
+import { LogOut, Share } from "lucide-react-native";
 import { Alert } from "react-native";
 
 const ShareButton = (_props: NativeStackHeaderItemProps) => {
   return (
     <IconButton onPress={() => Alert.alert("Share pressed")}>
-      <Ionicons name="share-outline" size={24} />
+      <Share size={24} />
     </IconButton>
   );
 };
@@ -18,7 +18,7 @@ const LogoutButton = () => {
 
   return (
     <IconButton onPress={async () => await signOut()}>
-      <Ionicons name="log-out-outline" size={24} />
+      <LogOut size={24} />
     </IconButton>
   );
 };

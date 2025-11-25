@@ -2,15 +2,15 @@ import { StyleSheet, View } from "react-native";
 
 import { Text } from "@/components";
 import { colours, typography } from "@/styles/tokens";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { fullPageStyles } from "@/styles/styles";
+import { Send } from "lucide-react-native";
 
 // TODO: make this a sheet that is half the height of a modal
 export default function HandoffScreen() {
   return (
     <View style={styles.container}>
-      <Ionicons name="paper-plane" size={96} color={colours.accent} />
+      <Send size={96} color={colours.accent} />
       <Text style={styles.title}>Hang tight!</Text>
       <Text style={styles.subtitle}>Check your email.</Text>
     </View>
