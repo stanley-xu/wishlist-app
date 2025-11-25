@@ -79,15 +79,41 @@ async function seed() {
     // Create default wishlist
     // Mirrors the single wishlist stage of the app.
     // TODO: remove this once multi-wishlist is implemented
-    const { error: wishlistError } = await supabase.from("wishlists").insert({
-      user_id: user.id,
-      name: "My Wishlist",
-    });
+    const { data: wishlistData, error: wishlistError } = await supabase
+      .from("wishlists")
+      .insert({
+        user_id: user.id,
+        name: "My Wishlist",
+      })
+      .select()
+      .single();
 
     if (wishlistError) {
       console.error(`  ❌ Error creating wishlist: ${wishlistError.message}`);
     } else {
       console.log(`  ✅ Default wishlist created`);
+
+      // Add dummy wishlist items for development
+      const dummyItems = Array.from({ length: 10 }, (_, index) => ({
+        wishlist_id: wishlistData.id,
+        name: `Item ${index}`,
+        description: `Description ${index}`,
+        url: "https://www.google.com",
+        order: index,
+        status: null,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("wishlist_items")
+        .insert(dummyItems);
+
+      if (itemsError) {
+        console.error(
+          `  ❌ Error creating dummy items: ${itemsError.message}`
+        );
+      } else {
+        console.log(`  ✅ Created ${dummyItems.length} dummy wishlist items`);
+      }
     }
 
     console.log("");
