@@ -291,7 +291,7 @@ export default function ProfileScreen() {
             }}
           >
             <CirclePlus color={colours.background} />
-            <Text variant="semibold" fontSize="xs">
+            <Text variant="bold" fontSize="2xs">
               Add Item
             </Text>
           </View>
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   bottomButton: {
     position: "absolute",
     borderRadius: borderRadius.full,
-    width: 200,
+    width: 125,
     paddingVertical: spacing.sm,
   },
   collapsedHeaderContent: {
