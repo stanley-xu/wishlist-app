@@ -82,11 +82,13 @@ export default function ProfileScreen() {
       headerTitle: () => (
         <TouchableOpacity
           onPress={toggleExpand}
-          style={styles.collapsedHeaderContent}
+          style={[styles.collapsedHeaderContent]}
         >
-          <Text style={styles.collapsedHeaderName}>{firstName}</Text>
+          <Text variant="semibold" fontSize="lg">
+            {firstName}
+          </Text>
           <Animated.View style={animatedChevronStyle}>
-            <ChevronUp size={20} color={text.black} />
+            <ChevronUp size={16} color={text.black} />
           </Animated.View>
         </TouchableOpacity>
       ),
@@ -329,14 +331,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   collapsedHeaderContent: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: spacing.sm,
-  },
-  collapsedHeaderName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: text.black,
+    justifyContent: "center",
+    paddingTop: spacing.md, // Used to vertically align on header content baseline
+    width: 150,
+    gap: 0,
   },
   fieldElement: {
     borderWidth: 1,
