@@ -496,11 +496,28 @@ export const wishlists = {
 
 // ============================================================================
 // Wishlist Items
+//
+// IMPORTANT: Item Ordering Semantics
+// -----------------------------------
+// The `order` field represents an item's "natural position within its section"
+// (pinned vs unpinned), NOT its absolute visual position in the list.
+//
+// Visual order is determined by a multi-key sort:
+//   1. Primary: status = 'pinned' (pinned items first)
+//   2. Secondary: order ASC (within each section)
+//
+// This means:
+// - Pinning/unpinning only toggles status, no order changes needed
+// - Items maintain their relative order within their section
+// - See docs/records/pinning-semantics.md for detailed examples
 // ============================================================================
 
 export const wishlistItems = {
   /**
    * Get all items for a wishlist
+   *
+   * Items are sorted with pinned items first, then by order within each section.
+   * This implements the multi-key sorting described in docs/records/pinning-semantics.md
    */
   async getByWishlistId(wishlistId: string): Promise<DbResult<WishlistItem[]>> {
     try {
@@ -512,8 +529,20 @@ export const wishlistItems = {
 
       if (error) throw error;
 
+      // Sort in-memory: pinned items first, then by order within each section
+      const sorted = data.sort((a, b) => {
+        // Primary sort: pinned items first
+        const aIsPinned = a.status === "pinned";
+        const bIsPinned = b.status === "pinned";
+        if (aIsPinned !== bIsPinned) {
+          return aIsPinned ? -1 : 1;
+        }
+        // Secondary sort: by order within section
+        return a.order - b.order;
+      });
+
       return {
-        data: data.map((item) => WishlistItemSchema.parse(item)),
+        data: sorted.map((item) => WishlistItemSchema.parse(item)),
         error: null,
       };
     } catch (error) {
@@ -572,7 +601,7 @@ export const wishlistItems = {
     try {
       const { data: item, error } = await supabase
         .from("wishlist_items")
-        .update(data)
+        .update(data as any)
         .eq("id", id)
         .select()
         .single();
@@ -619,6 +648,40 @@ export const wishlistItems = {
       return { data: true, error: null };
     } catch (error) {
       console.error("Error reordering wishlist items:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Toggle pin status of a wishlist item
+   * Pinned items have status='pinned', unpinned items have status=NULL
+   */
+  async togglePin(id: string): Promise<DbResult<WishlistItem>> {
+    try {
+      // First get the current item to know its status
+      const { data: currentItem, error: fetchError } = await supabase
+        .from("wishlist_items")
+        .select("status")
+        .eq("id", id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const newStatus: string | null =
+        currentItem.status === "pinned" ? null : "pinned";
+
+      const { data: item, error } = await supabase
+        .from("wishlist_items")
+        .update({ status: newStatus } as any)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { data: WishlistItemSchema.parse(item), error: null };
+    } catch (error) {
+      console.error("Error toggling pin status:", error);
       return { data: null, error: error as Error };
     }
   },
