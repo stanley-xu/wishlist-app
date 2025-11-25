@@ -1,7 +1,6 @@
 import { Text } from "@/components/Text";
 import type { WishlistItem } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import { ExternalPathString, Link } from "expo-router";
 import {
   Pin,
   PinOff,
@@ -9,7 +8,13 @@ import {
   Trash2,
 } from "lucide-react-native";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -17,6 +22,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { IconButton } from "../Button";
 
 interface WishlistItemProps {
   item: WishlistItem;
@@ -166,39 +172,48 @@ export default function WishlistItemComponent({
       </Animated.View>
 
       {/* Main content */}
-      <GestureDetector gesture={composedGesture}>
-        <Animated.View style={animatedStyle}>
-          <View style={[styles.container, styles[variant]]}>
-            {/* Pin indicator */}
-            {isPinned && (
-              <View style={styles.pinIndicator}>
-                <Pin size={14} fill={colours.accent} color={colours.accent} />
-              </View>
-            )}
+      <Animated.View style={animatedStyle}>
+        <View style={[styles.container, styles[variant]]}>
+          {/* Pin indicator */}
+          {isPinned && (
+            <View style={styles.pinIndicator}>
+              <Pin size={14} fill={colours.accent} color={colours.accent} />
+            </View>
+          )}
 
-            {/* Item content */}
-            <View style={styles.content}>
+          {/* Item content */}
+          <View style={styles.content}>
+            <GestureDetector gesture={composedGesture}>
               <View style={styles.contentColumn1}>
-                <Text style={styles.itemName}>{item.name}</Text>
+                <TouchableOpacity>
+                  <Text style={styles.itemName}>{item.name}</Text>
 
-                {item.description && (
-                  <Text style={styles.itemDescription} numberOfLines={2}>
-                    {item.description}
-                  </Text>
-                )}
+                  {item.description && (
+                    <Text style={styles.itemDescription} numberOfLines={2}>
+                      {item.description}
+                    </Text>
+                  )}
+                </TouchableOpacity>
               </View>
+            </GestureDetector>
 
-              <View style={styles.contentColumn2}>
-                {item.url && (
-                  <Link href={item.url as ExternalPathString}>
-                    <SquareArrowOutUpRight size={24} color={colours.accent} />
-                  </Link>
-                )}
-              </View>
+            <View style={styles.contentColumn2}>
+              {item.url && (
+                <IconButton
+                  onPress={async () => {
+                    if (item.url && (await Linking.canOpenURL(item.url))) {
+                      Linking.openURL(item.url);
+                    }
+                  }}
+                  style={styles.linkButton}
+                >
+                  <SquareArrowOutUpRight size={24} color={colours.accent} />
+                </IconButton>
+              )}
             </View>
           </View>
-        </Animated.View>
-      </GestureDetector>
+        </View>
+      </Animated.View>
     </View>
   );
 }
@@ -285,12 +300,17 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   contentColumn1: {
     flex: 1,
   },
   contentColumn2: {},
-
+  linkButton: {
+    borderRadius: borderRadius.full,
+    padding: spacing.xs,
+    boxShadow: `inset 4 4 ${text.black}`,
+  },
   itemName: {
     fontSize: 16,
     fontWeight: "600",

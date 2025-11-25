@@ -1,14 +1,24 @@
+import { Text } from "@/components";
 import { IconButton } from "@/components/Button";
 import { useAuthContext } from "@/lib/auth";
+import { spacing } from "@/styles/tokens";
 import { NativeStackHeaderItemProps } from "@react-navigation/native-stack";
 import { Stack } from "expo-router";
 import { LogOut, Share } from "lucide-react-native";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 
 const ShareButton = (_props: NativeStackHeaderItemProps) => {
   return (
-    <IconButton onPress={() => Alert.alert("Share pressed")}>
-      <Share size={24} />
+    <IconButton
+      onPress={() => Alert.alert("Share pressed")}
+      style={{ paddingHorizontal: spacing.xs }}
+    >
+      <View
+        style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs }}
+      >
+        <Text variant="semibold">Share</Text>
+        <Share size={24} />
+      </View>
     </IconButton>
   );
 };
