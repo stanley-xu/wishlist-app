@@ -24,7 +24,7 @@ export function useWishlists(
       return;
     }
 
-    if (data == null || data?.length === 0) {
+    if (data == null || data.length === 0) {
       setLoading(false);
       setWishlists([]);
       return;
@@ -38,7 +38,7 @@ export function useWishlists(
       throw new Error("Multi-wishlist mode not supported");
     }
     setLoading(false);
-  }, []);
+  }, [singleWishlist]);
 
   const fetchWishlistItems = useCallback(async (wishlistId: string) => {
     setLoading(true);
@@ -52,13 +52,14 @@ export function useWishlists(
       return;
     }
 
-    if (items == null || items?.length === 0) {
+    if (items == null || items.length === 0) {
       setLoading(false);
       setWishlistItems([]);
       return;
     }
 
     setWishlistItems(items);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export function useWishlists(
         fetchWishlistItems(firstWishlist.id);
       }
     }
-  }, [wishlists]);
+  }, [wishlists, fetchWishlistItems]);
 
   return {
     wishlists,
@@ -81,5 +82,6 @@ export function useWishlists(
     error,
     refetchWishlist: fetchWishlists,
     refetchWishlistItems: fetchWishlistItems,
+    setWishlistItems, // expose state updater for optimistic UI control
   };
 }

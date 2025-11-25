@@ -6,13 +6,16 @@ import { Text } from "../Text";
 import { WishlistItem } from "../WishlistItem";
 
 import { wishlistItems as wishlistItemsApi } from "@/lib/api";
+import { useWishlists } from "@/lib/hooks/useWishlists";
 
 interface WishlistSectionProps {
   wishlists: Wishlist[];
   wishlistItems: WishlistItemType[];
   error: Error | null;
-  onItemPress: (item: WishlistItemType) => void;
+  onItemPress?: (item: WishlistItemType) => void;
   refetch: (wishlistId: string) => void;
+  // Used for local updates
+  setWishlistItems?: ReturnType<typeof useWishlists>["setWishlistItems"];
 }
 
 export default function WishlistSection({
@@ -21,6 +24,7 @@ export default function WishlistSection({
   error,
   onItemPress,
   refetch,
+  setWishlistItems,
 }: WishlistSectionProps) {
   if (error) {
     return null;
@@ -42,6 +46,18 @@ export default function WishlistSection({
   }
 
   const handlePin = async (item: WishlistItemType) => {
+    // Optimistic update
+    setWishlistItems?.((items) => {
+      const toPinIndex = items.findIndex((i) => i.id === item.id)!;
+      items[toPinIndex].status = "pinned";
+
+      return [
+        ...items.slice(0, toPinIndex),
+        items[toPinIndex],
+        ...items.slice(toPinIndex + 1),
+      ];
+    });
+
     try {
       // Toggle pin status (no reordering needed - sorting happens at query time)
       const { error: toggleError } = await wishlistItemsApi.togglePin(item.id);
@@ -56,8 +72,8 @@ export default function WishlistSection({
   };
 
   const handleDelete = async (item: WishlistItemType) => {
-    // Optimistic delete (would need to expose setWishlists from useWishlists hook)
-    // For now, we'll refetch after the API call
+    // Optimistic update
+    setWishlistItems?.((items) => items.filter((i) => i.id !== item.id));
 
     try {
       const { error } = await wishlistItemsApi.delete(item.id);

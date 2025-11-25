@@ -6,12 +6,15 @@ import { useState } from "react";
 import { Modal, ScrollView, StyleSheet, View } from "react-native";
 
 import { wishlistItems } from "@/lib/api";
+import { useWishlists } from "@/lib/hooks/useWishlists";
 
 interface EditItemModalProps {
   visible: boolean;
   item: WishlistItem | null;
   onSave?: () => void;
   onClose: () => void;
+  // Used for optimistic updates
+  setWishlistItems?: ReturnType<typeof useWishlists>["setWishlistItems"];
 }
 
 export default function WishlistItemEditModal({
@@ -19,6 +22,7 @@ export default function WishlistItemEditModal({
   item,
   onSave,
   onClose,
+  setWishlistItems,
 }: EditItemModalProps) {
   const [name, setName] = useState(item?.name || "");
   const [url, setUrl] = useState(item?.url || "");
@@ -34,6 +38,17 @@ export default function WishlistItemEditModal({
 
   const handleSave = async () => {
     if (!item || !name.trim()) return;
+
+    // Optimistic update
+    setWishlistItems?.((items) => {
+      const updateIndex = items.findIndex((i) => i.id === item.id);
+
+      return [
+        ...items.slice(0, updateIndex),
+        items[updateIndex],
+        ...items.slice(updateIndex + 1),
+      ];
+    });
 
     setIsSaving(true);
     try {

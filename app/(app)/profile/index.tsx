@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Keyboard,
   Pressable,
@@ -97,10 +97,20 @@ export default function ProfileScreen() {
     null
   );
 
-  const { wishlists, wishlistItems, error, refetchWishlistItems } =
-    useWishlists();
+  const {
+    wishlists,
+    wishlistItems,
+    error,
+    refetchWishlistItems,
+    setWishlistItems,
+  } = useWishlists();
   const [editingItem, setEditingItem] = useState<WishlistItemType | null>(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const memoRefetchWishlistItems = useCallback(() => {
+    if (wishlists.length > 0 && !Features["multi-wishlists"]) {
+      refetchWishlistItems(wishlists[0].id);
+    }
+  }, [refetchWishlistItems, wishlists]);
 
   const {
     control,
@@ -251,11 +261,8 @@ export default function ProfileScreen() {
               wishlistItems={wishlistItems}
               error={error}
               onItemPress={handleItemPress}
-              refetch={() => {
-                if (wishlists.length > 0 && !Features["multi-wishlists"]) {
-                  refetchWishlistItems(wishlists[0].id);
-                }
-              }}
+              refetch={memoRefetchWishlistItems}
+              setWishlistItems={setWishlistItems}
             />
           </View>
         </Pressable>
@@ -282,11 +289,8 @@ export default function ProfileScreen() {
       <WishlistItemEditModal
         visible={isEditModalVisible}
         item={editingItem}
-        onSave={() => {
-          if (wishlists.length > 0 && !Features["multi-wishlists"]) {
-            refetchWishlistItems(wishlists[0].id);
-          }
-        }}
+        setWishlistItems={setWishlistItems}
+        onSave={memoRefetchWishlistItems}
         onClose={() => {
           setIsEditModalVisible(false);
           setEditingItem(null);
