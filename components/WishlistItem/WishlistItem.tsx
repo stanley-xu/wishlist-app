@@ -182,36 +182,34 @@ export default function WishlistItemComponent({
           )}
 
           {/* Item content */}
-          <View style={styles.content}>
-            <GestureDetector gesture={composedGesture}>
+          <GestureDetector gesture={composedGesture}>
+            <View style={styles.content}>
               <View style={styles.contentColumn1}>
-                <TouchableOpacity>
-                  <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemName}>{item.name}</Text>
 
-                  {item.description && (
-                    <Text style={styles.itemDescription} numberOfLines={2}>
-                      {item.description}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                {item.description && (
+                  <Text style={styles.itemDescription} numberOfLines={2}>
+                    {item.description}
+                  </Text>
+                )}
               </View>
-            </GestureDetector>
 
-            <View style={styles.contentColumn2}>
-              {item.url && (
-                <IconButton
-                  onPress={async () => {
-                    if (item.url && (await Linking.canOpenURL(item.url))) {
-                      Linking.openURL(item.url);
-                    }
-                  }}
-                  style={styles.linkButton}
-                >
-                  <SquareArrowOutUpRight size={24} color={colours.accent} />
-                </IconButton>
-              )}
+              <View style={styles.contentColumn2} pointerEvents="box-none">
+                {item.url && (
+                  <IconButton
+                    onPress={async () => {
+                      if (item.url && (await Linking.canOpenURL(item.url))) {
+                        Linking.openURL(item.url);
+                      }
+                    }}
+                    style={styles.linkButton}
+                  >
+                    <SquareArrowOutUpRight size={24} color={colours.accent} />
+                  </IconButton>
+                )}
+              </View>
             </View>
-          </View>
+          </GestureDetector>
         </View>
       </Animated.View>
     </View>
