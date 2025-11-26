@@ -47,6 +47,7 @@ export default function WishlistItemComponent({
   const translateX = useSharedValue(0);
   const [swipeState, setSwipeState] = useState<SwipeState>("closed");
   const isPinned = item.status === "pinned";
+  const isReadOnly = !onPin && !onDelete;
 
   const closeSwipe = () => {
     setSwipeState("closed");
@@ -125,7 +126,9 @@ export default function WishlistItemComponent({
       }
     });
 
-  const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
+  const composedGesture = isReadOnly
+    ? tapGesture
+    : Gesture.Exclusive(panGesture, tapGesture);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -142,34 +145,38 @@ export default function WishlistItemComponent({
   return (
     <View style={styles.wrapper}>
       {/* Left action (appears when swiping left) - Pin */}
-      <Animated.View style={[styles.leftAction, leftActionStyle]}>
-        <Pressable
-          style={styles.actionButton}
-          onPress={() => {
-            closeSwipe();
-            onPin?.(item);
-          }}
-        >
-          {isPinned ? (
-            <PinOff size={24} color={colours.background} />
-          ) : (
-            <Pin size={24} color={colours.background} />
-          )}
-        </Pressable>
-      </Animated.View>
+      {!isReadOnly && (
+        <Animated.View style={[styles.leftAction, leftActionStyle]}>
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => {
+              closeSwipe();
+              onPin?.(item);
+            }}
+          >
+            {isPinned ? (
+              <PinOff size={24} color={colours.background} />
+            ) : (
+              <Pin size={24} color={colours.background} />
+            )}
+          </Pressable>
+        </Animated.View>
+      )}
 
       {/* Right action (appears when swiping right) - Delete */}
-      <Animated.View style={[styles.rightAction, rightActionStyle]}>
-        <Pressable
-          style={styles.actionButton}
-          onPress={() => {
-            closeSwipe();
-            onDelete?.(item);
-          }}
-        >
-          <Trash2 size={24} color={colours.background} />
-        </Pressable>
-      </Animated.View>
+      {!isReadOnly && (
+        <Animated.View style={[styles.rightAction, rightActionStyle]}>
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => {
+              closeSwipe();
+              onDelete?.(item);
+            }}
+          >
+            <Trash2 size={24} color={colours.background} />
+          </Pressable>
+        </Animated.View>
+      )}
 
       {/* Main content */}
       <Animated.View style={animatedStyle}>

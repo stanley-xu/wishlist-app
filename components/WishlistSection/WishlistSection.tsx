@@ -16,6 +16,7 @@ interface WishlistSectionProps {
   refetch: (wishlistId: string) => void;
   optimisticUpdateItem?: ReturnType<typeof useWishlists>["updateLocalItem"];
   optimisticRemoveItem?: ReturnType<typeof useWishlists>["removeLocalItem"];
+  readOnly?: boolean;
 }
 
 export default function WishlistSection({
@@ -26,6 +27,7 @@ export default function WishlistSection({
   refetch,
   optimisticUpdateItem,
   optimisticRemoveItem,
+  readOnly = false,
 }: WishlistSectionProps) {
   if (error) {
     return null;
@@ -39,9 +41,11 @@ export default function WishlistSection({
     return (
       <View style={styles.emptyState}>
         <Text style={styles.emptyStateText}>No items yet</Text>
-        <Text style={styles.emptyStateSubtext}>
-          Tap the button below to add your first wish
-        </Text>
+        {!readOnly && (
+          <Text style={styles.emptyStateSubtext}>
+            Tap the button below to add your first wish
+          </Text>
+        )}
       </View>
     );
   }
@@ -87,8 +91,8 @@ export default function WishlistSection({
               item={item}
               variant="elevated"
               onPress={onItemPress}
-              onPin={handlePin}
-              onDelete={handleDelete}
+              onPin={readOnly ? undefined : handlePin}
+              onDelete={readOnly ? undefined : handleDelete}
             />
           ))}
         </View>
