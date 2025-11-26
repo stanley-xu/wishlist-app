@@ -404,6 +404,27 @@ export const wishlists = {
   },
 
   /**
+   * Get all wishlists for a specific user by userId
+   */
+  async getByUserId(userId: string): Promise<DbListResult<Wishlist>> {
+    try {
+      const { data, error } = await supabase
+        .from("wishlists")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const validated = data?.map((w) => WishlistSchema.parse(w)) ?? [];
+      return { data: validated, error: null };
+    } catch (error) {
+      console.error("Error fetching wishlists by user ID:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
    * Get wishlist by ID with items
    */
   async getById(
