@@ -15,6 +15,8 @@ export const colours = {
   surfaceDark: palette.primary3,
   accent: palette.primary3,
   error: palette.secondary,
+  text: "hsl(135, 15%, 15%)",
+  border: "hsl(0, 0%, 88%)",
 } as const;
 
 export const text = {

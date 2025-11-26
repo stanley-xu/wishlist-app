@@ -2,7 +2,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { spacing, typography } from "@/styles/tokens";
+import { spacing, text, typography } from "@/styles/tokens";
 
 interface ModalHeaderProps {
   title: string;
@@ -42,11 +42,12 @@ export default function ModalHeader({
           size="sm"
           onPress={onCancel}
           disabled={cancelDisabled}
+          style={styles.button}
         >
           <Text>{cancelText}</Text>
         </Button>
       ) : (
-        <View style={styles.placeholder} />
+        <View style={styles.button} />
       )}
 
       {/* Center Title */}
@@ -59,11 +60,12 @@ export default function ModalHeader({
           onPress={onSave}
           loading={saveLoading}
           disabled={saveDisabled}
+          style={styles.button}
         >
           <Text>{saveText}</Text>
         </Button>
       ) : (
-        <View style={styles.placeholder} />
+        <View style={styles.button} />
       )}
     </View>
   );
@@ -80,7 +82,8 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
   },
-  placeholder: {
-    width: 70, // Approximate width of a small button for alignment
+  button: {
+    width: 90,
+    borderColor: text.black,
   },
 });

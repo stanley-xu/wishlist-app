@@ -76,6 +76,8 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     marginBottom: spacing.xs,
+    color: text.black,
+    opacity: 0.6,
   },
 
   // Base input styles
