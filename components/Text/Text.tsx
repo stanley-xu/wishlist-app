@@ -27,8 +27,8 @@ export function Text({
     <RNText
       style={[
         styles[variant],
-        fontSize && { fontSize: typography.fontSize[fontSize] },
-        { color: textColour },
+        { fontSize: typography.fontSize[fontSize] },
+        textColour && { color: textColour },
         style,
       ]}
       {...rest}

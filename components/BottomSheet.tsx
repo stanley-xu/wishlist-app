@@ -41,6 +41,11 @@ export default function BottomSheet() {
   const { signOut, profile } = useAuthContext();
   const { bottom } = useSafeAreaInsets();
 
+  // Only render Modal when it needs to be visible or is animating
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <Modal
       visible={isOpen}

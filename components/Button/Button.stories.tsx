@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { Button } from "./Button";
+import { Text } from "../Text";
 
 const meta = {
   title: "Components/Button",
@@ -25,6 +26,11 @@ const meta = {
     children: "Button",
     onPress: () => {},
   },
+  render: (args) => (
+    <Button {...args}>
+      <Text>{args.children}</Text>
+    </Button>
+  ),
 } satisfies Meta<typeof Button>;
 
 export default meta;
