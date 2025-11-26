@@ -3,7 +3,7 @@ export { Button, ButtonProps, Logout } from "./Button";
 export { Card } from "./Card";
 export { Container } from "./Container";
 export * from "./Input";
-export { Loader } from "./Loading";
+export { Loading } from "./Loading";
 export { ModalHeader } from "./ModalHeader";
 export { ProfileCard } from "./ProfileCard";
 export { Text, TextProps } from "./Text";

@@ -1,13 +1,33 @@
-import { useCallback, useEffect, useState } from "react";
-import { Keyboard, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
-import Animated from "react-native-reanimated";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { ChevronUp } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
-import { Loader, ProfileCard, Text, WishlistSection, WishlistItemEditModal } from "@/components";
+import {
+  Loading,
+  ProfileCard,
+  Text,
+  WishlistItemEditModal,
+  WishlistSection,
+} from "@/components";
 import { Features } from "@/config";
-import { profiles, wishlists as wishlistsApi, wishlistItems as wishlistItemsApi } from "@/lib/api";
+import {
+  profiles,
+  wishlistItems as wishlistItemsApi,
+  wishlists as wishlistsApi,
+} from "@/lib/api";
 import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import type { Profile, Wishlist, WishlistItem } from "@/lib/schemas";
 import { colours, spacing, text } from "@/styles/tokens";
@@ -71,20 +91,27 @@ export default function UserProfileScreen() {
         setLoading(true);
 
         // Fetch profile
-        const { data: profileData, error: profileError } = await profiles.getById(userId);
+        const { data: profileData, error: profileError } =
+          await profiles.getById(userId);
         if (profileError) throw profileError;
         if (!profileData) throw new Error("Profile not found");
         setProfile(profileData);
 
         // Fetch wishlists
-        const { data: wishlistsData, error: wishlistsError } = await wishlistsApi.getByUserId(userId);
+        const { data: wishlistsData, error: wishlistsError } =
+          await wishlistsApi.getByUserId(userId);
         if (wishlistsError) throw wishlistsError;
         setWishlists(wishlistsData || []);
 
         // Fetch wishlist items for the first wishlist (single wishlist mode)
-        if (wishlistsData && wishlistsData.length > 0 && !Features["multi-wishlists"]) {
+        if (
+          wishlistsData &&
+          wishlistsData.length > 0 &&
+          !Features["multi-wishlists"]
+        ) {
           const wishlist = wishlistsData[0];
-          const { data: itemsData, error: itemsError } = await wishlistItemsApi.getByWishlistId(wishlist.id);
+          const { data: itemsData, error: itemsError } =
+            await wishlistItemsApi.getByWishlistId(wishlist.id);
           if (itemsError) throw itemsError;
           setWishlistItems(itemsData || []);
         }
@@ -102,7 +129,8 @@ export default function UserProfileScreen() {
 
   const refetchWishlistItems = useCallback(async (wishlistId: string) => {
     try {
-      const { data: itemsData, error: itemsError } = await wishlistItemsApi.getByWishlistId(wishlistId);
+      const { data: itemsData, error: itemsError } =
+        await wishlistItemsApi.getByWishlistId(wishlistId);
       if (itemsError) throw itemsError;
       setWishlistItems(itemsData || []);
     } catch (err) {
@@ -118,7 +146,7 @@ export default function UserProfileScreen() {
   if (loading) {
     return (
       <View style={styles.centerContainer}>
-        <Loader />
+        <Loading />
       </View>
     );
   }
@@ -126,7 +154,9 @@ export default function UserProfileScreen() {
   if (error || !profile) {
     return (
       <View style={styles.centerContainer}>
-        <Text>Error loading profile: {error?.message || "Profile not found"}</Text>
+        <Text>
+          Error loading profile: {error?.message || "Profile not found"}
+        </Text>
       </View>
     );
   }
