@@ -1,4 +1,5 @@
 // UI Components
+export { default as BottomSheet } from "./BottomSheet";
 export { Button, ButtonProps, Logout } from "./Button";
 export { Card } from "./Card";
 export { Container } from "./Container";

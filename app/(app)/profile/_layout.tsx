@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { Text } from "@/components";
 import { IconButton } from "@/components/Button";
-import { useDrawer } from "@/lib/hooks/useDrawer";
+import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { spacing } from "@/styles/tokens";
 import { Menu, Share } from "lucide-react-native";
 import { Alert, View, Pressable } from "react-native";
@@ -22,11 +22,11 @@ const ShareButton = () => {
   );
 };
 
-const DrawerButton = () => {
-  const { openDrawer } = useDrawer();
+const BottomSheetButton = () => {
+  const { openBottomSheet } = useBottomSheet();
 
   return (
-    <IconButton onPress={openDrawer}>
+    <IconButton onPress={openBottomSheet}>
       <Menu size={24} />
     </IconButton>
   );
@@ -42,7 +42,7 @@ export default function ProfileLayout() {
           title: "",
           headerTransparent: true,
           headerRight: () => <ShareButton />,
-          headerLeft: () => <DrawerButton />,
+          headerLeft: () => <BottomSheetButton />,
         }}
       />
       <Stack.Screen
