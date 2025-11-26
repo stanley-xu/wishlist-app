@@ -1,4 +1,4 @@
-import { Text } from "@/components";
+import { Text } from "@/components/Text";
 import { IconButton } from "@/components/Button";
 import { avatarImage } from "@/lib/api";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";

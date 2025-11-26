@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import Avatar from "@/components/Avatar/Avatar";
-import { Card, Input } from "@/components";
+import { Card } from "@/components/Card";
+import { Input } from "@/components/Input";
 import { cardTitleStyles } from "@/components/Card/Title";
 import { UpdateProfileSchema, type Profile } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
