@@ -5,6 +5,7 @@ export { Container } from "./Container";
 export * from "./Input";
 export { Loader } from "./Loading";
 export { ModalHeader } from "./ModalHeader";
+export { ProfileCard } from "./ProfileCard";
 export { Text, TextProps } from "./Text";
 export { WishlistItem } from "./WishlistItem";
 export { WishlistItemEditModal } from "./WishlistItemEditModal";
