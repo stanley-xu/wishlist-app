@@ -2,11 +2,14 @@ import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
 import { Features } from "@/config";
 import { colours, text } from "@/styles/tokens";
+import { DrawerProvider } from "@/lib/hooks/useDrawer";
+import SlideDrawer from "@/components/SlideDrawer";
 import { DynamicColorIOS } from "react-native";
 
 export default function TabLayout() {
   return (
-    <NativeTabs
+    <DrawerProvider>
+      <NativeTabs
       labelStyle={{
         color: DynamicColorIOS({
           dark: text.white,
@@ -35,5 +38,7 @@ export default function TabLayout() {
         <Icon sf="book" />
       </NativeTabs.Trigger>
     </NativeTabs>
+    <SlideDrawer />
+    </DrawerProvider>
   );
 }

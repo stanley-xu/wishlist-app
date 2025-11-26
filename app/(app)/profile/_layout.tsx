@@ -1,15 +1,14 @@
+import { Stack } from "expo-router";
 import { Text } from "@/components";
 import { IconButton } from "@/components/Button";
-import { useAuthContext } from "@/lib/auth";
+import { useDrawer } from "@/lib/hooks/useDrawer";
 import { spacing } from "@/styles/tokens";
-import { NativeStackHeaderItemProps } from "@react-navigation/native-stack";
-import { Stack } from "expo-router";
-import { LogOut, Share } from "lucide-react-native";
-import { Alert, View } from "react-native";
+import { Menu, Share } from "lucide-react-native";
+import { Alert, View, Pressable } from "react-native";
 
-const ShareButton = (_props: NativeStackHeaderItemProps) => {
+const ShareButton = () => {
   return (
-    <IconButton
+    <Pressable
       onPress={() => Alert.alert("Share pressed")}
       style={{ paddingHorizontal: spacing.xs }}
     >
@@ -19,43 +18,19 @@ const ShareButton = (_props: NativeStackHeaderItemProps) => {
         <Text variant="semibold">Share</Text>
         <Share size={24} />
       </View>
-    </IconButton>
+    </Pressable>
   );
 };
 
-const LogoutButton = () => {
-  const { signOut } = useAuthContext();
+const DrawerButton = () => {
+  const { openDrawer } = useDrawer();
 
   return (
-    <IconButton onPress={async () => await signOut()}>
-      <LogOut size={24} />
+    <IconButton onPress={openDrawer}>
+      <Menu size={24} />
     </IconButton>
   );
 };
-
-// Sadly, this doesn't work
-// const RightItems: NativeStackHeaderItem[] = (
-//   props: NativeStackHeaderItemProps
-// ) => {
-//   const { signOut } = useAuthContext();
-//   return [
-//     {
-//       type: "button",
-//       label: "Share",
-//       icon: { type: "sfSymbol", name: "square.and.arrow.up" },
-//       onPress: () => Alert.alert("Share pressed"),
-//     },
-//     {
-//       type: "button",
-//       label: "Logout",
-//       icon: {
-//         type: "sfSymbol",
-//         name: "rectangle.portrait.and.arrow.right",
-//       },
-//       onPress: async () => await signOut(),
-//     },
-//   ];
-// };
 
 export default function ProfileLayout() {
   return (
@@ -67,7 +42,14 @@ export default function ProfileLayout() {
           title: "",
           headerTransparent: true,
           headerRight: () => <ShareButton />,
-          headerLeft: () => <LogoutButton />,
+          headerLeft: () => <DrawerButton />,
+        }}
+      />
+      <Stack.Screen
+        name="[userId]"
+        options={{
+          headerShown: true,
+          presentation: "card",
         }}
       />
     </Stack>
