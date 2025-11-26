@@ -17,6 +17,7 @@ interface EditItemModalProps {
   onSave?: () => void;
   onClose: () => void;
   optimisticUpdateItem?: ReturnType<typeof useWishlists>["updateLocalItem"];
+  readOnly?: boolean;
 }
 
 export default function WishlistItemEditModal({
@@ -25,6 +26,7 @@ export default function WishlistItemEditModal({
   onSave,
   onClose,
   optimisticUpdateItem,
+  readOnly = false,
 }: EditItemModalProps) {
   const [isSaving, setIsSaving] = useState(false);
 
@@ -131,10 +133,10 @@ export default function WishlistItemEditModal({
     >
       <View style={styles.container}>
         <ModalHeader
-          title="Edit Item"
+          title="Item details"
           onCancel={handleClose}
-          onSave={handleSubmit(onSubmit)}
-          saveDisabled={!isValid || isSaving}
+          onSave={readOnly ? undefined : handleSubmit(onSubmit)}
+          saveDisabled={!isValid || isSaving || Object.keys(dirtyFields).length === 0}
           saveLoading={isSaving}
         />
 
@@ -150,8 +152,8 @@ export default function WishlistItemEditModal({
                   onChangeText={onChange}
                   onBlur={onBlur}
                   placeholder="Item name"
-                  autoFocus
                   error={errors.name?.message}
+                  editable={!readOnly}
                 />
               )}
             />
@@ -169,6 +171,7 @@ export default function WishlistItemEditModal({
                   keyboardType="url"
                   autoCapitalize="none"
                   error={errors.url?.message}
+                  editable={!readOnly}
                 />
               )}
             />
@@ -186,6 +189,7 @@ export default function WishlistItemEditModal({
                   multiline
                   numberOfLines={4}
                   error={errors.description?.message}
+                  editable={!readOnly}
                 />
               )}
             />
