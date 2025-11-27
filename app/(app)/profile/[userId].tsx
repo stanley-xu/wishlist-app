@@ -45,8 +45,9 @@ export default function UserProfileScreen() {
     "UserProfileScreen should be authenticated and have profile context"
   );
 
-  const { userId, share: shareToken } = useLocalSearchParams<{
+  const { userId, list: wishlistId, share: shareToken } = useLocalSearchParams<{
     userId: string;
+    list?: string;
     share?: string;
   }>();
   const navigation = useNavigation();
@@ -105,10 +106,10 @@ export default function UserProfileScreen() {
         // User viewing their own profile - always has access
         if (currentUser.id === userId) {
           userHasAccess = true;
-        } else if (shareToken && typeof shareToken === "string") {
-          // Validate share token
+        } else if (wishlistId && shareToken && typeof shareToken === "string") {
+          // Validate share token for specific wishlist
           const { data: isValid } = await shareTokens.validateFor(
-            userId,
+            wishlistId,
             shareToken
           );
           userHasAccess = Boolean(isValid);
