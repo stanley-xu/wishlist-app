@@ -65,26 +65,7 @@ You've got 30 productive hours ahead of you. Make them count. 💪
 
 ---
 
-## Planned timelines
-
-**Goal**: Deploy to App Store in 2 weeks (by ~Nov 30, 2025)
-
-**Week 1 Focus** (Nov 16-23):
-
-- ✅ Complete onboarding flow
-- ✅ Fix and test db-helpers with RLS
-- ✅ Implement Wishlist UI (creation, editing, display)
-- ✅ Event creation and joining basics
-
-**Week 2 Focus** (Nov 24-30):
-
-- ✅ Secret Santa matching algorithm
-- ✅ Polish core user flows
-- ✅ App store assets (icon, splash, screenshots)
-- ✅ TestFlight beta testing
-- ✅ Submit to App Store
-
-### TestFlight Deployment Checklist
+## TestFlight Deployment Checklist
 
 **Prerequisites:**
 
@@ -109,25 +90,86 @@ You've got 30 productive hours ahead of you. Make them count. 💪
 
 ## Ideas
 
-### Later
+Unsorted.
 
 - Enhanced modal forms
   - Clear button
-- Superpowered add-to-list flow
-  - Unified add to list form
-    - Single text field with paste button > paste from clipboard
-    - Modal should be half-height sheet
-    - Text content is automatically parsed into required wishlist data (name and URL if text is a URL)
-      - Use cases enabled:
-        - Adding abstract gifts (entering a short note, instead of name / link)
-        - Adding links quickly (URL saved; attempt made at parsing name from URL)
-  - Contextual menu quick-paste:
-    1. Tap-to-hold on profile page button reveals paste button
-    2. Finger on paste button > finger up > paste from clipboard
-- Notification drawer
-  - Wishlists you follow will appear as a notification in a page
-  - Page has drawer UX, revealed from an activator somewhere
-  - Push notifications
 - Android support
 - Web support
 - Multiple header buttons (SwiftUI)
+
+### Superpowered add-to-list flow
+
+- Unified add to list form
+  - Single text field with paste button > paste from clipboard
+  - Modal should be half-height sheet
+  - Text content is _automatically parsed_ into required wishlist data (name and URL if text is a URL)
+    - Use cases enabled:
+      - Adding **abstract gifts** (entering a short note, instead of name / link)
+      - Adding **links quickly** (URL saved; attempt made at parsing name from URL)
+- Contextual menu quick-paste:
+  1. Tap-to-hold on profile page button reveals paste button
+  2. Finger on paste button > finger up > paste from clipboard
+
+### Notification drawer
+
+- Wishlists you follow will appear as a notification in a page
+- Page has drawer UX, revealed from an activator somewhere
+- Push notifications
+
+### Updates to screens
+
+### Profile 2.0
+
+- Still collapsible
+- Move wishlist section out to make room... for new content
+
+I want to expand on what a user's profile can do:
+
+- I think it can _summarize_ what a user is into lately (e.g. movie / book genres, types of clothing, etc.)
+- This can be LLM-powered
+  - Though this will require a way to collect data about a user's preferences...
+- More basic MVP: take the wishlist content and summarize that
+  - Removes the need for data acquisition
+
+This gives gifters a compass that guides them to **getting better gifts to giftees**
+
+Giftful
+
+- Some content section that summarzies "your wishes" in an easy-to-understand way
+  - e.g. display some emojis that represent the wishes
+
+Notes
+
+- Consider other ways to **"give better gifts"**
+  - UI hint at leaving notes to followers in the Bio section
+- Can this help with ALL types of gifts?
+  - Consumables
+  - Objects
+  - Experiences
+
+### Facilitate custom gift exchanges
+
+Custom rules can be created by organizers
+
+Here's what the MKBHD studio did
+
+1. Everyone is assigned a dollar value
+2. They must buy a gift that is EDC / tech - themed within the budget
+3. Randomly assign each dollar value gift to a participant
+
+Giftful
+
+- Allow multiple types of gift exchanges
+- Presets: secret santa, white elephant
+- Custom:
+  - Define by: name, description, rules, participants, assignments
+- (Bonus) can we allow organizers to _crowd-source_ these exchanges?
+  - It could look like an "app store", but you can browse custom gift exchanges
+
+Notes
+
+- Rethink how the app can actually help facilitate these exchanges
+- For (probably every exchange), you'll need to administrate it by managing: participants, assignments, event dates, and content
+  - We can **minimize this friction**
+- For very specific rules (e.g. white elephant), can the app do anything there? "No" is okay.
