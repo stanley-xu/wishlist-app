@@ -120,6 +120,17 @@ export type CreateWishlistItem = z.infer<typeof CreateWishlistItemSchema>;
 export type UpdateWishlistItem = z.infer<typeof UpdateWishlistItemSchema>;
 
 // ============================================================================
+// Share Token schemas
+// ============================================================================
+
+export const ShareTokenValidationSchema = z.object({
+  userId: z.guid("Invalid user ID format"),
+  token: z.guid("Invalid share token format"),
+});
+
+export type ShareTokenValidation = z.infer<typeof ShareTokenValidationSchema>;
+
+// ============================================================================
 // Event schemas
 // ============================================================================
 

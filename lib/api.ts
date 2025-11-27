@@ -13,17 +13,18 @@ import { PostgRESTErrorCodes } from "../data/postgres-errors";
 import {
   CreateProfile,
   ProfileSchema,
+  ShareTokenValidationSchema,
   UpdateProfile,
   UpdateProfileSchema,
-  WishlistSchema,
   WishlistItemSchema,
+  WishlistSchema,
+  type CreateWishlist,
+  type CreateWishlistItem,
   type Profile,
+  type UpdateWishlist,
+  type UpdateWishlistItem,
   type Wishlist,
   type WishlistItem,
-  type CreateWishlist,
-  type UpdateWishlist,
-  type CreateWishlistItem,
-  type UpdateWishlistItem,
 } from "./schemas";
 
 // ============================================================================
@@ -589,7 +590,7 @@ export const wishlistItems = {
         .limit(1)
         .single();
 
-      const nextOrder = data.order ?? ((maxOrderResult?.order ?? -1) + 1);
+      const nextOrder = data.order ?? (maxOrderResult?.order ?? -1) + 1;
 
       const { data: item, error } = await supabase
         .from("wishlist_items")
@@ -703,6 +704,84 @@ export const wishlistItems = {
       return { data: WishlistItemSchema.parse(item), error: null };
     } catch (error) {
       console.error("Error toggling pin status:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+};
+
+// ============================================================================
+// Share Tokens - Wishlist Sharing
+// ============================================================================
+
+export const shareTokens = {
+  /**
+   * Generate or get existing share token for current user's wishlist
+   * Creates a new token if one doesn't exist, or returns existing active token
+   */
+  async findOrCreate(userId: string): Promise<DbResult<string>> {
+    try {
+      // Check if token already exists
+      const { data: existing } = await supabase
+        .from("wishlist_permissions")
+        .select("share_token")
+        .eq("user_id", userId)
+        .single();
+
+      if (existing?.share_token) {
+        return { data: existing.share_token, error: null };
+      }
+
+      // Create new token
+      const { data, error } = await supabase
+        .from("wishlist_permissions")
+        .insert({ user_id: userId })
+        .select("share_token")
+        .single();
+
+      if (error) throw error;
+      if (!data?.share_token) throw new Error("Failed to generate token");
+
+      return { data: data.share_token, error: null };
+    } catch (error) {
+      console.error("Error generating share token:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Validate a share token for a given user ID
+   * Returns true if the token is valid and active for that user
+   */
+  async validateFor(userId: string, token: string): Promise<DbResult<boolean>> {
+    try {
+      // Validate input types first
+      const validationResult = ShareTokenValidationSchema.safeParse({ userId, token });
+
+      if (!validationResult.success) {
+        return {
+          data: false,
+          error: new Error(`Invalid input: ${validationResult.error.message}`)
+        };
+      }
+
+      const { data, error } = await supabase
+        .from("wishlist_permissions")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("share_token", token)
+        .single();
+
+      if (error) {
+        // Token not found is not an error, just return false
+        if (error.code === PostgRESTErrorCodes.NO_ROWS) {
+          return { data: false, error: null };
+        }
+        throw error;
+      }
+
+      return { data: !!data, error: null };
+    } catch (error) {
+      console.error("Error validating share token:", error);
       return { data: null, error: error as Error };
     }
   },

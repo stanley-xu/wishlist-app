@@ -26,6 +26,7 @@ import { useAuthContext } from "@/lib/auth";
 import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import { useWishlists } from "@/lib/hooks/useWishlists";
 import { WishlistItem as WishlistItemType } from "@/lib/schemas";
+import { assert } from "@/lib/utils";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 import { router, useNavigation } from "expo-router";
 import { ChevronUp, CirclePlus } from "lucide-react-native";
@@ -35,9 +36,7 @@ const PROFILE_CARD_HEIGHT = 320;
 
 export default function ProfileScreen() {
   const { profile, setProfile } = useAuthContext();
-  if (!profile) {
-    throw new Error("[Panic] rendering ProfileScreen without a profile");
-  }
+  assert(profile, "ProfileScreen should have profile context");
 
   const firstName = profile.name.split(" ")[0];
 
@@ -108,14 +107,13 @@ export default function ProfileScreen() {
     setIsEditModalVisible(true);
   };
 
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ScrollView
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
         style={{ backgroundColor: colours.background }}
-        contentContainerStyle={{ paddingBottom: 50 }}
+        contentContainerStyle={{ paddingBottom: 50 }} // Pad main content due to native tabs
       >
         <Pressable onPress={() => Keyboard.dismiss()}>
           <Animated.View style={animatedSpacerStyle} />
@@ -145,23 +143,15 @@ export default function ProfileScreen() {
         </Animated.View>
       </GestureDetector>
 
-      <View style={styles.bottomButtonWrapper}>
+      <View style={[styles.bottomButtonWrapper, { bottom: bottom + 60 }]}>
         <Button
           onPress={() => router.push("/add-item")}
-          style={[styles.bottomButton, { bottom: bottom + 60 }]}
+          style={styles.bottomButton}
         >
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              gap: spacing.xs,
-            }}
-          >
-            <CirclePlus color={colours.background} />
-            <Text variant="bold" fontSize="2xs">
-              Add Item
-            </Text>
-          </View>
+          <CirclePlus color={colours.background} />
+          <Text variant="bold" fontSize="2xs">
+            Add Item
+          </Text>
         </Button>
       </View>
 
@@ -189,9 +179,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomButton: {
-    position: "absolute",
-    borderRadius: borderRadius.full,
     width: 125,
+    flexDirection: "column",
+    gap: spacing.xs,
+    borderRadius: borderRadius.full,
     paddingVertical: spacing.sm,
   },
   collapsedHeaderContent: {

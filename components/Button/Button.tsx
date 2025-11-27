@@ -1,22 +1,21 @@
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import {
   ActivityIndicator,
+  Pressable,
+  PressableStateCallbackType,
   StyleProp,
   StyleSheet,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
-import {
-  SurfaceColourContext,
-  useSurfaceColourContext,
-} from "../SurfaceColourContext";
+import { SurfaceColourContext } from "../SurfaceColourContext";
 import { UnstyledButton } from "./Unstyled/Unstyled";
 
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
+  fullWidth?: boolean;
   variant?: "primary" | "outline" | "dev";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
@@ -24,49 +23,67 @@ export interface ButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
+const ON_PRESS_STYLES: ViewStyle = {
+  opacity: 0.7,
+};
+
+const HUG_STYLES: ViewStyle = {
+  marginHorizontal: "auto",
+};
+
 export function Button({
   children,
   onPress,
+  fullWidth = false,
   variant = "primary",
   size = "md",
   disabled = false,
   loading = false,
   style: styleOverrides,
 }: ButtonProps) {
+  const hug = !fullWidth;
   const isDisabled = disabled || loading;
-  let textColour = useSurfaceColourContext()?.textColour ?? text.black;
 
-  if (variant === "primary") {
-    textColour = text.white;
-  }
+  const onPressStyles = useCallback((args: PressableStateCallbackType) => {
+    return {
+      ...(hug ? HUG_STYLES : null),
+      ...(args.pressed ? ON_PRESS_STYLES : null),
+    };
+  }, []);
 
-  return (
-    <SurfaceColourContext.Provider value={{ textColour }}>
-      <TouchableOpacity
+  const buttonMarkup = (
+    <Pressable onPress={onPress} disabled={isDisabled} style={onPressStyles}>
+      <View
         style={[
           styles.base,
           styles[variant],
           styles[size],
           isDisabled && styles.disabled,
+          styles.contentContainer,
           styleOverrides,
         ]}
-        onPress={onPress}
-        disabled={isDisabled}
-        activeOpacity={0.7}
       >
-        <View style={styles.contentContainer}>
-          {loading && (
-            <ActivityIndicator
-              size="small"
-              color={colours.background}
-              style={styles.spinner}
-            />
-          )}
-          {children}
-        </View>
-      </TouchableOpacity>
-    </SurfaceColourContext.Provider>
+        {loading && (
+          <ActivityIndicator
+            size="small"
+            color={variant === "primary" ? text.white : undefined}
+            style={styles.spinner}
+          />
+        )}
+        {children}
+      </View>
+    </Pressable>
   );
+
+  if (variant === "primary") {
+    return (
+      <SurfaceColourContext.Provider value={{ textColour: text.white }}>
+        {buttonMarkup}
+      </SurfaceColourContext.Provider>
+    );
+  }
+
+  return buttonMarkup;
 }
 
 const styles = StyleSheet.create({
@@ -75,7 +92,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
   },
 
   // Variants
@@ -85,8 +102,7 @@ const styles = StyleSheet.create({
   outline: {
     backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: colours.accent,
-    borderRadius: borderRadius.lg,
+    borderColor: text.black,
   },
   unstyled: {
     backgroundColor: "transparent",
@@ -120,10 +136,7 @@ const styles = StyleSheet.create({
 
   // Loading state styles
   contentContainer: {
-    // flex: 1,
     position: "relative",
-    // alignItems: "center",
-    // justifyContent: "center",
   },
   spinner: {
     position: "absolute",

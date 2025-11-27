@@ -25,17 +25,30 @@ import {
 import { Features } from "@/config";
 import {
   profiles,
+  shareTokens,
   wishlistItems as wishlistItemsApi,
   wishlists as wishlistsApi,
 } from "@/lib/api";
+import { useAuthContext } from "@/lib/auth";
 import { useCollapsibleHeader } from "@/lib/hooks/useCollapsibleHeader";
 import type { Profile, Wishlist, WishlistItem } from "@/lib/schemas";
+import { assert } from "@/lib/utils";
 import { colours, spacing, text } from "@/styles/tokens";
 
 const PROFILE_CARD_HEIGHT = 320;
 
 export default function UserProfileScreen() {
-  const { userId } = useLocalSearchParams<{ userId: string }>();
+  // Note: this is the currently logged in user, not necessarily the one whose profile we're rendering
+  const { session, profile: currentProfile } = useAuthContext();
+  assert(
+    session && currentProfile,
+    "UserProfileScreen should be authenticated and have profile context"
+  );
+
+  const { userId, share: shareToken } = useLocalSearchParams<{
+    userId: string;
+    share?: string;
+  }>();
   const navigation = useNavigation();
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -43,6 +56,7 @@ export default function UserProfileScreen() {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [hasAccess, setHasAccess] = useState(false);
   const [viewingItem, setViewingItem] = useState<WishlistItem | null>(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
 
@@ -80,15 +94,33 @@ export default function UserProfileScreen() {
   }, [navigation, firstName, isCollapsed, toggleExpand, animatedChevronStyle]);
 
   useEffect(() => {
-    if (!userId) {
-      setError(new Error("No user ID provided"));
-      setLoading(false);
-      return;
-    }
-
-    const fetchUserData = async () => {
+    const checkAccessAndFetchData = async () => {
       try {
         setLoading(true);
+
+        // Check if user has access to this profile
+        const currentUser = session.user;
+        let userHasAccess = false;
+
+        // User viewing their own profile - always has access
+        if (currentUser.id === userId) {
+          userHasAccess = true;
+        } else if (shareToken && typeof shareToken === "string") {
+          // Validate share token
+          const { data: isValid } = await shareTokens.validateFor(
+            userId,
+            shareToken
+          );
+          userHasAccess = Boolean(isValid);
+        }
+
+        setHasAccess(userHasAccess);
+
+        // If we don't have access, stop here
+        if (!userHasAccess) {
+          setLoading(false);
+          return;
+        }
 
         // Fetch profile
         const { data: profileData, error: profileError } =
@@ -124,8 +156,8 @@ export default function UserProfileScreen() {
       }
     };
 
-    fetchUserData();
-  }, [userId]);
+    checkAccessAndFetchData();
+  }, [userId, shareToken]);
 
   const refetchWishlistItems = useCallback(async (wishlistId: string) => {
     try {
@@ -147,6 +179,19 @@ export default function UserProfileScreen() {
     return (
       <View style={styles.centerContainer}>
         <Loading />
+      </View>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text fontSize="lg" style={{ marginBottom: spacing.md }}>
+          This wishlist is private
+        </Text>
+        <Text style={{ color: colours.text, opacity: 0.6 }}>
+          Ask the owner to share it with you
+        </Text>
       </View>
     );
   }
