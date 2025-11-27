@@ -113,9 +113,11 @@ export default function BottomSheet() {
                     "Paste link",
                     (input: string) => {
                       // Hack around the deeplinking we need to setup
-                      // Assumed structure: https://giftful.io/profile/00000000-0000-0000-0000-000000000001?share=13ded48d-ad44-4578-9004-79a5e7ce7f6f
                       // Seeded user for testing:
-                      // https://giftful.io/profile/00000000-0000-0000-0000-000000000002?share=13ded48d-ad44-4578-9004-79a5e7ce7f6f
+                      // Dev
+                      // https://giftful.io/profile/00000000-0000-0000-0000-000000000001?share=406eb86d-7622-4be9-b262-243876260892
+                      // Alice
+                      // https://giftful.io/profile/00000000-0000-0000-0000-000000000002?share=7c74ca94-b0d9-44a0-883f-922b8c9ba799
                       const index = input.indexOf("profile");
                       const link = input.slice(index);
                       console.log({ link });

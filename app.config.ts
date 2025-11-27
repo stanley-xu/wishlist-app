@@ -19,6 +19,7 @@ export default {
     ios: {
       icon: "./assets/giftful.icon",
       bundleIdentifier: "io.giftful",
+      associatedDomains: ["applinks:giftful.io", "applinks:www.giftful.io"],
       supportsTablet: true,
     },
     plugins: [

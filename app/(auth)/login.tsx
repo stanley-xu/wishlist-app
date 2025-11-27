@@ -45,6 +45,23 @@ export default function LoginScreen() {
     }
   };
 
+  const handleDev2Login = async () => {
+    try {
+      setSubmitting(true);
+      setError(null);
+      await signIn({
+        email: "alice@example.com",
+        password: "alice@example.com",
+      });
+      // Navigation happens automatically via session state change
+    } catch (e) {
+      console.error(e);
+      setError((e as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -76,13 +93,22 @@ export default function LoginScreen() {
         {error && <Text variant="error">{error}</Text>}
 
         {__DEV__ && (
-          <Button
-            variant="dev"
-            loading={submitting || loading}
-            onPress={handleDevLogin}
-          >
-            <Text variant="semibold">Login as Dev</Text>
-          </Button>
+          <>
+            <Button
+              variant="dev"
+              loading={submitting || loading}
+              onPress={handleDevLogin}
+            >
+              <Text variant="semibold">Login as Dev</Text>
+            </Button>
+            <Button
+              variant="dev"
+              loading={submitting || loading}
+              onPress={handleDev2Login}
+            >
+              <Text variant="semibold">Login as Alice</Text>
+            </Button>
+          </>
         )}
       </ScrollView>
     </View>
