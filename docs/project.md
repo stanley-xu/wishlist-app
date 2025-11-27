@@ -92,8 +92,11 @@ You've got 30 productive hours ahead of you. Make them count. 💪
 
 Unsorted.
 
-- Enhanced modal forms
-  - Clear button
+- Assets
+  - Icon
+  - Splash
+- Mark as purchased
+  - Only available for user profile route
 - Android support
 - Web support
 - Multiple header buttons (SwiftUI)
@@ -116,6 +119,10 @@ Unsorted.
 - Wishlists you follow will appear as a notification in a page
 - Page has drawer UX, revealed from an activator somewhere
 - Push notifications
+
+### Mutex for mark as purchased
+
+- Needed for high write contention on lists (e.g. wedding registries)
 
 ### Updates to screens
 

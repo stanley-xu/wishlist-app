@@ -64,3 +64,4 @@ Specific preferences
 Behaviours
 
 - When you troubleshoot problems and realizing you're running in circles, take a step back and do web searches for the problems we see at a high level. (e.g. instead of "supabase 2025 polyfill", do "supabase js hangs")
+- Before writing new migrations make sure you understand the current database schema. Use `npx supabase db pull --schema public` to check.
