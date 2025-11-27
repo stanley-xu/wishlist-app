@@ -162,11 +162,27 @@ export default function ProfileCard({
           }
         />
       </View>
+
+      {/* Drag handle indicator at bottom */}
+      <View style={styles.handleContainer}>
+        <View style={styles.handle} />
+      </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
+  handleContainer: {
+    alignItems: "center",
+    paddingVertical: spacing.sm,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: text.black,
+    opacity: 0.2,
+  },
   fieldElement: {
     borderWidth: 1,
     borderColor: "transparent",
