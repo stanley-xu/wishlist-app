@@ -61,6 +61,8 @@ export default function ProfileCard({
     if (!isValid) return;
 
     const value = getValues(field);
+    if (value === undefined) return;
+
     setEditingField(null);
     await onUpdate(field, value);
   };
