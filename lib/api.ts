@@ -715,16 +715,16 @@ export const wishlistItems = {
 
 export const shareTokens = {
   /**
-   * Generate or get existing share token for current user's wishlist
+   * Generate or get existing share token for a wishlist
    * Creates a new token if one doesn't exist, or returns existing active token
    */
-  async findOrCreate(userId: string): Promise<DbResult<string>> {
+  async findOrCreate(wishlistId: string): Promise<DbResult<string>> {
     try {
       // Check if token already exists
       const { data: existing } = await supabase
         .from("wishlist_permissions")
         .select("share_token")
-        .eq("user_id", userId)
+        .eq("wishlist_id", wishlistId)
         .single();
 
       if (existing?.share_token) {
@@ -734,7 +734,7 @@ export const shareTokens = {
       // Create new token
       const { data, error } = await supabase
         .from("wishlist_permissions")
-        .insert({ user_id: userId })
+        .insert({ wishlist_id: wishlistId })
         .select("share_token")
         .single();
 
@@ -749,13 +749,13 @@ export const shareTokens = {
   },
 
   /**
-   * Validate a share token for a given user ID
-   * Returns true if the token is valid and active for that user
+   * Validate a share token for a given wishlist ID
+   * Returns true if the token is valid and active for that wishlist
    */
-  async validateFor(userId: string, token: string): Promise<DbResult<boolean>> {
+  async validateFor(wishlistId: string, token: string): Promise<DbResult<boolean>> {
     try {
       // Validate input types first
-      const validationResult = ShareTokenValidationSchema.safeParse({ userId, token });
+      const validationResult = ShareTokenValidationSchema.safeParse({ wishlistId, token });
 
       if (!validationResult.success) {
         return {
@@ -767,7 +767,7 @@ export const shareTokens = {
       const { data, error } = await supabase
         .from("wishlist_permissions")
         .select("id")
-        .eq("user_id", userId)
+        .eq("wishlist_id", wishlistId)
         .eq("share_token", token)
         .single();
 
