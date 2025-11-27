@@ -21,29 +21,15 @@ if (!hasURL || !hasURLSearchParams) {
   `);
 }
 
-import { createClient } from "@supabase/supabase-js";
-import Constants from "expo-constants";
+import { createClient, processLock } from "@supabase/supabase-js";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
+import { AppState, Platform } from "react-native";
 import { Database } from "./database.types";
 
-// Use Constants.expoConfig.extra to read runtime env vars from app.config.js
-const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? "";
-const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? "";
+import { DB_CONFIG } from "@/config";
+import validate from "./validations";
 
-console.log("🔧 Supabase Client Config:", {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-});
-
-// Validate Supabase configuration early
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    "❌ Supabase configuration is missing!\n\n" +
-      "Make sure you have set up your environment file (.env.local or .env.device)\n" +
-      `Current URL: "${supabaseUrl}"\n` +
-      `Has Key: ${!!supabaseAnonKey}`
-  );
-}
+validate();
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -62,33 +48,27 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-// Catch common placeholder values that indicate incomplete setup
-const invalidPatterns = ["REPLACE", "TODO", "CHANGEME"];
-
-const hasInvalidPattern = invalidPatterns.some((pattern) =>
-  supabaseUrl.toLowerCase().includes(pattern.toLowerCase())
-);
-
-if (hasInvalidPattern) {
-  throw new Error(
-    "❌ Invalid Supabase URL detected!\n\n" +
-      `Current URL: "${supabaseUrl}"\n\n` +
-      "It looks like you haven't configured your .env.* file yet.\n" +
-      "Please update LOCAL_IP to your actual machine's IP address.\n\n" +
-      "To find your IP:\n" +
-      "  - macOS: ifconfig | grep 'inet ' | grep -v 127.0.0.1\n" +
-      "  - Linux: ip addr show | grep 'inet '\n" +
-      "  - Windows: ipconfig\n\n" +
-      "Then update .env.device:\n" +
-      "  LOCAL_IP=192.168.1.XXX  # Replace with your actual IP"
-  );
-}
-
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(DB_CONFIG.URL, DB_CONFIG.KEY, {
   auth: {
     storage: ExpoSecureStoreAdapter as any,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    lock: processLock,
   },
 });
+
+// Tells Supabase Auth to continuously refresh the session automatically
+// if the app is in the foreground. When this is added, you will continue
+// to receive `onAuthStateChange` events with the `TOKEN_REFRESHED` or
+// `SIGNED_OUT` event if the user's session is terminated. This should
+// only be registered once.
+if (Platform.OS !== "web") {
+  AppState.addEventListener("change", (state) => {
+    if (state === "active") {
+      supabase.auth.startAutoRefresh();
+    } else {
+      supabase.auth.stopAutoRefresh();
+    }
+  });
+}
