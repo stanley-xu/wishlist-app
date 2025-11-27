@@ -209,6 +209,41 @@ export type Database = {
           },
         ]
       }
+      wishlist_permissions: {
+        Row: {
+          access_count: number | null
+          created_at: string | null
+          id: string
+          last_accessed_at: string | null
+          share_token: string
+          user_id: string
+        }
+        Insert: {
+          access_count?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          share_token?: string
+          user_id: string
+        }
+        Update: {
+          access_count?: number | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          share_token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlists: {
         Row: {
           created_at: string
