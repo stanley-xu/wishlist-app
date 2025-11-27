@@ -32,7 +32,9 @@ function SheetItem({
       ]}
     >
       <View>{icon}</View>
-      <Text variant={variant}>{label}</Text>
+      <Text variant={variant} style={{ textAlign: "center" }}>
+        {label}
+      </Text>
     </Button>
   );
 }
@@ -127,14 +129,14 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   section: {
-    marginBottom: spacing.lg,
+    margin: spacing.md,
   },
   sectionTitle: {
     fontSize: 12,
     fontWeight: "600",
     color: text.black,
     opacity: 0.5,
-    paddingBottom: spacing.xs,
+    paddingBottom: spacing.md,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },

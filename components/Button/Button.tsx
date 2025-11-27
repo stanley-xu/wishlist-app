@@ -1,10 +1,11 @@
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import {
   ActivityIndicator,
+  Pressable,
+  PressableStateCallbackType,
   StyleProp,
   StyleSheet,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
@@ -14,6 +15,7 @@ import { UnstyledButton } from "./Unstyled/Unstyled";
 export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
+  fullWidth?: boolean;
   variant?: "primary" | "outline" | "dev";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
@@ -21,23 +23,36 @@ export interface ButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
+const ON_PRESS_STYLES: ViewStyle = {
+  opacity: 0.7,
+};
+
+const HUG_STYLES: ViewStyle = {
+  marginHorizontal: "auto",
+};
+
 export function Button({
   children,
   onPress,
+  fullWidth = false,
   variant = "primary",
   size = "md",
   disabled = false,
   loading = false,
   style: styleOverrides,
 }: ButtonProps) {
+  const hug = !fullWidth;
   const isDisabled = disabled || loading;
 
+  const onPressStyles = useCallback((args: PressableStateCallbackType) => {
+    return {
+      ...(hug ? HUG_STYLES : null),
+      ...(args.pressed ? ON_PRESS_STYLES : null),
+    };
+  }, []);
+
   const buttonMarkup = (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={isDisabled}
-      activeOpacity={0.7}
-    >
+    <Pressable onPress={onPress} disabled={isDisabled} style={onPressStyles}>
       <View
         style={[
           styles.base,
@@ -51,13 +66,13 @@ export function Button({
         {loading && (
           <ActivityIndicator
             size="small"
-            color={colours.background}
+            color={variant === "primary" ? text.white : undefined}
             style={styles.spinner}
           />
         )}
         {children}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   if (variant === "primary") {
@@ -77,7 +92,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
   },
 
   // Variants
@@ -88,7 +103,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: text.black,
-    borderRadius: borderRadius.lg,
   },
   unstyled: {
     backgroundColor: "transparent",
