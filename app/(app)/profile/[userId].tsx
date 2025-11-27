@@ -63,6 +63,9 @@ export default function UserProfileScreen() {
 
   const firstName = profile?.name.split(" ")[0] || "Profile";
 
+  // Check if this is a shared wishlist view (has share token)
+  const isSharedView = !!shareToken && !!wishlistId;
+
   const {
     gesture,
     animatedProfileCardStyle,
@@ -70,7 +73,10 @@ export default function UserProfileScreen() {
     animatedChevronStyle,
     toggleExpand,
     isCollapsed,
-  } = useCollapsibleHeader({ cardHeight: PROFILE_CARD_HEIGHT });
+  } = useCollapsibleHeader({
+    cardHeight: PROFILE_CARD_HEIGHT,
+    initialExpanded: isSharedView
+  });
 
   useEffect(() => {
     navigation.setOptions({

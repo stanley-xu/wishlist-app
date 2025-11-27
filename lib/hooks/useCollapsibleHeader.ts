@@ -12,17 +12,21 @@ const TIMING_CONFIG = { duration: 300 };
 
 interface UseCollapsibleHeaderParams {
   cardHeight: number;
+  initialExpanded?: boolean;
 }
 
-export function useCollapsibleHeader({ cardHeight }: UseCollapsibleHeaderParams) {
+export function useCollapsibleHeader({
+  cardHeight,
+  initialExpanded = false
+}: UseCollapsibleHeaderParams) {
   const EXPANDED_POSITION = 0;
   const COLLAPSED_POSITION = -cardHeight;
   const SNAP_THRESHOLD = COLLAPSED_POSITION * 0.5;
 
-  const translateY = useSharedValue(COLLAPSED_POSITION);
+  const translateY = useSharedValue(initialExpanded ? EXPANDED_POSITION : COLLAPSED_POSITION);
   const context = useSharedValue({ y: 0 });
-  const chevronRotation = useSharedValue(0);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const chevronRotation = useSharedValue(initialExpanded ? -180 : 0);
+  const [isCollapsed, setIsCollapsed] = useState(!initialExpanded);
 
   const updateCollapseState = (collapsed: boolean) => {
     "worklet";
