@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 
 import Avatar from "@/components/Avatar/Avatar";
 import { Card } from "@/components/Card";
-import { Input } from "@/components/Input";
 import { cardTitleStyles } from "@/components/Card/Title";
+import { Input } from "@/components/Input";
 import { UpdateProfileSchema, type Profile } from "@/lib/schemas";
 import { borderRadius, colours, spacing, text } from "@/styles/tokens";
 
@@ -78,7 +78,7 @@ export default function ProfileCard({
         justifyContent: "space-between",
       }}
     >
-      <View style={styles.profileHeader}>
+      <View style={styles.container}>
         <View style={styles.profileAvatar}>
           <Avatar
             url={avatarUrl}
@@ -95,7 +95,7 @@ export default function ProfileCard({
           />
         </View>
 
-        <View style={styles.profileName}>
+        <View>
           <Controller
             control={control}
             name="name"
@@ -176,16 +176,18 @@ export default function ProfileCard({
 }
 
 const styles = StyleSheet.create({
-  handleContainer: {
+  container: {
+    flexDirection: "column",
     alignItems: "center",
-    paddingBottom: spacing.xs,
+    gap: spacing.md,
   },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: text.black,
-    opacity: 0.2,
+  profileAvatar: {
+    // marginBottom: spacing.md,
+  },
+  profileInput: {
+    borderStyle: "dashed",
+    borderColor: colours.accent,
+    borderRadius: borderRadius.md,
   },
   fieldElement: {
     borderWidth: 1,
@@ -195,18 +197,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
   },
-  profileHeader: {
-    flexDirection: "column",
+  handleContainer: {
     alignItems: "center",
-    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
-  profileAvatar: {
-    marginBottom: spacing.md,
-  },
-  profileName: {},
-  profileInput: {
-    borderStyle: "dashed",
-    borderColor: colours.accent,
-    borderRadius: borderRadius.md,
+  handle: {
+    width: 44,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: text.black,
+    opacity: 0.2,
   },
 });
