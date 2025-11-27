@@ -728,9 +728,6 @@ export const shareTokens = {
         .single();
 
       if (existing?.share_token) {
-        console.debug("existing");
-        console.debug(existing.share_token);
-
         return { data: existing.share_token, error: null };
       }
 
@@ -743,8 +740,6 @@ export const shareTokens = {
 
       if (error) throw error;
       if (!data?.share_token) throw new Error("Failed to generate token");
-
-      console.debug(data.share_token);
 
       return { data: data.share_token, error: null };
     } catch (error) {
@@ -763,36 +758,22 @@ export const shareTokens = {
       const validationResult = ShareTokenValidationSchema.safeParse({ userId, token });
 
       if (!validationResult.success) {
-        console.error("[validateFor] Invalid input:", validationResult.error.format());
         return {
           data: false,
           error: new Error(`Invalid input: ${validationResult.error.message}`)
         };
       }
 
-      console.log("[validateFor] Input:", { userId, token, userIdType: typeof userId, tokenType: typeof token });
-
-      // First, let's see what tokens exist for this user
-      const { data: allUserTokens } = await supabase
-        .from("wishlist_permissions")
-        .select("*")
-        .eq("user_id", userId);
-
-      console.log("[validateFor] All tokens for user:", allUserTokens);
-
       const { data, error } = await supabase
         .from("wishlist_permissions")
-        .select("*")
+        .select("id")
         .eq("user_id", userId)
         .eq("share_token", token)
         .single();
 
-      console.log("[validateFor] Query result:", { data, error });
-
       if (error) {
         // Token not found is not an error, just return false
         if (error.code === PostgRESTErrorCodes.NO_ROWS) {
-          console.log("[validateFor] NO_ROWS - token not found");
           return { data: false, error: null };
         }
         throw error;
