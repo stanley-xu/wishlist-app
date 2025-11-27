@@ -105,19 +105,15 @@ export default function BottomSheet() {
                 }}
               />
               <SheetItem
-                label="View Another Profile"
+                label="View a shared wishlist"
                 icon={<UserSearch size={20} color={text.black} />}
                 onPress={() => {
                   Alert.prompt(
                     "Enter a wishlist share link",
-                    "Paste link",
+                    "Paste the full share URL",
                     (input: string) => {
-                      // Hack around the deeplinking we need to setup
-                      // Seeded user for testing:
-                      // Dev
-                      // https://giftful.io/profile/00000000-0000-0000-0000-000000000001?share=406eb86d-7622-4be9-b262-243876260892
-                      // Alice
-                      // https://giftful.io/profile/00000000-0000-0000-0000-000000000002?share=7c74ca94-b0d9-44a0-883f-922b8c9ba799
+                      // Parse the share link and navigate
+                      // Expected format: https://giftful.io/profile/{userId}?list={wishlistId}&share={token}
                       const index = input.indexOf("profile");
                       const link = input.slice(index);
                       console.log({ link });
