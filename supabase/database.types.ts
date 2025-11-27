@@ -216,7 +216,7 @@ export type Database = {
           id: string
           last_accessed_at: string | null
           share_token: string
-          user_id: string
+          wishlist_id: string
         }
         Insert: {
           access_count?: number | null
@@ -224,7 +224,7 @@ export type Database = {
           id?: string
           last_accessed_at?: string | null
           share_token?: string
-          user_id: string
+          wishlist_id: string
         }
         Update: {
           access_count?: number | null
@@ -232,14 +232,14 @@ export type Database = {
           id?: string
           last_accessed_at?: string | null
           share_token?: string
-          user_id?: string
+          wishlist_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "wishlist_permissions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
+            foreignKeyName: "wishlist_permissions_wishlist_id_fkey"
+            columns: ["wishlist_id"]
+            isOneToOne: true
+            referencedRelation: "wishlists"
             referencedColumns: ["id"]
           },
         ]
