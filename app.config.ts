@@ -1,5 +1,9 @@
 const envFile = process.env.ENV || "local";
-require("dotenv").config({ path: `.env.${envFile}`, override: true, quiet: true });
+require("dotenv").config({
+  path: `.env.${envFile}`,
+  override: true,
+  quiet: true,
+});
 
 export default {
   expo: {
@@ -37,6 +41,7 @@ export default {
       // Make env vars available via expo-constants
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+      webUrl: process.env.EXPO_PUBLIC_WEB_URL || "https://giftful.io",
       eas: {
         projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
       },
