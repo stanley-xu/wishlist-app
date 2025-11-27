@@ -3,36 +3,37 @@ import { LogOut, UserSearch } from "lucide-react-native";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Text } from "@/components/Text";
+import { Text, TextProps } from "@/components/Text";
 import { useAuthContext } from "@/lib/auth";
 import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { colours, spacing, text } from "@/styles/tokens";
+import { Button } from "./Button";
 
 interface SheetItemProps {
   label: string;
   icon?: React.ReactNode;
   onPress: () => void;
-  variant?: "default" | "destructive";
+  variant?: TextProps["variant"];
 }
 
 function SheetItem({
   label,
   icon,
   onPress,
-  variant = "default",
+  variant = "semibold",
 }: SheetItemProps) {
   return (
-    <Pressable style={styles.sheetItem} onPress={onPress}>
-      {icon && <View style={styles.sheetItemIcon}>{icon}</View>}
-      <Text
-        style={[
-          styles.sheetItemLabel,
-          variant === "destructive" && styles.sheetItemLabelDestructive,
-        ]}
-      >
-        {label}
-      </Text>
-    </Pressable>
+    <Button
+      onPress={onPress}
+      variant="outline"
+      style={[
+        styles.sheetItem,
+        variant === "destructive" && { borderColor: colours.error },
+      ]}
+    >
+      <View>{icon}</View>
+      <Text variant={variant}>{label}</Text>
+    </Button>
   );
 }
 
@@ -55,10 +56,25 @@ export default function BottomSheet() {
     >
       <Pressable style={styles.overlay} onPress={closeBottomSheet}>
         <View style={styles.sheetWrapper}>
-          <Pressable style={[styles.container, { paddingBottom: bottom + spacing.lg }]}>
+          <Pressable
+            style={[styles.container, { paddingBottom: bottom + spacing.lg }]}
+          >
             {/* Handle/Grip indicator */}
             <View style={styles.handleContainer}>
               <View style={styles.handle} />
+            </View>
+
+            {/* Logout */}
+            <View style={styles.section}>
+              <SheetItem
+                label="Logout"
+                icon={<LogOut size={20} color={colours.error} />}
+                onPress={() => {
+                  closeBottomSheet();
+                  signOut();
+                }}
+                variant="destructive"
+              />
             </View>
 
             {/* Developer Section */}
@@ -77,19 +93,6 @@ export default function BottomSheet() {
                 />
               </View>
             )}
-
-            {/* Logout */}
-            <View style={styles.section}>
-              <SheetItem
-                label="Logout"
-                icon={<LogOut size={20} color={colours.error} />}
-                onPress={() => {
-                  closeBottomSheet();
-                  signOut();
-                }}
-                variant="destructive"
-              />
-            </View>
           </Pressable>
         </View>
       </Pressable>
@@ -137,21 +140,7 @@ const styles = StyleSheet.create({
   },
   sheetItem: {
     flexDirection: "row",
-    alignItems: "center",
     paddingVertical: spacing.md,
     gap: spacing.md,
-  },
-  sheetItemIcon: {
-    width: 24,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  sheetItemLabel: {
-    fontSize: 16,
-    color: text.black,
-  },
-  sheetItemLabelDestructive: {
-    color: colours.error,
   },
 });

@@ -7,7 +7,13 @@ import {
 import { useSurfaceColourContext } from "../SurfaceColourContext";
 
 export interface TextProps extends RNTextProps {
-  variant?: "regular" | "bold" | "semibold" | "italic" | "error";
+  variant?:
+    | "regular"
+    | "bold"
+    | "semibold"
+    | "italic"
+    | "error"
+    | "destructive";
   fontSize?: keyof typeof typography.fontSize;
 }
 
@@ -50,6 +56,10 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   error: {
+    color: colours.error,
+    fontWeight: typography.fontWeight.bold,
+  },
+  destructive: {
     color: colours.error,
     fontWeight: typography.fontWeight.bold,
   },

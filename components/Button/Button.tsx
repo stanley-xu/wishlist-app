@@ -8,10 +8,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import {
-  SurfaceColourContext,
-  useSurfaceColourContext,
-} from "../SurfaceColourContext";
+import { SurfaceColourContext } from "../SurfaceColourContext";
 import { UnstyledButton } from "./Unstyled/Unstyled";
 
 export interface ButtonProps {
@@ -34,39 +31,44 @@ export function Button({
   style: styleOverrides,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  let textColour = useSurfaceColourContext()?.textColour ?? text.black;
 
-  if (variant === "primary") {
-    textColour = text.white;
-  }
-
-  return (
-    <SurfaceColourContext.Provider value={{ textColour }}>
-      <TouchableOpacity
+  const buttonMarkup = (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={isDisabled}
+      activeOpacity={0.7}
+    >
+      <View
         style={[
           styles.base,
           styles[variant],
           styles[size],
           isDisabled && styles.disabled,
+          styles.contentContainer,
           styleOverrides,
         ]}
-        onPress={onPress}
-        disabled={isDisabled}
-        activeOpacity={0.7}
       >
-        <View style={styles.contentContainer}>
-          {loading && (
-            <ActivityIndicator
-              size="small"
-              color={colours.background}
-              style={styles.spinner}
-            />
-          )}
-          {children}
-        </View>
-      </TouchableOpacity>
-    </SurfaceColourContext.Provider>
+        {loading && (
+          <ActivityIndicator
+            size="small"
+            color={colours.background}
+            style={styles.spinner}
+          />
+        )}
+        {children}
+      </View>
+    </TouchableOpacity>
   );
+
+  if (variant === "primary") {
+    return (
+      <SurfaceColourContext.Provider value={{ textColour: text.white }}>
+        {buttonMarkup}
+      </SurfaceColourContext.Provider>
+    );
+  }
+
+  return buttonMarkup;
 }
 
 const styles = StyleSheet.create({
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   outline: {
     backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: colours.accent,
+    borderColor: text.black,
     borderRadius: borderRadius.lg,
   },
   unstyled: {
@@ -120,10 +122,7 @@ const styles = StyleSheet.create({
 
   // Loading state styles
   contentContainer: {
-    // flex: 1,
     position: "relative",
-    // alignItems: "center",
-    // justifyContent: "center",
   },
   spinner: {
     position: "absolute",

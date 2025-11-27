@@ -7,6 +7,8 @@ import {
 } from "react-native";
 import { ButtonProps } from "../Button";
 
+export type UnstyledButtonProps = Omit<ButtonProps, "variant">;
+
 export function UnstyledButton({
   children,
   onPress,
@@ -14,22 +16,24 @@ export function UnstyledButton({
   disabled = false,
   loading = false,
   style: styleOverrides,
-}: Omit<ButtonProps, "variant">) {
+}: UnstyledButtonProps) {
   const isDisabled = disabled || loading;
 
   return (
     <TouchableOpacity
-      style={[
-        styles.base,
-        size && styles[size],
-        isDisabled && styles.disabled,
-        styleOverrides,
-      ]}
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.7}
     >
-      <View style={styles.contentContainer}>
+      <View
+        style={[
+          styles.contentContainer,
+          styles.base,
+          size && styles[size],
+          isDisabled && styles.disabled,
+          styleOverrides,
+        ]}
+      >
         {loading && (
           <ActivityIndicator
             size="small"
