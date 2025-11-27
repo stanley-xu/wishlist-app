@@ -102,16 +102,28 @@ export default function UserProfileScreen() {
         const currentUser = session.user;
         let userHasAccess = false;
 
+        console.log('[Access Check]', {
+          currentUserId: currentUser.id,
+          targetUserId: userId,
+          shareToken,
+          isOwnProfile: currentUser.id === userId,
+        });
+
         // User viewing their own profile - always has access
         if (currentUser.id === userId) {
+          console.log('[Access] Own profile - granted');
           userHasAccess = true;
         } else if (shareToken && typeof shareToken === "string") {
           // Validate share token
-          const { data: isValid } = await shareTokens.validateFor(
+          console.log('[Access] Validating token for userId:', userId);
+          const { data: isValid, error } = await shareTokens.validateFor(
             userId,
             shareToken
           );
+          console.log('[Access] Validation result:', { isValid, error });
           userHasAccess = Boolean(isValid);
+        } else {
+          console.log('[Access] No token provided - denied');
         }
 
         setHasAccess(userHasAccess);
