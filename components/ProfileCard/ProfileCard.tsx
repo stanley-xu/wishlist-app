@@ -68,10 +68,14 @@ export default function ProfileCard({
   return (
     <Card
       corners="squared"
+      padding="sm"
       style={{
         borderBottomStartRadius: borderRadius.lg,
         borderBottomEndRadius: borderRadius.lg,
         height: cardHeight,
+        paddingTop: 0,
+        paddingBottom: 0,
+        justifyContent: "space-between",
       }}
     >
       <View style={styles.profileHeader}>
@@ -174,7 +178,7 @@ export default function ProfileCard({
 const styles = StyleSheet.create({
   handleContainer: {
     alignItems: "center",
-    paddingVertical: spacing.sm,
+    paddingBottom: spacing.xs,
   },
   handle: {
     width: 40,
@@ -194,6 +198,7 @@ const styles = StyleSheet.create({
   profileHeader: {
     flexDirection: "column",
     alignItems: "center",
+    paddingTop: spacing.xs,
   },
   profileAvatar: {
     marginBottom: spacing.md,
