@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/Button";
 import { APP_CONFIG } from "@/config";
-import { shareTokens } from "@/lib/api";
+import { shareTokens, wishlists as wishlistsApi } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { assert } from "@/lib/utils";
@@ -24,8 +24,22 @@ const ShareButton = () => {
     try {
       setLoading(true);
 
-      const { data: token, error: tokenError } = await shareTokens.findOrCreate(
+      // Get user's wishlist (singleton for MVP)
+      const { data: wishlists, error: wishlistError } = await wishlistsApi.getByUserId(
         currentUser.id
+      );
+
+      if (wishlistError || !wishlists || wishlists.length === 0) {
+        setLoading(false);
+        Alert.alert("Error", "No wishlist found to share");
+        return;
+      }
+
+      const wishlist = wishlists[0]; // Get first wishlist (singleton)
+
+      // Generate token for that wishlist
+      const { data: token, error: tokenError } = await shareTokens.findOrCreate(
+        wishlist.id
       );
 
       // end of required network calls
@@ -37,7 +51,7 @@ const ShareButton = () => {
       }
 
       const userName = profile.name || "My";
-      const shareUrl = `${APP_CONFIG.WEB_URL}/profile/${currentUser.id}?share=${token}`;
+      const shareUrl = `${APP_CONFIG.WEB_URL}/profile/${currentUser.id}?list=${wishlist.id}&share=${token}`;
 
       await Share.share({
         message: `Check out ${userName}'s wishlist!`,
@@ -47,6 +61,8 @@ const ShareButton = () => {
     } catch (error) {
       console.error("Error sharing:", error);
       Alert.alert("Error", "Failed to share wishlist");
+    } finally {
+      setLoading(false);
     }
   };
 
