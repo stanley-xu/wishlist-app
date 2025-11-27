@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 
 import Avatar from "@/components/Avatar/Avatar";
@@ -43,7 +43,7 @@ export default function ProfileCard({
     control,
     getValues,
     trigger,
-    formState: { errors: formErrors },
+    formState: { errors: formErrors, isValid: formIsValid },
   } = useForm<ProfileForm>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
@@ -53,6 +53,18 @@ export default function ProfileCard({
   });
 
   const hasFormErrors = Object.keys(formErrors).length > 0;
+
+  // Save when keyboard dismisses (mobile behavior)
+  useEffect(() => {
+    const subscription = Keyboard.addListener("keyboardDidHide", () => {
+      if (editingField) {
+        console.log(`dismiss and for ${editingField}`);
+        handleSave(editingField);
+      }
+    });
+
+    return () => subscription.remove();
+  }, [editingField]);
 
   const handleSave = async (field: keyof ProfileForm) => {
     if (readOnly || !onUpdate) return;
@@ -78,7 +90,12 @@ export default function ProfileCard({
         justifyContent: "space-between",
       }}
     >
-      <View style={styles.container}>
+      <Pressable
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+        style={styles.container}
+      >
         <View style={styles.profileAvatar}>
           <Avatar
             url={avatarUrl}
@@ -121,7 +138,7 @@ export default function ProfileCard({
               ) : (
                 <TouchableOpacity
                   onPress={() => !readOnly && setEditingField("name")}
-                  disabled={readOnly || hasFormErrors}
+                  disabled={readOnly || hasFormErrors || !formIsValid}
                   style={styles.fieldElement}
                 >
                   <Card.Title>{value}</Card.Title>
@@ -155,7 +172,7 @@ export default function ProfileCard({
             ) : (
               <TouchableOpacity
                 onPress={() => !readOnly && setEditingField("bio")}
-                disabled={readOnly || hasFormErrors}
+                disabled={readOnly || hasFormErrors || !formIsValid}
                 style={styles.fieldElement}
               >
                 <Card.Text variant="italic">
@@ -165,7 +182,7 @@ export default function ProfileCard({
             )
           }
         />
-      </View>
+      </Pressable>
 
       {/* Drag handle indicator at bottom */}
       <View style={styles.handleContainer}>
