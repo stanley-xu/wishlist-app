@@ -16,7 +16,7 @@ export interface ButtonProps {
   children: ReactNode;
   onPress: () => void;
   fullWidth?: boolean;
-  variant?: "primary" | "outline" | "dev";
+  variant?: "primary" | "outline" | "dev" | "destructive";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -66,7 +66,7 @@ export function Button({
         {loading && (
           <ActivityIndicator
             size="small"
-            color={variant === "primary" ? text.white : undefined}
+            color={variant === "primary" || variant === "destructive" ? text.white : undefined}
             style={styles.spinner}
           />
         )}
@@ -75,7 +75,7 @@ export function Button({
     </Pressable>
   );
 
-  if (variant === "primary") {
+  if (variant === "primary" || variant === "destructive") {
     return (
       <SurfaceColourContext.Provider value={{ textColour: text.white }}>
         {buttonMarkup}
@@ -103,6 +103,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: text.black,
+  },
+  destructive: {
+    backgroundColor: colours.error,
   },
   unstyled: {
     backgroundColor: "transparent",

@@ -1,24 +1,34 @@
 import { router } from "expo-router";
-import { LogOut, UserSearch } from "lucide-react-native";
+import { UserSearch } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Alert, Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  Alert,
+  Dimensions,
+  Modal,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
+import {
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text, TextProps } from "@/components/Text";
+import { wishlists } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { useDragToDismiss } from "@/lib/hooks/useDragToDismiss";
-import { wishlists } from "@/lib/api";
+import type { Wishlist } from "@/lib/schemas";
 import { colours, spacing, text } from "@/styles/tokens";
 import { Button } from "./Button";
+import { ModalHeader } from "./ModalHeader";
 import { VisibilitySelector } from "./VisibilitySelector";
-import type { Wishlist } from "@/lib/schemas";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const SHEET_HEIGHT_PERCENTAGE = 0.5;
-const SHEET_HEIGHT = SCREEN_HEIGHT * SHEET_HEIGHT_PERCENTAGE;
+const MAX_SHEET_HEIGHT = SCREEN_HEIGHT * 0.9;
 
 interface SheetItemProps {
   label: string;
@@ -82,12 +92,16 @@ export default function BottomSheet() {
     }
   };
 
-  const handleVisibilityChange = async (visibility: "private" | "follower" | "public") => {
+  const handleVisibilityChange = async (
+    visibility: "private" | "follower" | "public"
+  ) => {
     if (!currentWishlist || isUpdating) return;
 
     setIsUpdating(true);
     try {
-      const { data, error } = await wishlists.update(currentWishlist.id, { visibility });
+      const { data, error } = await wishlists.update(currentWishlist.id, {
+        visibility,
+      });
 
       if (error) throw error;
 
@@ -118,102 +132,100 @@ export default function BottomSheet() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Pressable style={styles.overlay} onPress={closeBottomSheet}>
           <GestureDetector gesture={gesture}>
-          <Animated.View
-            style={[
-              styles.sheetWrapper,
-              styles.container,
-              animatedStyle,
-              {
-                paddingBottom: bottom + spacing.lg,
-                shadowOffset: {
-                  height: -4,
-                  width: 0,
-                },
-                shadowOpacity: 0.1,
-              },
-            ]}
-          >
-            <Pressable onPress={(e) => e.stopPropagation()} style={{ flex: 1 }}>
-              {/* Handle/Grip indicator */}
-              <View style={styles.handleContainer}>
-                <View style={styles.handle} />
-              </View>
-
-          {/* Wishlist Visibility */}
-          <VisibilitySelector
-            defaultValue={currentWishlist?.visibility ?? "private"}
-            onChange={handleVisibilityChange}
-            disabled={isUpdating}
-          />
-
-          {/* Logout */}
-          <View style={styles.section}>
-            <SheetItem
-              label="Logout"
-              icon={<LogOut size={20} color={colours.error} />}
-              onPress={() => {
-                closeBottomSheet();
-                signOut();
-              }}
-              variant="destructive"
-            />
-          </View>
-
-          {/* Developer Section */}
-          {__DEV__ && (
-            <View style={styles.section}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "600",
-                  color: text.black,
-                  opacity: 0.5,
-                  paddingBottom: spacing.md,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
+            <Animated.View style={[animatedStyle]}>
+              <View
+                style={[
+                  styles.container,
+                  {
+                    paddingBottom: bottom + spacing.lg,
+                    shadowOffset: {
+                      height: -4,
+                      width: 0,
+                    },
+                    shadowOpacity: 0.1,
+                  },
+                ]}
               >
-                Developer
-              </Text>
-              <SheetItem
-                label="Preview your profile"
-                icon={<UserSearch size={20} color={text.black} />}
-                onPress={() => {
-                  closeBottomSheet();
-                  if (profile) {
-                    router.push(`/profile/${profile.id}`);
-                  }
-                }}
-              />
-              <SheetItem
-                label="View a shared wishlist"
-                icon={<UserSearch size={20} color={text.black} />}
-                onPress={() => {
-                  Alert.prompt(
-                    "Enter a wishlist share link",
-                    "Paste the full share URL",
-                    (input: string) => {
-                      // Parse the share link and navigate
-                      // Expected format: https://giftful.io/profile/{userId}?list={wishlistId}&share={token}
-                      const index = input.indexOf("profile");
-                      const link = input.slice(index);
-                      console.log({ link });
+                <Pressable onPress={(e) => e.stopPropagation()}>
+                {/* Handle/Grip indicator */}
+                <View style={styles.handleContainer}>
+                  <View style={styles.handle} />
+                </View>
 
-                      if (link && profile) {
+                <ModalHeader
+                  title=""
+                  onSave={() => {
+                    closeBottomSheet();
+                    signOut();
+                  }}
+                  saveText="Logout"
+                  saveOutline
+                  saveDestructive
+                />
+
+                {/* Wishlist Visibility */}
+                <VisibilitySelector
+                  defaultValue={currentWishlist?.visibility ?? "private"}
+                  onChange={handleVisibilityChange}
+                  disabled={isUpdating}
+                />
+
+                {/* Developer Section */}
+                {__DEV__ && (
+                  <View style={styles.section}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: text.black,
+                        opacity: 0.5,
+                        paddingBottom: spacing.md,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      Developer
+                    </Text>
+                    <SheetItem
+                      label="Preview your profile"
+                      icon={<UserSearch size={20} color={text.black} />}
+                      onPress={() => {
                         closeBottomSheet();
-                        //@ts-expect-error
-                        router.navigate(`/${link}`);
-                      }
-                    }
-                  );
-                }}
-              />
-            </View>
-          )}
-            </Pressable>
-          </Animated.View>
-        </GestureDetector>
-      </Pressable>
+                        if (profile) {
+                          router.push(`/profile/${profile.id}`);
+                        }
+                      }}
+                    />
+                    <SheetItem
+                      label="View a shared wishlist"
+                      icon={<UserSearch size={20} color={text.black} />}
+                      onPress={() => {
+                        Alert.prompt(
+                          "Enter a wishlist share link",
+                          "Paste the full share URL",
+                          (input: string) => {
+                            // Parse the share link and navigate
+                            // Expected format: https://giftful.io/profile/{userId}?list={wishlistId}&share={token}
+                            const index = input.indexOf("profile");
+                            const link = input.slice(index);
+                            console.log({ link });
+
+                            if (link && profile) {
+                              closeBottomSheet();
+                              //@ts-expect-error
+                              router.navigate(`/${link}`);
+                            }
+                          }
+                        );
+                      }}
+                    />
+                  </View>
+                )}
+                </Pressable>
+              </View>
+            </Animated.View>
+          </GestureDetector>
+        </Pressable>
       </GestureHandlerRootView>
     </Modal>
   );
@@ -223,9 +235,6 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-  },
-  sheetWrapper: {
-    height: SHEET_HEIGHT,
   },
   container: {
     backgroundColor: colours.background,

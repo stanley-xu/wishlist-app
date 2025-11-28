@@ -2,7 +2,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { spacing, text, typography } from "@/styles/tokens";
+import { colours, spacing, text, typography } from "@/styles/tokens";
 
 interface ModalHeaderProps {
   title: string;
@@ -17,6 +17,8 @@ interface ModalHeaderProps {
   saveText?: string;
   saveDisabled?: boolean;
   saveLoading?: boolean;
+  saveDestructive?: boolean;
+  saveOutline?: boolean;
 
   // Styling
   style?: StyleProp<ViewStyle>;
@@ -31,6 +33,8 @@ export default function ModalHeader({
   saveText = "Save",
   saveDisabled = false,
   saveLoading = false,
+  saveDestructive = false,
+  saveOutline = false,
   style,
 }: ModalHeaderProps) {
   return (
@@ -57,12 +61,24 @@ export default function ModalHeader({
       {onSave ? (
         <Button
           size="sm"
+          variant={
+            saveOutline
+              ? "outline"
+              : saveDestructive
+                ? "destructive"
+                : "primary"
+          }
           onPress={onSave}
           loading={saveLoading}
           disabled={saveDisabled}
-          style={styles.button}
+          style={[
+            styles.button,
+            saveOutline && saveDestructive && { borderColor: colours.error },
+          ]}
         >
-          <Text>{saveText}</Text>
+          <Text variant={saveDestructive && saveOutline ? "destructive" : "default"}>
+            {saveText}
+          </Text>
         </Button>
       ) : (
         <View style={styles.button} />
@@ -83,7 +99,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
   },
   button: {
-    width: 90,
+    minWidth: 90,
     borderColor: text.black,
   },
 });
