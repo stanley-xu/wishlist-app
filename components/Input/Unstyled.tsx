@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   textField: {
-    marginVertical: spacing.sm,
+    marginTop: spacing.sm,
   },
 });

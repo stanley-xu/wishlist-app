@@ -12,7 +12,6 @@ import {
   TextInput,
   TextInputProps,
   TextStyle,
-  View,
 } from "react-native";
 import { Text } from "../Text";
 import { Unstyled } from "./Unstyled";
@@ -35,7 +34,7 @@ export function Input({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <>
       {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
 
       <TextInput
@@ -63,15 +62,11 @@ export function Input({
           {error}
         </Text>
       )}
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.sm, // To create space for textField
-  },
-
   label: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
@@ -115,7 +110,7 @@ const styles = StyleSheet.create({
 
   // Subcomponents
   textField: {
-    marginTop: spacing.sm,
+    // marginTop: spacing.sm,
   },
 });
 

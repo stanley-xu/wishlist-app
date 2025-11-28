@@ -1,7 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Keyboard, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { z } from "zod";
 
 import Avatar from "@/components/Avatar/Avatar";
@@ -50,21 +56,10 @@ export default function ProfileCard({
       name: profile.name,
       bio: profile.bio ?? "",
     },
+    reValidateMode: "onChange",
   });
 
   const hasFormErrors = Object.keys(formErrors).length > 0;
-
-  // Save when keyboard dismisses (mobile behavior)
-  useEffect(() => {
-    const subscription = Keyboard.addListener("keyboardDidHide", () => {
-      if (editingField) {
-        console.log(`dismiss and for ${editingField}`);
-        handleSave(editingField);
-      }
-    });
-
-    return () => subscription.remove();
-  }, [editingField]);
 
   const handleSave = async (field: keyof ProfileForm) => {
     if (readOnly || !onUpdate) return;
@@ -125,14 +120,13 @@ export default function ProfileCard({
                   value={value}
                   onChangeText={onChange}
                   onBlur={() => handleSave("name")}
-                  autoFocus
                   error={error?.message}
                   style={[
                     cardTitleStyles.title,
                     styles.fieldElement,
                     styles.profileInput,
                     isDirty && { borderColor: text.black },
-                    error && { borderColor: colours.error, borderWidth: 2 },
+                    error && { borderColor: colours.error },
                   ]}
                 />
               ) : (
@@ -166,7 +160,7 @@ export default function ProfileCard({
                   styles.fieldElement,
                   styles.profileInput,
                   isDirty && { borderColor: text.black },
-                  error && { borderColor: colours.error, borderWidth: 2 },
+                  error && { borderColor: colours.error },
                 ]}
               />
             ) : (
@@ -210,7 +204,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "transparent",
     minWidth: 150,
-    padding: spacing.sm,
+    paddingVertical: spacing.xs,
     alignItems: "center",
     textAlign: "center",
   },

@@ -10,7 +10,7 @@ import { Title } from "./Title";
 
 interface CardProps {
   children: ReactNode;
-  variant?: "default" | "elevated" | "outlined";
+  variant?: "default" | "elevated";
   padding?: "sm" | "md" | "lg";
   corners?: "rounded" | "squared";
   style?: ViewStyle;
@@ -64,11 +64,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     // Android shadow
     elevation: 4,
-  },
-  outlined: {
-    backgroundColor: colours.background,
-    borderWidth: 1,
-    // TODO: Add borderColor when colours.border token is defined
   },
 
   // Padding options
