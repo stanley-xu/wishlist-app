@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { ChevronUp } from "lucide-react-native";
+import { ChevronUp, UserPlus, UserCheck } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Pressable,
   ScrollView,
@@ -24,6 +25,7 @@ import {
 } from "@/components";
 import { Features } from "@/config";
 import {
+  follows,
   profiles,
   shareTokens,
   wishlistItems as wishlistItemsApi,
@@ -36,6 +38,35 @@ import { assert } from "@/lib/utils";
 import { colours, spacing, text } from "@/styles/tokens";
 
 const PROFILE_CARD_HEIGHT = 320;
+
+function FollowButton({
+  isFollowing,
+  isLoading,
+  onPress,
+}: {
+  isFollowing: boolean;
+  isLoading: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={isLoading}
+      style={styles.followButton}
+    >
+      {isLoading ? (
+        <ActivityIndicator size="small" color={text.black} />
+      ) : isFollowing ? (
+        <UserCheck size={20} color={text.black} />
+      ) : (
+        <UserPlus size={20} color={text.black} />
+      )}
+      <Text variant="semibold" fontSize="sm">
+        {isFollowing ? "Unfollow" : "Follow"}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
 export default function UserProfileScreen() {
   // Note: this is the currently logged in user, not necessarily the one whose profile we're rendering
@@ -60,6 +91,8 @@ export default function UserProfileScreen() {
   const [hasAccess, setHasAccess] = useState(false);
   const [viewingItem, setViewingItem] = useState<WishlistItem | null>(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
 
   const firstName = profile?.name.split(" ")[0] || "Profile";
 
@@ -79,6 +112,8 @@ export default function UserProfileScreen() {
   });
 
   useEffect(() => {
+    const isOwnProfile = session.user.id === userId;
+
     navigation.setOptions({
       headerTransparent: false,
       headerStyle: {
@@ -97,8 +132,27 @@ export default function UserProfileScreen() {
           </Animated.View>
         </TouchableOpacity>
       ),
+      headerRight: !isOwnProfile
+        ? () => (
+            <FollowButton
+              isFollowing={isFollowing}
+              isLoading={isFollowLoading}
+              onPress={handleFollowToggle}
+            />
+          )
+        : undefined,
     });
-  }, [navigation, firstName, isCollapsed, toggleExpand, animatedChevronStyle]);
+  }, [
+    navigation,
+    firstName,
+    isCollapsed,
+    toggleExpand,
+    animatedChevronStyle,
+    userId,
+    isFollowing,
+    isFollowLoading,
+    handleFollowToggle,
+  ]);
 
   useEffect(() => {
     const checkAccessAndFetchData = async () => {
@@ -155,6 +209,12 @@ export default function UserProfileScreen() {
           setWishlistItems(itemsData || []);
         }
 
+        // Check if currently following this user (only if not own profile)
+        if (userHasAccess && currentUser.id !== userId) {
+          const { data: followingStatus } = await follows.isFollowing(userId);
+          setIsFollowing(followingStatus ?? false);
+        }
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -180,6 +240,31 @@ export default function UserProfileScreen() {
   const handleItemPress = (item: WishlistItem) => {
     setViewingItem(item);
     setIsViewModalVisible(true);
+  };
+
+  const handleFollowToggle = async () => {
+    if (isFollowLoading) return;
+
+    // Optimistic update
+    const previousState = isFollowing;
+    setIsFollowing(!isFollowing);
+    setIsFollowLoading(true);
+
+    try {
+      if (previousState) {
+        const { error } = await follows.delete(userId);
+        if (error) throw error;
+      } else {
+        const { error } = await follows.create(userId);
+        if (error) throw error;
+      }
+    } catch (err) {
+      console.error("Error toggling follow:", err);
+      // Revert on error
+      setIsFollowing(previousState);
+    } finally {
+      setIsFollowLoading(false);
+    }
   };
 
   if (loading) {
@@ -286,5 +371,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     width: 150,
     gap: 0,
+  },
+  followButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
   },
 });

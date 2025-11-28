@@ -789,6 +789,155 @@ export const shareTokens = {
 };
 
 // ============================================================================
+// Follows - User Following Relationships
+// ============================================================================
+
+export const follows = {
+  /**
+   * Follow a user
+   */
+  async create(followingId: string): Promise<DbResult<boolean>> {
+    try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      // Check if already following
+      const { data: existing } = await supabase
+        .from("follows")
+        .select("id")
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", followingId)
+        .single();
+
+      if (existing) {
+        // Already following, return success
+        return { data: true, error: null };
+      }
+
+      const { error } = await supabase.from("follows").insert({
+        follower_id: currentUser.id,
+        following_id: followingId,
+      });
+
+      if (error) throw error;
+
+      return { data: true, error: null };
+    } catch (error) {
+      console.error("Error following user:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Unfollow a user
+   */
+  async delete(followingId: string): Promise<DbResult<boolean>> {
+    try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      const { error } = await supabase
+        .from("follows")
+        .delete()
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", followingId);
+
+      if (error) throw error;
+
+      return { data: true, error: null };
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Check if current user is following another user
+   */
+  async isFollowing(followingId: string): Promise<DbResult<boolean>> {
+    try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      const { data, error } = await supabase
+        .from("follows")
+        .select("id")
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", followingId)
+        .single();
+
+      if (error && error.code !== PostgRESTErrorCodes.NO_ROWS) {
+        throw error;
+      }
+
+      return { data: !!data, error: null };
+    } catch (error) {
+      console.error("Error checking follow status:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Get list of users the current user is following
+   */
+  async getFollowing(): Promise<DbListResult<Profile>> {
+    try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      const { data, error } = await supabase
+        .from("follows")
+        .select("following_id, profiles!follows_following_id_fkey(*)")
+        .eq("follower_id", currentUser.id);
+
+      if (error) throw error;
+
+      const profiles = data
+        ?.map((row: any) => row.profiles)
+        .filter((p: any) => p !== null)
+        .map((p: any) => ProfileSchema.parse(p)) ?? [];
+
+      return { data: profiles, error: null };
+    } catch (error) {
+      console.error("Error fetching following list:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+
+  /**
+   * Get list of users following the current user
+   */
+  async getFollowers(): Promise<DbListResult<Profile>> {
+    try {
+      const { data: currentUser, error: userError } =
+        await auth.getCurrentUser();
+      if (!currentUser || userError) throw userError || new Error("No user");
+
+      const { data, error } = await supabase
+        .from("follows")
+        .select("follower_id, profiles!follows_follower_id_fkey(*)")
+        .eq("following_id", currentUser.id);
+
+      if (error) throw error;
+
+      const profiles = data
+        ?.map((row: any) => row.profiles)
+        .filter((p: any) => p !== null)
+        .map((p: any) => ProfileSchema.parse(p)) ?? [];
+
+      return { data: profiles, error: null };
+    } catch (error) {
+      console.error("Error fetching followers list:", error);
+      return { data: null, error: error as Error };
+    }
+  },
+};
+
+// ============================================================================
 // Events - Full CRUD example
 // ============================================================================
 
