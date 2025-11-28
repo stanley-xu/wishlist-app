@@ -29,6 +29,10 @@ export default function TabLayout() {
           <Label>Profile</Label>
           <Icon sf="person.fill" />
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="following">
+          <Label>Following</Label>
+          <Icon sf="person.crop.rectangle.stack" />
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="events">
           <Label>Events</Label>
           <Icon sf="calendar" />

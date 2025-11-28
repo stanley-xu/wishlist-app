@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { ChevronUp, UserPlus, UserCheck } from "lucide-react-native";
+import { ChevronUp, UserCheck, UserPlus } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -76,7 +76,11 @@ export default function UserProfileScreen() {
     "UserProfileScreen should be authenticated and have profile context"
   );
 
-  const { userId, list: wishlistId, share: shareToken } = useLocalSearchParams<{
+  const {
+    userId,
+    list: wishlistId,
+    share: shareToken,
+  } = useLocalSearchParams<{
     userId: string;
     list?: string;
     share?: string;
@@ -108,7 +112,7 @@ export default function UserProfileScreen() {
     isCollapsed,
   } = useCollapsibleHeader({
     cardHeight: PROFILE_CARD_HEIGHT,
-    initialExpanded: isSharedView
+    initialExpanded: isSharedView,
   });
 
   const handleFollowToggle = useCallback(async () => {
@@ -184,20 +188,46 @@ export default function UserProfileScreen() {
       try {
         setLoading(true);
 
-        // Check if user has access to this profile
         const currentUser = session.user;
         let userHasAccess = false;
 
-        // User viewing their own profile - always has access
+        // 1. User viewing their own profile - always has access
         if (currentUser.id === userId) {
           userHasAccess = true;
-        } else if (wishlistId && shareToken && typeof shareToken === "string") {
-          // Validate share token for specific wishlist
+        }
+        // 2. Share token - overrides all visibility settings
+        else if (wishlistId && shareToken) {
           const { data: isValid } = await shareTokens.validateFor(
             wishlistId,
             shareToken
           );
           userHasAccess = Boolean(isValid);
+        }
+        // 3. Check wishlist visibility + following status
+        else {
+          // Fetch the user's wishlists to check visibility
+          const { data: wishlistsData } = await wishlistsApi.getByUserId(
+            userId
+          );
+
+          if (wishlistsData && wishlistsData.length > 0) {
+            // In single-wishlist mode, check the first wishlist
+            const wishlist = wishlistsData[0];
+
+            if (wishlist.visibility === "public") {
+              // Public - anyone can see
+              userHasAccess = true;
+            } else if (wishlist.visibility === "follower") {
+              // Follower - only followers can see
+              const { data: isFollowingUser } = await follows.isFollowing(
+                userId
+              );
+              userHasAccess = Boolean(isFollowingUser);
+            } else {
+              // Private - only owner can see (already handled above)
+              userHasAccess = false;
+            }
+          }
         }
 
         setHasAccess(userHasAccess);

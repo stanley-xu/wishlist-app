@@ -97,6 +97,10 @@ Unsorted.
   - Splash
 - Mark as purchased
   - Only available for user profile route
+- Experiment: Support large title
+  - No title for me to try an center (to fix my OCD) > Enables me to use more header buttons with wrapper pattern
+  - Some default collapsibility
+  - Breaks bottom button (now it flickers when large header collapses) - probably some height calc?
 - Android support
 - Web support
 - Multiple header buttons (SwiftUI)

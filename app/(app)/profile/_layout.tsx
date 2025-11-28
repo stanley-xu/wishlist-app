@@ -25,9 +25,8 @@ const ShareButton = () => {
       setLoading(true);
 
       // Get user's wishlist (singleton for MVP)
-      const { data: wishlists, error: wishlistError } = await wishlistsApi.getByUserId(
-        currentUser.id
-      );
+      const { data: wishlists, error: wishlistError } =
+        await wishlistsApi.getByUserId(currentUser.id);
 
       if (wishlistError || !wishlists || wishlists.length === 0) {
         setLoading(false);
