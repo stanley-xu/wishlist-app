@@ -97,8 +97,9 @@ export default function UserProfileScreen() {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [isFollowStatusLoading, setIsFollowStatusLoading] = useState(true);
 
-  const firstName = profile?.name.split(" ")[0] || "Profile";
+  const firstName = profile?.name.split(" ")[0] || "";
 
   // Check if this is a shared wishlist view (has share token)
   const isSharedView = !!shareToken && !!wishlistId;
@@ -165,13 +166,11 @@ export default function UserProfileScreen() {
         ? () => (
             <FollowButton
               isFollowing={isFollowing}
-              isLoading={isFollowLoading}
+              isLoading={isFollowLoading || isFollowStatusLoading}
               onPress={handleFollowToggle}
             />
           )
         : undefined,
-      headerBackTitleVisible: false,
-      headerBackVisible: true,
     });
   }, [
     navigation,
@@ -182,6 +181,7 @@ export default function UserProfileScreen() {
     userId,
     isFollowing,
     isFollowLoading,
+    isFollowStatusLoading,
     handleFollowToggle,
     session.user.id,
   ]);
@@ -272,6 +272,7 @@ export default function UserProfileScreen() {
           const { data: followingStatus } = await follows.isFollowing(userId);
           setIsFollowing(followingStatus ?? false);
         }
+        setIsFollowStatusLoading(false);
 
         setLoading(false);
       } catch (err) {
