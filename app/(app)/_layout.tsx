@@ -29,7 +29,7 @@ export default function TabLayout() {
           <Label>Profile</Label>
           <Icon sf="person.fill" />
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="following">
+        <NativeTabs.Trigger name="user">
           <Label>Following</Label>
           <Icon sf="person.crop.rectangle.stack" />
         </NativeTabs.Trigger>

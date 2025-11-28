@@ -171,6 +171,7 @@ export default function UserProfileScreen() {
           )
         : undefined,
       headerBackTitleVisible: false,
+      headerBackVisible: true,
     });
   }, [
     navigation,

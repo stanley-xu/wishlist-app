@@ -4,6 +4,7 @@ import { shareTokens, wishlists as wishlistsApi } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { assert } from "@/lib/utils";
+import { generateShareUrl } from "@/lib/utils/routes";
 import { text } from "@/styles/tokens";
 import { Stack } from "expo-router";
 import { Settings, Share as ShareIcon } from "lucide-react-native";
@@ -50,7 +51,12 @@ const ShareButton = () => {
       }
 
       const userName = profile.name || "My";
-      const shareUrl = `${APP_CONFIG.WEB_URL}/user/${currentUser.id}?list=${wishlist.id}&share=${token}`;
+      const shareUrl = generateShareUrl(
+        APP_CONFIG.WEB_URL,
+        currentUser.id,
+        wishlist.id,
+        token
+      );
 
       await Share.share({
         message: `Check out ${userName}'s wishlist!`,

@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
@@ -7,6 +7,7 @@ import { follows } from "@/lib/api";
 import { useAuthContext } from "@/lib/auth";
 import type { Profile } from "@/lib/schemas";
 import { assert } from "@/lib/utils";
+import { routes } from "@/lib/utils/routes";
 import { colours, spacing, text } from "@/styles/tokens";
 
 function FollowingItem({ profile }: { profile: Profile }) {
@@ -17,24 +18,23 @@ function FollowingItem({ profile }: { profile: Profile }) {
     .join("");
 
   return (
-    <Pressable
-      style={styles.item}
-      onPress={() => router.push(`/user/${profile.id}`)}
-    >
-      <View style={styles.avatar}>
-        <Text variant="semibold" fontSize="lg" style={{ color: text.white }}>
-          {initials}
-        </Text>
-      </View>
-      <View style={styles.info}>
-        <Text variant="semibold">{profile.name}</Text>
-        {profile.bio && (
-          <Text fontSize="sm" style={{ color: text.black, opacity: 0.6 }}>
-            {profile.bio}
+    <Link href={routes.user(profile.id) as any} asChild>
+      <Pressable style={styles.item}>
+        <View style={styles.avatar}>
+          <Text variant="semibold" fontSize="lg" style={{ color: text.white }}>
+            {initials}
           </Text>
-        )}
-      </View>
-    </Pressable>
+        </View>
+        <View style={styles.info}>
+          <Text variant="semibold">{profile.name}</Text>
+          {profile.bio && (
+            <Text fontSize="sm" style={{ color: text.black, opacity: 0.6 }}>
+              {profile.bio}
+            </Text>
+          )}
+        </View>
+      </Pressable>
+    </Link>
   );
 }
 
