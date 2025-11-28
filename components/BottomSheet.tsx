@@ -28,7 +28,8 @@ import { ModalHeader } from "./ModalHeader";
 import { VisibilitySelector } from "./VisibilitySelector";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const MAX_SHEET_HEIGHT = SCREEN_HEIGHT * 0.9;
+const SHEET_HEIGHT_PERCENTAGE = 0.5;
+const SHEET_HEIGHT = SCREEN_HEIGHT * SHEET_HEIGHT_PERCENTAGE;
 
 interface SheetItemProps {
   label: string;
@@ -132,21 +133,22 @@ export default function BottomSheet() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Pressable style={styles.overlay} onPress={closeBottomSheet}>
           <GestureDetector gesture={gesture}>
-            <Animated.View style={[animatedStyle]}>
-              <View
-                style={[
-                  styles.container,
-                  {
-                    paddingBottom: bottom + spacing.lg,
-                    shadowOffset: {
-                      height: -4,
-                      width: 0,
-                    },
-                    shadowOpacity: 0.1,
+            <Animated.View
+              style={[
+                styles.sheetWrapper,
+                styles.container,
+                animatedStyle,
+                {
+                  paddingBottom: bottom + spacing.lg,
+                  shadowOffset: {
+                    height: -4,
+                    width: 0,
                   },
-                ]}
-              >
-                <Pressable onPress={(e) => e.stopPropagation()}>
+                  shadowOpacity: 0.1,
+                },
+              ]}
+            >
+              <Pressable onPress={(e) => e.stopPropagation()} style={{ flex: 1 }}>
                 {/* Handle/Grip indicator */}
                 <View style={styles.handleContainer}>
                   <View style={styles.handle} />
@@ -192,7 +194,7 @@ export default function BottomSheet() {
                       onPress={() => {
                         closeBottomSheet();
                         if (profile) {
-                          router.push(`/profile/${profile.id}`);
+                          router.push(`/user/${profile.id}` as any);
                         }
                       }}
                     />
@@ -221,8 +223,7 @@ export default function BottomSheet() {
                     />
                   </View>
                 )}
-                </Pressable>
-              </View>
+              </Pressable>
             </Animated.View>
           </GestureDetector>
         </Pressable>
@@ -235,6 +236,9 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  sheetWrapper: {
+    height: SHEET_HEIGHT,
   },
   container: {
     backgroundColor: colours.background,

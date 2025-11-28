@@ -76,7 +76,7 @@ export default function ModalHeader({
             saveOutline && saveDestructive && { borderColor: colours.error },
           ]}
         >
-          <Text variant={saveDestructive && saveOutline ? "destructive" : "default"}>
+          <Text variant={saveDestructive && saveOutline ? "destructive" : "semibold"}>
             {saveText}
           </Text>
         </Button>

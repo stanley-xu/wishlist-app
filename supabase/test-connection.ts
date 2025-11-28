@@ -7,7 +7,7 @@ import { supabase } from "./client";
 export async function testConnection(): Promise<boolean> {
   try {
     const { data, error } = await supabase
-      .from("users")
+      .from("profiles")
       .select("count")
       .limit(1);
     if (error && error.code !== "PGRST116") {

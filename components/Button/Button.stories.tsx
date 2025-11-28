@@ -8,7 +8,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "outline", "unstyled", "dev"],
+      options: ["primary", "outline", "destructive", "dev"],
     },
     size: {
       control: "select",
@@ -52,10 +52,10 @@ export const Outline: Story = {
   },
 };
 
-export const Unstyled: Story = {
+export const Destructive: Story = {
   args: {
-    variant: "unstyled",
-    children: "Unstyled Button",
+    variant: "destructive",
+    children: "Destructive Button",
   },
 };
 

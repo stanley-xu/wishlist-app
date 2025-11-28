@@ -170,8 +170,13 @@ describe("useLoadingState", () => {
       const mockFn1 = jest.fn().mockResolvedValue("result1");
       const mockFn2 = jest.fn().mockResolvedValue("result2");
 
-      let currentFn = mockFn1;
-      const { result, rerender } = renderHook(() => useLoadingState(currentFn));
+      const { result, rerender } = renderHook<
+        ReturnType<typeof useLoadingState<string>>,
+        { fn: () => Promise<string> }
+      >(
+        ({ fn }) => useLoadingState(fn),
+        { initialProps: { fn: mockFn1 } }
+      );
 
       // Call with first function
       await act(async () => {
@@ -181,8 +186,7 @@ describe("useLoadingState", () => {
       expect(mockFn2).toHaveBeenCalledTimes(0);
 
       // Change the function
-      currentFn = mockFn2;
-      rerender();
+      rerender({ fn: mockFn2 });
 
       // Call with second function - should use mockFn2
       await act(async () => {
@@ -198,16 +202,19 @@ describe("useLoadingState", () => {
 
     it("should use updated function in real-world scenario", async () => {
       // Simulate a component that changes its async function
-      let counter = 0;
-
       const createFn = (id: number) =>
         jest.fn(async () => {
           await new Promise((resolve) => setTimeout(resolve, 10));
           return `result-${id}`;
         });
 
-      let fn = createFn(counter);
-      const { result, rerender } = renderHook(() => useLoadingState(fn));
+      const { result, rerender } = renderHook<
+        ReturnType<typeof useLoadingState<string>>,
+        { fn: () => Promise<string> }
+      >(
+        ({ fn }) => useLoadingState(fn),
+        { initialProps: { fn: createFn(0) } }
+      );
 
       // First call
       let firstResult;
@@ -217,9 +224,7 @@ describe("useLoadingState", () => {
       expect(firstResult).toBe("result-0");
 
       // Update function
-      counter++;
-      fn = createFn(counter);
-      rerender();
+      rerender({ fn: createFn(1) });
 
       // Second call - should use new function
       let secondResult;
