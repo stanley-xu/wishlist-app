@@ -1,4 +1,8 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# local env files
+.env
+.env*.local
+.env.device
+.env.production
 
 # dependencies
 node_modules/
@@ -21,6 +25,10 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
+# EAS
+ios/
+android/
+
 # debug
 npm-debug.*
 yarn-debug.*
@@ -30,16 +38,8 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env
-.env*.local
-.env.device
-.env.production
-
 # typescript
 *.tsbuildinfo
-
-app-example
 
 # Claude
 .claude/settings.local.json
