@@ -99,6 +99,45 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+          notify_on_update: boolean
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+          notify_on_update?: boolean
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+          notify_on_update?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participants: {
         Row: {
           event_id: string
@@ -252,6 +291,7 @@ export type Database = {
           name: string
           updated_at: string
           user_id: string
+          visibility: string
         }
         Insert: {
           created_at?: string
@@ -260,6 +300,7 @@ export type Database = {
           name: string
           updated_at?: string
           user_id: string
+          visibility?: string
         }
         Update: {
           created_at?: string
@@ -268,6 +309,7 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
+          visibility?: string
         }
         Relationships: [
           {

@@ -8,6 +8,7 @@ export { Loading } from "./Loading";
 export { ModalHeader } from "./ModalHeader";
 export { ProfileCard } from "./ProfileCard";
 export { Text, TextProps } from "./Text";
+export { VisibilitySelector } from "./VisibilitySelector";
 export { WishlistItem } from "./WishlistItem";
 export { WishlistItemEditModal } from "./WishlistItemEditModal";
 export { WishlistSection } from "./WishlistSection";

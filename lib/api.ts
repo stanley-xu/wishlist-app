@@ -467,6 +467,7 @@ export const wishlists = {
           user_id: currentUser.id,
           name: data.name,
           event_id: data.event_id || null,
+          visibility: data.visibility || "private",
         })
         .select()
         .single();

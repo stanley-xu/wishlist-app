@@ -66,6 +66,7 @@ export const WishlistSchema = z.object({
   user_id: z.guid(),
   event_id: z.guid().nullable(),
   name: z.string().min(1).max(100),
+  visibility: z.enum(["private", "follower", "public"]),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -73,10 +74,12 @@ export const WishlistSchema = z.object({
 export const CreateWishlistSchema = z.object({
   name: z.string().min(1).max(100),
   event_id: z.uuid().optional(),
+  visibility: z.enum(["private", "follower", "public"]).optional(),
 });
 
 export const UpdateWishlistSchema = z.object({
   name: z.string().min(1).max(100).optional(),
+  visibility: z.enum(["private", "follower", "public"]).optional(),
 });
 
 /**

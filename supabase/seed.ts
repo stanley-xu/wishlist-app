@@ -79,11 +79,12 @@ async function seed() {
     // Create default wishlist
     // Mirrors the single wishlist stage of the app.
     // TODO: remove this once multi-wishlist is implemented
-    const { data: wishlistData, error: wishlistError } = await supabase
+    const { data: wishlistData, error: wishlistError} = await supabase
       .from("wishlists")
       .insert({
         user_id: user.id,
         name: "My Wishlist",
+        visibility: "private", // Default to private visibility
       })
       .select()
       .single();

@@ -27,6 +27,7 @@ export default {
       [
         "expo-splash-screen",
         {
+          // TODO: update
           image: "./assets/images/splash-icon.png",
           imageWidth: 200,
           resizeMode: "contain",

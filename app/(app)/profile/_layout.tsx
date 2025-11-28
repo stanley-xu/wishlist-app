@@ -6,7 +6,7 @@ import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
 import { assert } from "@/lib/utils";
 import { text } from "@/styles/tokens";
 import { Stack } from "expo-router";
-import { Menu, Share as ShareIcon } from "lucide-react-native";
+import { Settings, Share as ShareIcon } from "lucide-react-native";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Share } from "react-native";
 
@@ -82,7 +82,7 @@ const BottomSheetButton = () => {
 
   return (
     <IconButton onPress={openBottomSheet}>
-      <Menu size={24} />
+      <Settings size={24} />
     </IconButton>
   );
 };

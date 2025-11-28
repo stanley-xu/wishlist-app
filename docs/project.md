@@ -1,4 +1,4 @@
-# Secret Santa MVP - Development Plan
+# Project
 
 ## This Week's Focus
 
@@ -45,7 +45,7 @@ You've got 30 productive hours ahead of you. Make them count. 💪
 **All tasks are now tracked in GitHub!**
 
 - **GitHub Project Board**: [Giftful Project](https://github.com/users/stanley-xu/projects/2)
-- **Issues**: [wishlist-app/issues](https://github.com/stanley-xu/wishlist-app/issues)
+- **Issues**: [giftful/issues](https://github.com/stanley-xu/giftful/issues)
 
 ## Rescoping the project
 
@@ -58,7 +58,7 @@ You've got 30 productive hours ahead of you. Make them count. 💪
     - CRUD on items ✅
     - Pinning ✅
     - Drag to reorder
-  - Sharing of a profile
+  - Sharing of a profile ✅
     - Secret santa participants can see their match's profile
     - [Bonus] basic follower functionality so 2 people can see each other's wishlist
       - [Very bonus] notifications the wishlists you're following are updated
@@ -69,8 +69,8 @@ You've got 30 productive hours ahead of you. Make them count. 💪
 
 **Prerequisites:**
 
-- [ ] Apple Developer account active ($99/year, 24-48hr activation)
-- [ ] Bundle ID decided: `io.giftful`
+- [x] Apple Developer account active ($99/year, 24-48hr activation)
+- [x] Bundle ID decided: `io.giftful`
 
 **Setup (one-time):**
 

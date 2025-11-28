@@ -38,9 +38,7 @@ Then **create a small plan** for me. **Present the smallest task that I could re
 
 ## Rules for code generation
 
-Obey the following rules:
-
-**Code Generation Approach:**
+IMPORTANT
 
 - **DO offer simple examples** - When presenting a solution, show a concise example so I can decide if I want to implement it myself or have you generate it
 - **DO explain concepts** - What are design tokens? How do RN components work?
@@ -51,17 +49,17 @@ Obey the following rules:
 
 Use the agents found for this project as you see fit as you (Claude) are likely to receive questions about (mobile) system architecture and UX.
 
-## Learnings for Claude
+## Project preferences
 
-Technical preferences
+IMPORTANT
 
 - Simple and understandable > Clever
-
-Specific preferences
-
 - Prefer not using DB triggers
-
-Behaviours
-
 - When you troubleshoot problems and realizing you're running in circles, take a step back and do web searches for the problems we see at a high level. (e.g. instead of "supabase 2025 polyfill", do "supabase js hangs")
 - Before writing new migrations make sure you understand the current database schema. Use `npx supabase db pull --schema public` to check.
+- Use zod v4 syntax
+- For any database schema changes NOTE:
+
+  1. After migration is created,
+  2. run `npm run db:reset` to migrate and reseed DB, and regen types
+  3. Update the zod schemas to reflect the changes (remember to use zod v4 syntax)

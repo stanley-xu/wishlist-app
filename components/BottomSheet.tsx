@@ -1,13 +1,24 @@
 import { router } from "expo-router";
 import { LogOut, UserSearch } from "lucide-react-native";
-import { Alert, Modal, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
 import { Text, TextProps } from "@/components/Text";
 import { useAuthContext } from "@/lib/auth";
 import { useBottomSheet } from "@/lib/hooks/useBottomSheet";
+import { useDragToDismiss } from "@/lib/hooks/useDragToDismiss";
+import { wishlists } from "@/lib/api";
 import { colours, spacing, text } from "@/styles/tokens";
 import { Button } from "./Button";
+import { VisibilitySelector } from "./VisibilitySelector";
+import type { Wishlist } from "@/lib/schemas";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const SHEET_HEIGHT_PERCENTAGE = 0.5;
+const SHEET_HEIGHT = SCREEN_HEIGHT * SHEET_HEIGHT_PERCENTAGE;
 
 interface SheetItemProps {
   label: string;
@@ -44,6 +55,53 @@ export default function BottomSheet() {
   const { isOpen, closeBottomSheet } = useBottomSheet();
   const { signOut, profile } = useAuthContext();
   const { bottom } = useSafeAreaInsets();
+  const [currentWishlist, setCurrentWishlist] = useState<Wishlist | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const { gesture, animatedStyle } = useDragToDismiss(isOpen, closeBottomSheet);
+
+  // Fetch current wishlist when sheet opens
+  useEffect(() => {
+    if (isOpen && profile) {
+      fetchWishlist();
+    }
+  }, [isOpen, profile]);
+
+  const fetchWishlist = async () => {
+    try {
+      const { data, error } = await wishlists.getAll();
+      if (error) throw error;
+
+      // Get first wishlist (single-wishlist mode for now)
+      if (data && data.length > 0) {
+        setCurrentWishlist(data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+      Alert.alert("Error", "Failed to load wishlist settings");
+    }
+  };
+
+  const handleVisibilityChange = async (visibility: "private" | "follower" | "public") => {
+    if (!currentWishlist || isUpdating) return;
+
+    setIsUpdating(true);
+    try {
+      const { data, error } = await wishlists.update(currentWishlist.id, { visibility });
+
+      if (error) throw error;
+
+      // Update local state
+      if (data) {
+        setCurrentWishlist(data);
+      }
+    } catch (error) {
+      console.error("Error updating visibility:", error);
+      Alert.alert("Error", "Failed to update visibility");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   // Only render Modal when it needs to be visible or is animating
   if (!isOpen) {
@@ -57,25 +115,36 @@ export default function BottomSheet() {
       transparent
       onRequestClose={closeBottomSheet}
     >
-      <Pressable style={styles.overlay} onPress={closeBottomSheet}>
-        <View
-          style={[
-            styles.sheetWrapper,
-            styles.container,
-            {
-              paddingBottom: bottom + spacing.lg,
-              shadowOffset: {
-                height: -4,
-                width: 0,
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Pressable style={styles.overlay} onPress={closeBottomSheet}>
+          <GestureDetector gesture={gesture}>
+          <Animated.View
+            style={[
+              styles.sheetWrapper,
+              styles.container,
+              animatedStyle,
+              {
+                paddingBottom: bottom + spacing.lg,
+                shadowOffset: {
+                  height: -4,
+                  width: 0,
+                },
+                shadowOpacity: 0.1,
               },
-              shadowOpacity: 0.1,
-            },
-          ]}
-        >
-          {/* Handle/Grip indicator */}
-          <View style={styles.handleContainer}>
-            <View style={styles.handle} />
-          </View>
+            ]}
+          >
+            <Pressable onPress={(e) => e.stopPropagation()} style={{ flex: 1 }}>
+              {/* Handle/Grip indicator */}
+              <View style={styles.handleContainer}>
+                <View style={styles.handle} />
+              </View>
+
+          {/* Wishlist Visibility */}
+          <VisibilitySelector
+            defaultValue={currentWishlist?.visibility ?? "private"}
+            onChange={handleVisibilityChange}
+            disabled={isUpdating}
+          />
 
           {/* Logout */}
           <View style={styles.section}>
@@ -93,7 +162,19 @@ export default function BottomSheet() {
           {/* Developer Section */}
           {__DEV__ && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Developer</Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "600",
+                  color: text.black,
+                  opacity: 0.5,
+                  paddingBottom: spacing.md,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
+              >
+                Developer
+              </Text>
               <SheetItem
                 label="Preview your profile"
                 icon={<UserSearch size={20} color={text.black} />}
@@ -129,8 +210,11 @@ export default function BottomSheet() {
               />
             </View>
           )}
-        </View>
+            </Pressable>
+          </Animated.View>
+        </GestureDetector>
       </Pressable>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
@@ -141,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheetWrapper: {
-    maxHeight: "40%", // Adjust this percentage for desired height
+    height: SHEET_HEIGHT,
   },
   container: {
     backgroundColor: colours.background,
@@ -164,15 +248,6 @@ const styles = StyleSheet.create({
   section: {
     margin: spacing.md,
     gap: spacing.sm,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: text.black,
-    opacity: 0.5,
-    paddingBottom: spacing.md,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
   sheetItem: {
     flexDirection: "row",

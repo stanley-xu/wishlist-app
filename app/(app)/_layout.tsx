@@ -1,44 +1,44 @@
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
-import { Features } from "@/config";
-import { colours, text } from "@/styles/tokens";
-import { BottomSheetProvider } from "@/lib/hooks/useBottomSheet";
 import BottomSheet from "@/components/BottomSheet";
+import { Features } from "@/config";
+import { BottomSheetProvider } from "@/lib/hooks/useBottomSheet";
+import { colours, text } from "@/styles/tokens";
 import { DynamicColorIOS } from "react-native";
 
 export default function TabLayout() {
   return (
     <BottomSheetProvider>
       <NativeTabs
-      labelStyle={{
-        color: DynamicColorIOS({
+        labelStyle={{
+          color: DynamicColorIOS({
+            dark: text.white,
+            light: text.black,
+          }),
+        }}
+        tintColor={DynamicColorIOS({
           dark: text.white,
-          light: text.black,
-        }),
-      }}
-      tintColor={DynamicColorIOS({
-        dark: text.white,
-        light: colours.accent,
-      })}
-    >
-      <NativeTabs.Trigger name="index" hidden={!Features["home"]}>
-        <Label>Home</Label>
-        <Icon sf="house.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
-        <Label>Profile</Label>
-        <Icon sf="person.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="events">
-        <Label>Events</Label>
-        <Icon sf="calendar" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="storybook" hidden={!__DEV__}>
-        <Label>Storybook</Label>
-        <Icon sf="book" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
-    <BottomSheet />
+          light: colours.accent,
+        })}
+      >
+        <NativeTabs.Trigger name="index" hidden={!Features["home"]}>
+          <Label>Home</Label>
+          <Icon sf="house.fill" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="profile">
+          <Label>Profile</Label>
+          <Icon sf="person.fill" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="events">
+          <Label>Events</Label>
+          <Icon sf="calendar" />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="storybook" hidden={!__DEV__}>
+          <Label>Storybook</Label>
+          <Icon sf="book" />
+        </NativeTabs.Trigger>
+      </NativeTabs>
+      <BottomSheet />
     </BottomSheetProvider>
   );
 }
