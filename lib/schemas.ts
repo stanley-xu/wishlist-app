@@ -124,7 +124,7 @@ export type UpdateWishlistItem = z.infer<typeof UpdateWishlistItemSchema>;
 // ============================================================================
 
 export const ShareTokenValidationSchema = z.object({
-  userId: z.guid("Invalid user ID format"),
+  wishlistId: z.guid("Invalid wishlist ID format"),
   token: z.guid("Invalid share token format"),
 });
 
