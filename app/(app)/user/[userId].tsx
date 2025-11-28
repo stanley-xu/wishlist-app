@@ -170,6 +170,7 @@ export default function UserProfileScreen() {
             />
           )
         : undefined,
+      headerBackTitleVisible: false,
     });
   }, [
     navigation,
@@ -181,6 +182,7 @@ export default function UserProfileScreen() {
     isFollowing,
     isFollowLoading,
     handleFollowToggle,
+    session.user.id,
   ]);
 
   useEffect(() => {

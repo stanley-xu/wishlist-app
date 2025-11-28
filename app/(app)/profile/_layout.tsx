@@ -50,7 +50,7 @@ const ShareButton = () => {
       }
 
       const userName = profile.name || "My";
-      const shareUrl = `${APP_CONFIG.WEB_URL}/profile/${currentUser.id}?list=${wishlist.id}&share=${token}`;
+      const shareUrl = `${APP_CONFIG.WEB_URL}/user/${currentUser.id}?list=${wishlist.id}&share=${token}`;
 
       await Share.share({
         message: `Check out ${userName}'s wishlist!`,
@@ -97,13 +97,6 @@ export default function ProfileLayout() {
           headerTransparent: true,
           headerRight: () => <ShareButton />,
           headerLeft: () => <BottomSheetButton />,
-        }}
-      />
-      <Stack.Screen
-        name="[userId]"
-        options={{
-          headerShown: true,
-          presentation: "card",
         }}
       />
     </Stack>

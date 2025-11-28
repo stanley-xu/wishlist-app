@@ -79,12 +79,12 @@ async function seed() {
     // Create default wishlist
     // Mirrors the single wishlist stage of the app.
     // TODO: remove this once multi-wishlist is implemented
-    const { data: wishlistData, error: wishlistError} = await supabase
+    const { data: wishlistData, error: wishlistError } = await supabase
       .from("wishlists")
       .insert({
         user_id: user.id,
         name: "My Wishlist",
-        visibility: "private", // Default to private visibility
+        visibility: "follower", // Default to private visibility
       })
       .select()
       .single();
@@ -109,9 +109,7 @@ async function seed() {
         .insert(dummyItems);
 
       if (itemsError) {
-        console.error(
-          `  ❌ Error creating dummy items: ${itemsError.message}`
-        );
+        console.error(`  ❌ Error creating dummy items: ${itemsError.message}`);
       } else {
         console.log(`  ✅ Created ${dummyItems.length} dummy wishlist items`);
       }
@@ -119,6 +117,20 @@ async function seed() {
 
     console.log("");
   }
+
+  // Create follow relationships
+  console.log("Creating follow relationships...");
+  const { error: followError } = await supabase.from("follows").insert({
+    follower_id: "00000000-0000-0000-0000-000000000001", // Dev
+    following_id: "00000000-0000-0000-0000-000000000002", // Alice
+  });
+
+  if (followError) {
+    console.error(`  ❌ Error creating follow: ${followError.message}`);
+  } else {
+    console.log(`  ✅ Dev now follows Alice`);
+  }
+  console.log("");
 
   console.log("✨ Seeding complete!\n");
   console.log("Test users:");

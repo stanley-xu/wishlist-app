@@ -1,11 +1,6 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import { Loading, Text } from "@/components";
 import { follows } from "@/lib/api";
@@ -24,7 +19,7 @@ function FollowingItem({ profile }: { profile: Profile }) {
   return (
     <Pressable
       style={styles.item}
-      onPress={() => router.push(`/profile/${profile.id}`)}
+      onPress={() => router.push(`/user/${profile.id}`)}
     >
       <View style={styles.avatar}>
         <Text variant="semibold" fontSize="lg" style={{ color: text.white }}>
@@ -32,9 +27,7 @@ function FollowingItem({ profile }: { profile: Profile }) {
         </Text>
       </View>
       <View style={styles.info}>
-        <Text variant="semibold" fontSize="md">
-          {profile.name}
-        </Text>
+        <Text variant="semibold">{profile.name}</Text>
         {profile.bio && (
           <Text fontSize="sm" style={{ color: text.black, opacity: 0.6 }}>
             {profile.bio}
@@ -90,7 +83,11 @@ export default function FollowingScreen() {
   if (following.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <Text fontSize="lg" variant="semibold" style={{ marginBottom: spacing.sm }}>
+        <Text
+          fontSize="lg"
+          variant="semibold"
+          style={{ marginBottom: spacing.sm }}
+        >
           No one yet
         </Text>
         <Text style={{ color: text.black, opacity: 0.6, textAlign: "center" }}>
