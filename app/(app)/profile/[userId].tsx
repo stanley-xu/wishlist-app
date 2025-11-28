@@ -111,6 +111,31 @@ export default function UserProfileScreen() {
     initialExpanded: isSharedView
   });
 
+  const handleFollowToggle = useCallback(async () => {
+    if (isFollowLoading) return;
+
+    // Optimistic update
+    const previousState = isFollowing;
+    setIsFollowing(!isFollowing);
+    setIsFollowLoading(true);
+
+    try {
+      if (previousState) {
+        const { error } = await follows.delete(userId);
+        if (error) throw error;
+      } else {
+        const { error } = await follows.create(userId);
+        if (error) throw error;
+      }
+    } catch (err) {
+      console.error("Error toggling follow:", err);
+      // Revert on error
+      setIsFollowing(previousState);
+    } finally {
+      setIsFollowLoading(false);
+    }
+  }, [isFollowLoading, isFollowing, userId]);
+
   useEffect(() => {
     const isOwnProfile = session.user.id === userId;
 
@@ -240,31 +265,6 @@ export default function UserProfileScreen() {
   const handleItemPress = (item: WishlistItem) => {
     setViewingItem(item);
     setIsViewModalVisible(true);
-  };
-
-  const handleFollowToggle = async () => {
-    if (isFollowLoading) return;
-
-    // Optimistic update
-    const previousState = isFollowing;
-    setIsFollowing(!isFollowing);
-    setIsFollowLoading(true);
-
-    try {
-      if (previousState) {
-        const { error } = await follows.delete(userId);
-        if (error) throw error;
-      } else {
-        const { error } = await follows.create(userId);
-        if (error) throw error;
-      }
-    } catch (err) {
-      console.error("Error toggling follow:", err);
-      // Revert on error
-      setIsFollowing(previousState);
-    } finally {
-      setIsFollowLoading(false);
-    }
   };
 
   if (loading) {
