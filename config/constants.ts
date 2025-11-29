@@ -27,5 +27,5 @@ export const APP_CONFIG = {
 
 export const DB_CONFIG = {
   URL: Constants.expoConfig?.extra?.supabaseUrl,
-  KEY: Constants.expoConfig?.extra?.supabaseAnonKey,
+  KEY: Constants.expoConfig?.extra?.supabaseKey,
 };
