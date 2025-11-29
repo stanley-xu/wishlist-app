@@ -1,29 +1,50 @@
 # How env loading is done
 
-📱 For iOS Simulator / Android Emulator
+## Local Development
 
-npm start # General dev server
-npm run ios # Launch iOS simulator
-npm run android # Launch Android emulator
-Uses: .env.local → http://127.0.0.1:54321
+```
+npm start       # General dev server
+npm run ios     # Launch iOS simulator
+```
 
-📲 For Physical iPhone / Android Device
+Uses: `.env.local` → `http://<your-ip-address>:54321`
 
-npm run start:device # Dev server for device
-npm run ios:device # Launch on physical iPhone
-npm run android:device # Launch on physical Android
-Uses: .env.device → http://<your-ip-address>:54321
+Both simulator and physical devices use your local IP address. This simplifies configuration—no separate `:device` scripts needed.
 
-🌐 For Production Testing
+The `precheck` script automatically updates your IP in `.env.local` when it changes.
 
-npm run start:prod # Production environment
-npm run ios:prod # iOS with production
-npm run android:prod # Android with production
-Uses: .env.production → https://<supabase-url>.supabase.co
+## Production Testing
 
-How It Works
+```
+npm run start:prod   # Production environment
+npm run ios:prod     # iOS with production
+```
 
-- Each script sets `ENV=local|device|production`
-- app.config.js loads the corresponding `.env.*` file
-- Metro clears cache (`--clear`) to pick up new env vars
+Uses: `.env.production` → `https://<supabase-url>.supabase.co`
+
+## How It Works
+
+- Each script sets `APP_VARIANT=local|production`
+- `app.config.js` loads the corresponding `.env.*` file
 - Your app connects to the right Supabase instance
+
+---
+
+## Decision Record: Consolidate to single local env file (2025-11-28)
+
+**Context:** Previously had separate `.env.local` (using `localhost`) and `.env.device` (using IP address), with corresponding `:device` script variants.
+
+**Decision:** Consolidated to just `.env.local` using the local IP address.
+
+**Rationale:**
+
+- Simulators work fine with IP addresses (not just `localhost`)
+- Physical devices require IP addresses
+- Using IP for both means one env file and simpler scripts
+- IP rarely changes on home networks; `precheck` auto-updates it on each `npm start`
+
+**Removed:**
+
+- `.env.device` file
+- `start:device`, `ios:device` scripts
+- Standalone `update-ip` script (merged into `precheck.js`)
