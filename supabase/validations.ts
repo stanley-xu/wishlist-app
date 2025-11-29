@@ -5,20 +5,20 @@ import z from "zod";
 export default function validateSupabase() {
   // Use Constants.expoConfig.extra to read runtime env vars from app.config.js
   const supabaseUrl = DB_CONFIG.URL;
-  const supabaseAnonKey = DB_CONFIG.KEY;
+  const supabaseKey = DB_CONFIG.KEY;
 
   assert(
     supabaseUrl,
     `No expo constant for supabase URL. Check app config and environment variables.`
   );
   assert(
-    supabaseAnonKey,
-    `No expo constant for supabase anon key. Check app config and environment variables.`
+    supabaseKey,
+    `No expo constant for supabase key. Check app config and environment variables.`
   );
 
   console.log("🔧 Supabase Client Config:", {
     url: supabaseUrl,
-    hasKey: !!supabaseAnonKey,
+    hasKey: !!supabaseKey,
   });
 
   // Catch common placeholder values that indicate incomplete setup
