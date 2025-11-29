@@ -150,7 +150,7 @@ export default function ProfileScreen() {
         >
           <CirclePlus color={colours.background} />
           <Text variant="bold" fontSize="2xs">
-            Add Item
+            Add
           </Text>
         </Button>
       </View>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomButton: {
-    width: 125,
+    width: 100,
     flexDirection: "column",
     gap: spacing.xs,
     borderRadius: borderRadius.full,
